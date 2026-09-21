@@ -1,6 +1,8 @@
 set(SOURCES
         src/main.cpp
         src/glad.c
+        src/ShaderProgram.cpp
+        src/ShaderProgram.h
 )
 
 find_package(OpenGL REQUIRED)

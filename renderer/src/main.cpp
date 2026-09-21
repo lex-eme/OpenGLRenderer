@@ -4,6 +4,8 @@
 #include <iostream>
 
 #include <glm/glm.hpp>
+
+#include "ShaderProgram.h"
 #include "SFML/Window/Context.hpp"
 #include "SFML/Window/VideoMode.hpp"
 #include "SFML/Window/ContextSettings.hpp"
@@ -12,7 +14,7 @@
 
 #define numVAOs 1
 
-GLuint renderingProgram;
+ShaderProgram mainShader;
 GLuint vao[numVAOs];
 
 float x = 0.0f;
@@ -63,102 +65,8 @@ glm::mat4 buildScale(float x, float y, float z) {
     return scale;
 }
 
-std::string readShaderSource(const char* filePath) {
-    std::string content;
-    std::ifstream fileStream(filePath, std::ios::in);
-    std::string line = "";
-    while (!fileStream.eof()) {
-        getline(fileStream, line);
-        content.append(line + "\n");
-    }
-    fileStream.close();
-    return content;
-}
-
-void printShaderLog(GLuint shader) {
-    int len = 0;
-    int chWrittn = 0;
-    char* log;
-    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
-    if (len > 0) {
-        log = (char*) malloc(len);
-        glGetShaderInfoLog(shader, len, &chWrittn, log);
-        std::cout << "Shader Info Log: " << log << std::endl;
-        free(log);
-    }
-}
-
-void printProgramLog(int prog) {
-    int len = 0;
-    int chWrittn = 0;
-    char* log;
-    glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &len);
-    if (len > 0) {
-        log = (char*) malloc(len);
-        glGetProgramInfoLog(prog, len, &chWrittn, log);
-        std::cout << "Program Info Log: " << log << std::endl;
-        free(log);
-    }
-}
-
-bool checkOpenGLError() {
-    bool foundError = false;
-    int glErr = glGetError();
-    while (glErr != GL_NO_ERROR) {
-        std::cout << "glError: " << glErr << std::endl;
-        foundError = true;
-        glErr = glGetError();
-    }
-    return foundError;
-}
-
-GLuint createShaderProgram() {
-    GLint vertCompiled;
-    GLint fragCompiled;
-    GLint linked;
-
-    GLuint vShader = glCreateShader(GL_VERTEX_SHADER);
-    GLuint fShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-    std::string vertShaderStr = readShaderSource("assets/shaders/vertShader.glsl");
-    std::string fragShaderStr = readShaderSource("assets/shaders/fragShader.glsl");
-    const char* vertShaderSrc = vertShaderStr.c_str();
-    const char* fragShaderSrc = fragShaderStr.c_str();
-
-    glShaderSource(vShader, 1, &vertShaderSrc, nullptr);
-    glShaderSource(fShader, 1, &fragShaderSrc, nullptr);
-    glCompileShader(vShader);
-    checkOpenGLError();
-    glGetShaderiv(vShader, GL_COMPILE_STATUS, &vertCompiled);
-    if (vertCompiled != 1) {
-        std::cout << "vertex compilation failed" << std::endl;
-        printShaderLog(vShader);
-    }
-
-    glCompileShader(fShader);
-    checkOpenGLError();
-    glGetShaderiv(fShader, GL_COMPILE_STATUS, &fragCompiled);
-    if (fragCompiled != 1) {
-        std::cout << "fragment compilation failed" << std::endl;
-        printShaderLog(fShader);
-    }
-
-    GLuint vfProgram = glCreateProgram();
-    glAttachShader(vfProgram, vShader);
-    glAttachShader(vfProgram, fShader);
-    glLinkProgram(vfProgram);
-    checkOpenGLError();
-    glGetProgramiv(vfProgram, GL_LINK_STATUS, &linked);
-    if (linked != 1) {
-        std::cout << "linking failed" << std::endl;
-        printProgramLog(vfProgram);
-    }
-
-    return vfProgram;
-}
-
 void init() {
-    renderingProgram = createShaderProgram();
+    mainShader = ShaderProgram::createShaderProgram("assets/shaders/vertShader.glsl", "assets/shaders/fragShader.glsl");
     glGenVertexArrays(numVAOs, vao);
     glBindVertexArray(vao[0]);
 }
@@ -167,7 +75,7 @@ void display() {
     glClear(GL_DEPTH_BUFFER_BIT);
     glClearColor(0.85f, 0.65f, 0.2f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT);
-    glUseProgram(renderingProgram);
+    mainShader.setActive();
 
     x += inc;
     if (x > 1.0f) {
@@ -178,10 +86,8 @@ void display() {
         inc = 0.01f;
     }
 
-    GLuint offsetLoc = glGetUniformLocation(renderingProgram, "offset"); // get ptr to "offset"
-    glProgramUniform1f(renderingProgram, offsetLoc, x);
+    mainShader.setFloatUniform("offset", x);
 
-    glPointSize(30.0f);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
