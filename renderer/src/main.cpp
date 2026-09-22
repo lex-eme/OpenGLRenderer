@@ -19,16 +19,17 @@
 #define numVBOs 2
 float cameraX, cameraY, cameraZ;
 float cubeLocX, cubeLocY, cubeLocZ;
+float pyrLocX, pyrLocY, pyrLocZ;
 
 ShaderProgram mainShader;
 GLuint vao[numVAOs];
 GLuint vbo[numVBOs];
 
-// variable allocation for display
-GLuint mvLoc, projLoc;
 int width = 600, height = 600;
 float aspect;
 glm::mat4 pMat, vMat, mMat, mvMat, tMat, rMat;
+
+std::stack<glm::mat4> mvStack;
 
 void setupVertices() {
     const float vertexPositions[108] = {
@@ -46,12 +47,25 @@ void setupVertices() {
         1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, -1.0f
     };
 
+    float pyramidPositions[54] =
+    {
+        -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 0.0f, //front
+        1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, //right
+        1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, //back
+        -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 0.0f, //left
+        -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, //LF
+        1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f //RR
+    };
+
     glGenVertexArrays(1, vao);
     glBindVertexArray(vao[0]);
     glGenBuffers(numVBOs, vbo);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), vertexPositions, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(pyramidPositions), pyramidPositions, GL_STATIC_DRAW);
 }
 
 void init() {
@@ -61,7 +75,13 @@ void init() {
 
     cameraX = 0.0f;
     cameraY = 0.0f;
-    cameraZ = 420.0f;
+    cameraZ = 24.0f;
+    cubeLocX = 0.0f;
+    cubeLocY = -2.0f;
+    cubeLocZ = 0.0f;
+    pyrLocX = 2.0f;
+    pyrLocY = 2.0f;
+    pyrLocZ = 0.0f;
     setupVertices();
 }
 
@@ -71,21 +91,54 @@ void display(const float currentTime) {
     mainShader.setActive();
 
     vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
-
-    mainShader.setMat4Uniform("v_matrix", vMat);
+    mvStack.push(vMat);
     mainShader.setMat4Uniform("proj_matrix", pMat);
-    mainShader.setFloatUniform("tf", currentTime);
 
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-    // index 0 -> layout (location = 0) in vertex shader
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    // ----------------------  pyramid == sun
+    mvStack.push(mvStack.top());
+    mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+    mvStack.push(mvStack.top());
+    mvStack.top() *= rotate(glm::mat4(1.0f), currentTime, glm::vec3(1.0, 0.0, 0.0));
+    mainShader.setMat4Uniform("mv_matrix", mvStack.top());
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+    glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
     glEnableVertexAttribArray(0);
-
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
+    glDrawArrays(GL_TRIANGLES, 0, 18);
+    mvStack.pop();
 
-    //glDrawArrays(GL_TRIANGLES, 0, 36);
-    glDrawArraysInstanced(GL_TRIANGLES, 0, 36, 10000);
+    //-----------------------  cube == planet
+    mvStack.push(mvStack.top());
+    mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(sin(currentTime) * 8.0, 0.0f, cos(currentTime) * 8.0));
+    mvStack.push(mvStack.top());
+    mvStack.top() *= rotate(glm::mat4(1.0f), currentTime, glm::vec3(0.0, 1.0, 0.0));
+    mainShader.setMat4Uniform("mv_matrix", mvStack.top());
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+    glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+    glEnableVertexAttribArray(0);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    mvStack.pop();
+
+    //-----------------------  smaller cube == moon
+    mvStack.push(mvStack.top());
+    mvStack.top() *= glm::translate(glm::mat4(1.0f),
+                                    glm::vec3(0.0f, sin((float) currentTime) * 2.0, cos((float) currentTime) * 2.0));
+    mvStack.top() *= rotate(glm::mat4(1.0f), (float) currentTime, glm::vec3(0.0, 0.0, 1.0));
+    mvStack.top() *= scale(glm::mat4(1.0f), glm::vec3(0.25f, 0.25f, 0.25f));
+    mainShader.setMat4Uniform("mv_matrix", mvStack.top());
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+    glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+    glEnableVertexAttribArray(0);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    mvStack.pop();
+    mvStack.pop();
+    mvStack.pop();
+    mvStack.pop(); // the final pop is for the view matrix
 }
 
 int main() {
@@ -102,7 +155,7 @@ int main() {
     window.setActive(true);
 
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(sf::Context::getFunction))) {
-        std::cerr << "Echec de l'initialisation de GLAD !" << std::endl;
+        std::cerr << "Failed to load glad" << std::endl;
         return -1;
     }
     std::cout << "Version OpenGL : " << GLVersion.major << "." << GLVersion.minor << std::endl;
