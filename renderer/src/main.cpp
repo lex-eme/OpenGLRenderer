@@ -26,7 +26,6 @@ GLuint vao[numVAOs];
 GLuint vbo[numVBOs];
 
 int width = 600, height = 600;
-float aspect;
 glm::mat4 pMat, vMat, mMat, mvMat, tMat, rMat;
 
 std::stack<glm::mat4> mvStack;
@@ -70,7 +69,7 @@ void setupVertices() {
 
 void init() {
     mainShader = ShaderProgram::createShaderProgram("assets/shaders/vertShader.glsl", "assets/shaders/fragShader.glsl");
-    aspect = static_cast<float>(width) / static_cast<float>(height);
+    const float aspect = static_cast<float>(width) / static_cast<float>(height);
     pMat = glm::perspective(1.0472f, aspect, 0.1f, 1000.0f);
 
     cameraX = 0.0f;
@@ -94,6 +93,8 @@ void display(const float currentTime) {
     mvStack.push(vMat);
     mainShader.setMat4Uniform("proj_matrix", pMat);
 
+    glEnable(GL_CULL_FACE);
+
     // ----------------------  pyramid == sun
     mvStack.push(mvStack.top());
     mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
@@ -105,6 +106,7 @@ void display(const float currentTime) {
     glEnableVertexAttribArray(0);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
+    glFrontFace(GL_CCW);
     glDrawArrays(GL_TRIANGLES, 0, 18);
     mvStack.pop();
 
@@ -119,6 +121,7 @@ void display(const float currentTime) {
     glEnableVertexAttribArray(0);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
+    glFrontFace(GL_CW);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     mvStack.pop();
 
@@ -134,6 +137,7 @@ void display(const float currentTime) {
     glEnableVertexAttribArray(0);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
+    glFrontFace(GL_CW);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     mvStack.pop();
     mvStack.pop();
@@ -170,6 +174,8 @@ int main() {
             if (event->is<sf::Event::Closed>()) {
                 running = false;
             } else if (const auto* resized = event->getIf<sf::Event::Resized>()) {
+                const float aspect = static_cast<float>(resized->size.x) / static_cast<float>(resized->size.y);
+                pMat = glm::perspective(1.0472f, aspect, 0.1f, 1000.0f);
                 glViewport(0, 0, static_cast<GLsizei>(resized->size.x), static_cast<GLsizei>(resized->size.y));
             }
         }
