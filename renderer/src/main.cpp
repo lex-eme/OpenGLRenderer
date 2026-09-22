@@ -6,6 +6,9 @@
 #include <glm/glm.hpp>
 
 #include "ShaderProgram.h"
+#include "glm/ext/matrix_clip_space.hpp"
+#include "glm/ext/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 #include "SFML/Window/Context.hpp"
 #include "SFML/Window/VideoMode.hpp"
 #include "SFML/Window/ContextSettings.hpp"
@@ -13,82 +16,76 @@
 
 
 #define numVAOs 1
+#define numVBOs 2
+float cameraX, cameraY, cameraZ;
+float cubeLocX, cubeLocY, cubeLocZ;
 
 ShaderProgram mainShader;
 GLuint vao[numVAOs];
+GLuint vbo[numVBOs];
 
-float x = 0.0f;
-float inc = 0.01f;
+// variable allocation for display
+GLuint mvLoc, projLoc;
+int width = 600, height = 600;
+float aspect;
+glm::mat4 pMat, vMat, mMat, mvMat, tMat, rMat;
 
-// builds and returns a translation matrix
-glm::mat4 buildTranslate(float x, float y, float z) {
-    glm::mat4 trans = glm::mat4(1.0, 0.0, 0.0, 0.0,
-                                0.0, 1.0, 0.0, 0.0,
-                                0.0, 0.0, 1.0, 0.0,
-                                x, y, z, 1.0);
-    return trans;
-}
+void setupVertices() {
+    const float vertexPositions[108] = {
+        -1.0f, 1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f, -1.0f,
+        1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f,
+        1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+        -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+        -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, 1.0f,
+        -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f,
+        -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,
+        -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, -1.0f
+    };
 
-// builds and returns a matrix that performs a rotation around the X axis
-glm::mat4 buildRotateX(float rad) {
-    glm::mat4 xrot = glm::mat4(1.0, 0.0, 0.0, 0.0,
-                               0.0, cos(rad), -sin(rad), 0.0,
-                               0.0, sin(rad), cos(rad), 0.0,
-                               0.0, 0.0, 0.0, 1.0);
-    return xrot;
-}
+    glGenVertexArrays(1, vao);
+    glBindVertexArray(vao[0]);
+    glGenBuffers(numVBOs, vbo);
 
-// builds and returns a matrix that performs a rotation around the Y axis
-glm::mat4 buildRotateY(float rad) {
-    glm::mat4 yrot = glm::mat4(cos(rad), 0.0, sin(rad), 0.0,
-                               0.0, 1.0, 0.0, 0.0,
-                               -sin(rad), 0.0, cos(rad), 0.0,
-                               0.0, 0.0, 0.0, 1.0);
-    return yrot;
-}
-
-// builds and returns a matrix that performs a rotation around the Z axis
-glm::mat4 buildRotateZ(float rad) {
-    glm::mat4 zrot = glm::mat4(cos(rad), -sin(rad), 0.0, 0.0,
-                               sin(rad), cos(rad), 0.0, 0.0,
-                               0.0, 0.0, 1.0, 0.0,
-                               0.0, 0.0, 0.0, 1.0);
-    return zrot;
-}
-
-// builds and returns a scale matrix
-glm::mat4 buildScale(float x, float y, float z) {
-    glm::mat4 scale = glm::mat4(x, 0.0, 0.0, 0.0,
-                                0.0, y, 0.0, 0.0,
-                                0.0, 0.0, z, 0.0,
-                                0.0, 0.0, 0.0, 1.0);
-    return scale;
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), vertexPositions, GL_STATIC_DRAW);
 }
 
 void init() {
     mainShader = ShaderProgram::createShaderProgram("assets/shaders/vertShader.glsl", "assets/shaders/fragShader.glsl");
-    glGenVertexArrays(numVAOs, vao);
-    glBindVertexArray(vao[0]);
+    aspect = static_cast<float>(width) / static_cast<float>(height);
+    pMat = glm::perspective(1.0472f, aspect, 0.1f, 1000.0f);
+
+    cameraX = 0.0f;
+    cameraY = 0.0f;
+    cameraZ = 420.0f;
+    setupVertices();
 }
 
-void display() {
+void display(const float currentTime) {
     glClear(GL_DEPTH_BUFFER_BIT);
-    glClearColor(0.85f, 0.65f, 0.2f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT);
     mainShader.setActive();
 
-    x += inc;
-    if (x > 1.0f) {
-        inc = -0.01f;
-    }
+    vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
 
-    if (x < -1.0f) {
-        inc = 0.01f;
-    }
+    mainShader.setMat4Uniform("v_matrix", vMat);
+    mainShader.setMat4Uniform("proj_matrix", pMat);
+    mainShader.setFloatUniform("tf", currentTime);
 
-    mainShader.setFloatUniform("offset", x);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+    // index 0 -> layout (location = 0) in vertex shader
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
 
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+
+    //glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawArraysInstanced(GL_TRIANGLES, 0, 36, 10000);
 }
 
 int main() {
@@ -97,8 +94,10 @@ int main() {
     context_settings.majorVersion = 4;
     context_settings.minorVersion = 1;
     context_settings.attributeFlags = sf::ContextSettings::Attribute::Core;
+    context_settings.antiAliasingLevel = 0;
 
-    sf::Window window(sf::VideoMode({600, 600}), "OpenGL", sf::Style::Default, sf::State::Windowed, context_settings);
+    sf::Window window(sf::VideoMode({static_cast<unsigned>(width), static_cast<unsigned>(height)}), "OpenGL",
+                      sf::Style::Default, sf::State::Windowed, context_settings);
     window.setVerticalSyncEnabled(true);
     window.setActive(true);
 
@@ -110,6 +109,8 @@ int main() {
 
     init();
 
+    const sf::Clock clock;
+
     bool running = true;
     while (running) {
         while (const std::optional event = window.pollEvent()) {
@@ -120,7 +121,8 @@ int main() {
             }
         }
 
-        display();
+        const float currentTime = clock.getElapsedTime().asSeconds();
+        display(currentTime);
 
         window.display();
     }

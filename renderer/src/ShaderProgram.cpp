@@ -3,6 +3,8 @@
 #include <fstream>
 #include <iostream>
 
+#include <glm/gtc/type_ptr.hpp>
+
 bool checkOpenGLError() {
     bool foundError = false;
     int glErr = glGetError();
@@ -19,11 +21,15 @@ void ShaderProgram::setActive() const {
 }
 
 void ShaderProgram::setFloatUniform(const std::string& name, const float value) const {
-    const GLint location = glGetUniformLocation(ID, name.c_str());
-    if (location == -1) {
-        std::cerr << "Shader uniform '" + name << "' does not exist" << std::endl;
-    }
+    const GLint location = getUniformLocation(name);
     glProgramUniform1f(ID, location, value);
+    checkOpenGLError();
+    printProgramLog(ID);
+}
+
+void ShaderProgram::setMat4Uniform(const std::string& name, const glm::mat4& value) const {
+    const GLint location = getUniformLocation(name);
+    glProgramUniformMatrix4fv(ID, location, 1, GL_FALSE, glm::value_ptr(value));
     checkOpenGLError();
     printProgramLog(ID);
 }
@@ -114,4 +120,12 @@ void ShaderProgram::printProgramLog(GLuint program) {
         std::cout << "Program Info Log: " << log << std::endl;
         free(log);
     }
+}
+
+GLint ShaderProgram::getUniformLocation(const std::string& name) const {
+    const GLint location = glGetUniformLocation(ID, name.c_str());
+    if (location == -1) {
+        std::cerr << "Shader uniform '" + name << "' does not exist" << std::endl;
+    }
+    return location;
 }
