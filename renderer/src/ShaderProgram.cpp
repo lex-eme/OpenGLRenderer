@@ -27,6 +27,13 @@ void ShaderProgram::setFloatUniform(const std::string& name, const float value) 
     printProgramLog(ID);
 }
 
+void ShaderProgram::setIntUniform(const std::string& name, const int value) const {
+    const GLint location = getUniformLocation(name);
+    glProgramUniform1i(ID, location, value);
+    checkOpenGLError();
+    printProgramLog(ID);
+}
+
 void ShaderProgram::setMat4Uniform(const std::string& name, const glm::mat4& value) const {
     const GLint location = getUniformLocation(name);
     glProgramUniformMatrix4fv(ID, location, 1, GL_FALSE, glm::value_ptr(value));
@@ -40,16 +47,14 @@ ShaderProgram ShaderProgram::createShaderProgram(const std::string& vertexShader
     GLint fragCompiled;
     GLint linked;
 
-    const GLuint vShader = glCreateShader(GL_VERTEX_SHADER);
-    const GLuint fShader = glCreateShader(GL_FRAGMENT_SHADER);
 
     const std::string vertShaderStr = readShaderSource(vertexShaderSourcePath);
     const std::string fragShaderStr = readShaderSource(fragmentShaderSourcePath);
     const char* vertShaderSrc = vertShaderStr.c_str();
     const char* fragShaderSrc = fragShaderStr.c_str();
 
+    const GLuint vShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vShader, 1, &vertShaderSrc, nullptr);
-    glShaderSource(fShader, 1, &fragShaderSrc, nullptr);
     glCompileShader(vShader);
     checkOpenGLError();
     glGetShaderiv(vShader, GL_COMPILE_STATUS, &vertCompiled);
@@ -58,6 +63,8 @@ ShaderProgram ShaderProgram::createShaderProgram(const std::string& vertexShader
         printShaderLog(vShader);
     }
 
+    const GLuint fShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fShader, 1, &fragShaderSrc, nullptr);
     glCompileShader(fShader);
     checkOpenGLError();
     glGetShaderiv(fShader, GL_COMPILE_STATUS, &fragCompiled);
@@ -77,11 +84,13 @@ ShaderProgram ShaderProgram::createShaderProgram(const std::string& vertexShader
         printProgramLog(vfProgram);
     }
 
+    glDeleteShader(vShader);
+    glDeleteShader(fShader);
     return ShaderProgram(vfProgram);
 }
 
 ShaderProgram::ShaderProgram(const GLuint ID)
-    : ID(ID){
+    : ID(ID) {
 }
 
 std::string ShaderProgram::readShaderSource(const std::string& filePath) {
@@ -102,7 +111,7 @@ void ShaderProgram::printShaderLog(GLuint shader) {
     char* log;
     glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
     if (len > 0) {
-        log = (char*) malloc(len);
+        log = static_cast<char*>(malloc(len));
         glGetShaderInfoLog(shader, len, &chWrittn, log);
         std::cout << "Shader Info Log: " << log << std::endl;
         free(log);
@@ -115,7 +124,7 @@ void ShaderProgram::printProgramLog(GLuint program) {
     char* log;
     glGetProgramiv(program, GL_INFO_LOG_LENGTH, &len);
     if (len > 0) {
-        log = (char*) malloc(len);
+        log = static_cast<char*>(malloc(len));
         glGetProgramInfoLog(program, len, &chWrittn, log);
         std::cout << "Program Info Log: " << log << std::endl;
         free(log);

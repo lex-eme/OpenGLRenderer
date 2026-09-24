@@ -14,9 +14,11 @@ public:
 
     void setActive() const;
     void setFloatUniform(const std::string& name, float value) const;
+    void setIntUniform(const std::string& name, int value) const;
     void setMat4Uniform(const std::string& name, const glm::mat4& value) const;
 
-    static ShaderProgram createShaderProgram(const std::string& vertexShaderSourcePath, const std::string& fragmentShaderSourcePath);
+    static ShaderProgram createShaderProgram(const std::string& vertexShaderSourcePath,
+                                             const std::string& fragmentShaderSourcePath);
 
 private:
     explicit ShaderProgram(GLuint ID);

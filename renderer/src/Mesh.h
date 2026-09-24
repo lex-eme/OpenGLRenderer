@@ -8,12 +8,13 @@
 class Mesh {
 public:
     Transform transform{};
-    GLuint vbo{};
+    GLuint vbo[2]{};
+    GLuint textureID{};
 
 private:
     GLsizei vertexCount{};
 
 public:
-    void create(GLsizei vCount, GLsizeiptr size, const void* data);
+    void create(GLsizei vCount, GLsizeiptr vSize, const void* vData, GLsizeiptr tSize, const void* tData, GLuint texID);
     void draw(ShaderProgram shader, const glm::mat4& parentTransform) const;
 };

@@ -23,7 +23,7 @@ float cameraX, cameraY, cameraZ;
 ShaderProgram mainShader;
 GLuint vao[numVAOs];
 
-int width = 600, height = 600;
+int width = 1280, height = 720;
 glm::mat4 pMat, vMat, mMat, mvMat, tMat, rMat;
 
 std::stack<glm::mat4> mvStack;
@@ -33,7 +33,8 @@ Mesh earth;
 Mesh moon;
 
 GLuint loadTexture(const char* texImagePath) {
-    const GLuint textureID = SOIL_load_OGL_texture(texImagePath, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+    const GLuint textureID =
+            SOIL_load_OGL_texture(texImagePath, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
     if (textureID == 0) {
         std::cerr << "could not find texture file" << texImagePath << std::endl;
     }
@@ -66,15 +67,32 @@ void setupVertices() {
         1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f
     };
 
+    float textureCoordinates[36] =
+    {
+        0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f,
+        0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f,
+        0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f,
+        0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f,
+        0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f
+    };
+
     glGenVertexArrays(1, vao);
     glBindVertexArray(vao[0]);
 
-    sun.create(18, sizeof(pyramidPositions), pyramidPositions);
-    earth.create(36, sizeof(vertexPositions), vertexPositions);
-    moon.create(36, sizeof(vertexPositions), vertexPositions);
+    const GLuint brickTextureID = loadTexture("assets/textures/vince.png");
+
+    sun.create(18, sizeof(pyramidPositions), pyramidPositions, sizeof(textureCoordinates), textureCoordinates,
+               brickTextureID);
+    earth.create(18, sizeof(pyramidPositions), pyramidPositions, sizeof(textureCoordinates), textureCoordinates,
+                 brickTextureID);
+    moon.create(18, sizeof(pyramidPositions), pyramidPositions, sizeof(textureCoordinates), textureCoordinates,
+                brickTextureID);
 
     sun.transform.setPosition(glm::vec3(0.0f));
+    sun.transform.setScale({1.5f, 1.5f, 1.5f});
     earth.transform.setPosition(glm::vec3(0.0f));
+    earth.transform.setRotation({0.0f,0.0f, 3.1415f});
     moon.transform.setScale({0.25f, 0.25f, 0.25f});
 }
 
@@ -85,7 +103,7 @@ void init() {
 
     cameraX = 0.0f;
     cameraY = 0.0f;
-    cameraZ = 24.0f;
+    cameraZ = 14.0f;
     setupVertices();
 }
 
@@ -104,7 +122,7 @@ void display(const float currentTime) {
     mvStack.push(mvStack.top());
     mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     mvStack.push(mvStack.top());
-    sun.transform.setRotation(glm::vec3(currentTime, 0.0f, -currentTime));
+    sun.transform.setRotation(glm::vec3(0.0f, currentTime, 0.0f));
     sun.draw(mainShader, mvStack.top());
     mvStack.pop();
 
@@ -113,7 +131,7 @@ void display(const float currentTime) {
     mvStack.top() *= glm::rotate(glm::mat4(1.0f), currentTime, glm::vec3(0.0, 1.0, 0.0));
     mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(8.0f, 0.0f, 0.0f));
     mvStack.push(mvStack.top());
-    earth.transform.setRotation(glm::vec3(0.0f, currentTime, 0.0f));
+    earth.transform.setRotation(glm::vec3(0.0f, currentTime, 3.14159f));
     earth.draw(mainShader, mvStack.top());
     mvStack.pop();
 
