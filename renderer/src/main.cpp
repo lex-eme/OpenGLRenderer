@@ -38,6 +38,19 @@ GLuint loadTexture(const char* texImagePath) {
     if (textureID == 0) {
         std::cerr << "could not find texture file" << texImagePath << std::endl;
     }
+
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+
+    if (GL_EXT_texture_filter_anisotropic) {
+        std::cout << "Anisotropic filtering extension supported" << std::endl;
+        GLfloat anisoSetting = 0.0f;
+        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisoSetting);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisoSetting);
+    }
     return textureID;
 }
 
@@ -92,7 +105,7 @@ void setupVertices() {
     sun.transform.setPosition(glm::vec3(0.0f));
     sun.transform.setScale({1.5f, 1.5f, 1.5f});
     earth.transform.setPosition(glm::vec3(0.0f));
-    earth.transform.setRotation({0.0f,0.0f, 3.1415f});
+    earth.transform.setRotation({0.0f, 0.0f, 3.1415f});
     moon.transform.setScale({0.25f, 0.25f, 0.25f});
 }
 
@@ -105,6 +118,7 @@ void init() {
     cameraY = 0.0f;
     cameraZ = 14.0f;
     setupVertices();
+    glClearColor(0.15f, 0.19f, 0.37f, 1.0f);
 }
 
 void display(const float currentTime) {
@@ -122,7 +136,7 @@ void display(const float currentTime) {
     mvStack.push(mvStack.top());
     mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     mvStack.push(mvStack.top());
-    sun.transform.setRotation(glm::vec3(0.0f, currentTime, 0.0f));
+    sun.transform.setRotation(glm::vec3(currentTime, 0.0f, 0.0f));
     sun.draw(mainShader, mvStack.top());
     mvStack.pop();
 
@@ -179,6 +193,14 @@ int main() {
                 const float aspect = static_cast<float>(resized->size.x) / static_cast<float>(resized->size.y);
                 pMat = glm::perspective(1.0472f, aspect, 0.1f, 1000.0f);
                 glViewport(0, 0, static_cast<GLsizei>(resized->size.x), static_cast<GLsizei>(resized->size.y));
+            } else if (const auto* key = event->getIf<sf::Event::KeyPressed>()) {
+                switch (key->scancode) {
+                    case sf::Keyboard::Scan::Escape:
+                        running = false;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
