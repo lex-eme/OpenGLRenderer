@@ -8,10 +8,10 @@
 class Mesh {
 public:
     Transform transform{};
-    GLuint vbo[2]{};
-    GLuint textureID{};
 
 private:
+    GLuint vbo[2]{};
+    GLuint textureID{};
     GLsizei vertexCount{};
 
 public:

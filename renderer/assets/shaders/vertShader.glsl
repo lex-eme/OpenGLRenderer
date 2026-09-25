@@ -15,7 +15,7 @@ mat4 buildTranslate(float x, float y, float z);
 
 void main(void) {
     gl_Position = proj_matrix * mv_matrix * vec4(position, 1.0);
-    textureCoord = texCoord * 3;
+    textureCoord = texCoord;
 }
 
 mat4 buildTranslate(float x, float y, float z) {

@@ -11,7 +11,11 @@ add_executable(App
         src/Transform.cpp
         src/Transform.h
         src/Mesh.cpp
-        src/Mesh.h)
+        src/Mesh.h
+        src/Sphere.cpp
+        src/Sphere.h
+        src/Torus.cpp
+        src/Torus.h)
 target_sources(App PRIVATE ${SOURCES})
 
 target_include_directories(App PRIVATE ../dependencies)
