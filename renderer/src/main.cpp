@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 
 #include "Mesh.h"
+#include "Model.h"
 #include "ShaderProgram.h"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
@@ -16,27 +17,18 @@
 #include "SFML/Window/ContextSettings.hpp"
 #include "SFML/Window/Window.hpp"
 
-#include "Sphere.h"
-#include "Torus.h"
-
-
-#define numVAOs 1
 float cameraX, cameraY, cameraZ;
 
 ShaderProgram mainShader;
-GLuint vao[numVAOs];
 
 int width = 1280, height = 720;
-glm::mat4 pMat, vMat, mMat, mvMat, tMat, rMat;
+glm::mat4 pMat, vMat;
 
 std::stack<glm::mat4> mvStack;
 
-Mesh sun;
-Mesh earth;
-Mesh moon;
-
-Sphere sphere(48);
-Torus torus(0.5f, 0.2f, 48);
+Model sun;
+Model earth;
+Model moon;
 
 GLuint loadTexture(const char* texImagePath) {
     const GLuint textureID =
@@ -61,66 +53,22 @@ GLuint loadTexture(const char* texImagePath) {
 }
 
 void setupVertices() {
-    const float vertexPositions[108] = {
-        -1.0f, 1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f, -1.0f,
-        1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f,
-        1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-        -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-        -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, 1.0f,
-        -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f,
-        -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f,
-        -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, -1.0f
-    };
-
-    const float pyramidPositions[54] =
-    {
-        -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-        1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-        1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-        -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-        -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f,
-        1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f
-    };
-
-    float textureCoordinates[36] =
-    {
-        0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f,
-        0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f,
-        0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f,
-        0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f,
-        0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f
-    };
-
-    glGenVertexArrays(1, vao);
-    glBindVertexArray(vao[0]);
-
     const GLuint vinceTextureID = loadTexture("assets/textures/vince.png");
-    const GLuint earthTextureID = loadTexture("assets/textures/earth.jpg");
     const GLuint brickTextureID = loadTexture("assets/textures/brick1.jpg");
 
-    sun.create(18, sizeof(pyramidPositions), pyramidPositions, sizeof(textureCoordinates), textureCoordinates,
-               vinceTextureID);
-    earth.create(18, sizeof(pyramidPositions), pyramidPositions, sizeof(textureCoordinates), textureCoordinates,
-                 vinceTextureID);
-    moon.create(18, sizeof(pyramidPositions), pyramidPositions, sizeof(textureCoordinates), textureCoordinates,
-                vinceTextureID);
+    Mesh cube;
+    Mesh pyramid;
 
-    sun.transform.setPosition(glm::vec3(0.0f));
+    cube.loadFromFile("assets/meshes/Cube.obj");
+    pyramid.loadFromFile("assets/meshes/Pyramid.obj");
+
+    sun.init(cube, vinceTextureID);
+    earth.init(pyramid, vinceTextureID);
+    moon.init(cube, brickTextureID);
+
     sun.transform.setScale({1.5f, 1.5f, 1.5f});
-    earth.transform.setPosition(glm::vec3(0.0f));
     earth.transform.setRotation({0.0f, 0.0f, 3.1415f});
     moon.transform.setScale({0.25f, 0.25f, 0.25f});
-
-    sphere.create(earthTextureID);
-    sphere.transform.setPosition({-4.0f, 1.0f, 0.0f});
-
-    torus.create(brickTextureID);
-    torus.transform.setPosition({4.0f, 0.0f, 5.0f});
 }
 
 void init() {
@@ -173,12 +121,6 @@ void display(const float currentTime) {
     mvStack.pop();
     mvStack.pop();
     mvStack.pop();
-
-    sphere.transform.setRotation({0.1f, currentTime, 0.0f});
-    sphere.draw(mainShader, vMat);
-
-    torus.transform.setRotation({currentTime, currentTime, currentTime });
-    torus.draw(mainShader, vMat);
 }
 
 int main() {

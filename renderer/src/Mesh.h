@@ -1,20 +1,25 @@
 #pragma once
 #include <glad/glad.h>
+#include <glm/glm.hpp>
 
-#include "ShaderProgram.h"
-#include "Transform.h"
 
+struct Vertex {
+    glm::vec3 position;
+    glm::vec2 uvs;
+    //glm::vec3 normals;
+};
 
 class Mesh {
+    GLuint vao{};
+    GLuint verticesVbo{};
+    GLuint indicesVbo{};
+    GLsizei indicesCount{};
+
 public:
-    Transform transform{};
+    void loadFromFile(const std::string &path);
+    void draw() const;
 
 private:
-    GLuint vbo[2]{};
-    GLuint textureID{};
-    GLsizei vertexCount{};
-
-public:
-    void create(GLsizei vCount, GLsizeiptr vSize, const void* vData, GLsizeiptr tSize, const void* tData, GLuint texID);
-    void draw(ShaderProgram shader, const glm::mat4& parentTransform) const;
+    void createVertexBuffer(const std::vector<Vertex>& vertices);
+    void createIndexBuffer(const std::vector<int>& indices);
 };

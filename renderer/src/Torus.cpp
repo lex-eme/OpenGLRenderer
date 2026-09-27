@@ -21,6 +21,8 @@ Torus::Torus(const float in, const float out, const int precIn) {
 
 void Torus::create(const GLuint texID) {
     textureID = texID;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
 
     std::vector<float> pvalues;
     std::vector<float> tvalues;
@@ -46,10 +48,14 @@ void Torus::create(const GLuint texID) {
     // Positions buffer
     glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
     glBufferData(GL_ARRAY_BUFFER, pvalues.size() * sizeof(float), &pvalues[0], GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
 
     // Texture coordinates buffer
     glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
     glBufferData(GL_ARRAY_BUFFER, tvalues.size() * sizeof(float), &tvalues[0], GL_STATIC_DRAW);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(1);
 
     // Normals buffer
     glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
@@ -57,7 +63,8 @@ void Torus::create(const GLuint texID) {
 
     // Indices buffer
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[3]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(float), &indices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), &indices[0], GL_STATIC_DRAW);
+    glBindVertexArray(0);
 }
 
 void Torus::draw(const ShaderProgram shader, const glm::mat4& parentTransform) const {
@@ -65,27 +72,15 @@ void Torus::draw(const ShaderProgram shader, const glm::mat4& parentTransform) c
     shader.setMat4Uniform("mv_matrix", matrix);
     shader.setIntUniform("samp", 0);
 
-    // Positions buffer
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
-
-    // Texture coordinates buffer
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(1);
-
-    // Indices buffer
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[3]);
-
+    glBindVertexArray(vao);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureID);
-
     glEnable(GL_CULL_FACE);
-    glFrontFace(GL_CCW);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
+    glFrontFace(GL_CCW);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 }
 
 float Torus::toRadians(const float degrees) {

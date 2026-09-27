@@ -3,11 +3,6 @@ set(SOURCES
         src/glad.c
         src/ShaderProgram.cpp
         src/ShaderProgram.h
-)
-
-find_package(OpenGL REQUIRED)
-
-add_executable(App
         src/Transform.cpp
         src/Transform.h
         src/Mesh.cpp
@@ -15,7 +10,14 @@ add_executable(App
         src/Sphere.cpp
         src/Sphere.h
         src/Torus.cpp
-        src/Torus.h)
+        src/Torus.h
+        src/Model.cpp
+        src/Model.h
+)
+
+find_package(OpenGL REQUIRED)
+
+add_executable(App)
 target_sources(App PRIVATE ${SOURCES})
 
 target_include_directories(App PRIVATE ../dependencies)

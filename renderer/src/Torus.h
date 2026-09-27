@@ -21,6 +21,7 @@ private:
     std::vector<glm::vec3> sTangents;
     std::vector<glm::vec3> tTangents;
 
+    GLuint vao;
     GLuint vbo[4]{};
     GLuint textureID{};
 
