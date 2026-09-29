@@ -33,11 +33,3 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(glm)
-
-FetchContent_Declare(
-        soil2
-        GIT_REPOSITORY https://github.com/SpartanJ/SOIL2
-        GIT_TAG 1.4.1
-)
-
-FetchContent_MakeAvailable(soil2)

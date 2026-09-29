@@ -43,10 +43,7 @@ void ShaderProgram::setMat4Uniform(const std::string& name, const glm::mat4& val
 
 ShaderProgram ShaderProgram::createShaderProgram(const std::string& vertexShaderSourcePath,
                                                  const std::string& fragmentShaderSourcePath) {
-    GLint vertCompiled;
-    GLint fragCompiled;
-    GLint linked;
-
+    GLint success;
 
     const std::string vertShaderStr = readShaderSource(vertexShaderSourcePath);
     const std::string fragShaderStr = readShaderSource(fragmentShaderSourcePath);
@@ -57,8 +54,8 @@ ShaderProgram ShaderProgram::createShaderProgram(const std::string& vertexShader
     glShaderSource(vShader, 1, &vertShaderSrc, nullptr);
     glCompileShader(vShader);
     checkOpenGLError();
-    glGetShaderiv(vShader, GL_COMPILE_STATUS, &vertCompiled);
-    if (vertCompiled != 1) {
+    glGetShaderiv(vShader, GL_COMPILE_STATUS, &success);
+    if (success != 1) {
         std::cerr << "Vertex shader compilation failed" << std::endl;
         printShaderLog(vShader);
     }
@@ -67,8 +64,8 @@ ShaderProgram ShaderProgram::createShaderProgram(const std::string& vertexShader
     glShaderSource(fShader, 1, &fragShaderSrc, nullptr);
     glCompileShader(fShader);
     checkOpenGLError();
-    glGetShaderiv(fShader, GL_COMPILE_STATUS, &fragCompiled);
-    if (fragCompiled != 1) {
+    glGetShaderiv(fShader, GL_COMPILE_STATUS, &success);
+    if (success != 1) {
         std::cerr << "Fragment shader compilation failed" << std::endl;
         printShaderLog(fShader);
     }
@@ -78,8 +75,8 @@ ShaderProgram ShaderProgram::createShaderProgram(const std::string& vertexShader
     glAttachShader(vfProgram, fShader);
     glLinkProgram(vfProgram);
     checkOpenGLError();
-    glGetProgramiv(vfProgram, GL_LINK_STATUS, &linked);
-    if (linked != 1) {
+    glGetProgramiv(vfProgram, GL_LINK_STATUS, &success);
+    if (success != 1) {
         std::cerr << "Shader program linking failed" << std::endl;
         printProgramLog(vfProgram);
     }

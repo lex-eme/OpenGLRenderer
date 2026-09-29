@@ -5,14 +5,18 @@ set(SOURCES
         src/ShaderProgram.h
         src/Transform.cpp
         src/Transform.h
-        src/Mesh.cpp
-        src/Mesh.h
-        src/Sphere.cpp
-        src/Sphere.h
-        src/Torus.cpp
-        src/Torus.h
+        src/mesh/Mesh.cpp
+        src/mesh/Mesh.h
+        src/mesh/Sphere.cpp
+        src/mesh/Sphere.h
+        src/mesh/Torus.cpp
+        src/mesh/Torus.h
         src/Model.cpp
         src/Model.h
+        src/Image.cpp
+        src/Image.h
+        src/Texture.cpp
+        src/Texture.h
 )
 
 find_package(OpenGL REQUIRED)
@@ -21,7 +25,7 @@ add_executable(App)
 target_sources(App PRIVATE ${SOURCES})
 
 target_include_directories(App PRIVATE ../dependencies)
-target_link_libraries(App PRIVATE glm::glm ImGui-SFML::ImGui-SFML SFML::Audio soil2)
+target_link_libraries(App PRIVATE glm::glm ImGui-SFML::ImGui-SFML SFML::Audio)
 
 if (APPLE)
     target_link_libraries(App PRIVATE OpenGL::GL)

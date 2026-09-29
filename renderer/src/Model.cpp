@@ -1,9 +1,9 @@
 #include "Model.h"
 
-void Model::init(const Mesh inMesh, const GLuint inTextureID) {
+void Model::init(const Mesh inMesh, const Texture& inTexture) {
     transform.setPosition(glm::vec3(0.0f));
     mesh = inMesh;
-    textureID = inTextureID;
+    texture = inTexture;
 }
 
 void Model::draw(const ShaderProgram shader, const glm::mat4& parentTransformMatrix) const {
@@ -11,6 +11,6 @@ void Model::draw(const ShaderProgram shader, const glm::mat4& parentTransformMat
     shader.setMat4Uniform("mv_matrix", matrix);
     shader.setIntUniform("samp", 0);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textureID);
+    glBindTexture(GL_TEXTURE_2D, texture.textureID);
     mesh.draw();
 }

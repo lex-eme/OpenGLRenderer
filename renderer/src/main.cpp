@@ -2,11 +2,10 @@
 
 #include <glad/glad.h>
 #include <iostream>
-#include <SOIL2.h>
 
 #include <glm/glm.hpp>
 
-#include "Mesh.h"
+#include "mesh/Mesh.h"
 #include "Model.h"
 #include "ShaderProgram.h"
 #include "glm/ext/matrix_clip_space.hpp"
@@ -30,41 +29,20 @@ Model sun;
 Model earth;
 Model moon;
 
-GLuint loadTexture(const char* texImagePath) {
-    const GLuint textureID =
-            SOIL_load_OGL_texture(texImagePath, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
-    if (textureID == 0) {
-        std::cerr << "could not find texture file" << texImagePath << std::endl;
-    }
-
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glGenerateMipmap(GL_TEXTURE_2D);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-
-    if (GL_EXT_texture_filter_anisotropic) {
-        std::cout << "Anisotropic filtering extension supported" << std::endl;
-        GLfloat anisoSetting = 0.0f;
-        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisoSetting);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisoSetting);
-    }
-    return textureID;
-}
-
 void setupVertices() {
-    const GLuint vinceTextureID = loadTexture("assets/textures/vince.png");
-    const GLuint brickTextureID = loadTexture("assets/textures/brick1.jpg");
+    Texture vinceTexture;
+    Texture brickTexture;
+    vinceTexture.loadFromFile("assets/textures/vince.png");
+    brickTexture.loadFromFile("assets/textures/brick1.jpg");
 
     Mesh cube;
     Mesh pyramid;
-
     cube.loadFromFile("assets/meshes/Cube.obj");
     pyramid.loadFromFile("assets/meshes/Pyramid.obj");
 
-    sun.init(cube, vinceTextureID);
-    earth.init(pyramid, vinceTextureID);
-    moon.init(cube, brickTextureID);
+    sun.init(cube, vinceTexture);
+    earth.init(pyramid, vinceTexture);
+    moon.init(cube, brickTexture);
 
     sun.transform.setScale({1.5f, 1.5f, 1.5f});
     earth.transform.setRotation({0.0f, 0.0f, 3.1415f});
@@ -143,6 +121,10 @@ int main() {
     std::cout << "Version OpenGL : " << GLVersion.major << "." << GLVersion.minor << std::endl;
 
     init();
+
+    int nrAttributes;
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
+    std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
 
     const sf::Clock clock;
 

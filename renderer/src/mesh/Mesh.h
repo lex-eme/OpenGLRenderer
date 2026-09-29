@@ -9,6 +9,7 @@ struct Vertex {
     //glm::vec3 normals;
 };
 
+// TODO: when deallocate from GPU?
 class Mesh {
     GLuint vao{};
     GLuint verticesVbo{};
