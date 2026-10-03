@@ -1,0 +1,53 @@
+#include "Camera.h"
+
+#include "glm/ext/matrix_clip_space.hpp"
+#include "glm/ext/matrix_transform.hpp"
+
+void Camera::init(const float aspectRatio) {
+    setAspectRatio(aspectRatio);
+    viewMatrix = glm::lookAt(position, position + forward, worldUp);
+}
+
+void Camera::update() {
+    viewMatrix = glm::lookAt(position, position + forward, up);
+}
+
+void Camera::setAspectRatio(const float ratio) {
+    projectionMatrix = glm::perspective(1.0472f, ratio, 0.1f, 1000.0f);
+}
+
+void Camera::move(const glm::vec3 movement) {
+    position += movement;
+}
+
+void Camera::rotate(const glm::vec2 delta) {
+    yaw += delta.x * sensitivity;
+    pitch += delta.y * sensitivity;
+
+    if (pitch > 89.0f) {
+        pitch = 89.0f;
+    }
+    if (pitch < -89.0f) {
+        pitch = -89.0f;
+    }
+
+    glm::vec3 direction;
+    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    direction.y = sin(glm::radians(pitch));
+    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    forward = glm::normalize(direction);
+    right = glm::normalize(glm::cross(forward, worldUp));
+    up = glm::normalize(glm::cross(right, forward));
+}
+
+const glm::vec3& Camera::getForward() const {
+    return forward;
+}
+
+const glm::vec3& Camera::getRight() const {
+    return right;
+}
+
+const glm::vec3& Camera::getUp() const {
+    return up;
+}

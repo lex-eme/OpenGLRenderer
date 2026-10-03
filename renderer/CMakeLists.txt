@@ -17,6 +17,8 @@ set(SOURCES
         src/Image.h
         src/Texture.cpp
         src/Texture.h
+        src/Camera.cpp
+        src/Camera.h
 )
 
 find_package(OpenGL REQUIRED)

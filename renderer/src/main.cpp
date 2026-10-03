@@ -5,31 +5,24 @@
 
 #include <glm/glm.hpp>
 
+#include "Camera.h"
 #include "mesh/Mesh.h"
 #include "Model.h"
 #include "ShaderProgram.h"
 #include "glm/ext/matrix_clip_space.hpp"
-#include "glm/ext/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "SFML/Window/Context.hpp"
 #include "SFML/Window/VideoMode.hpp"
 #include "SFML/Window/ContextSettings.hpp"
 #include "SFML/Window/Window.hpp"
 
-float cameraX, cameraY, cameraZ;
-
 ShaderProgram mainShader;
 
 int width = 1280, height = 720;
-glm::mat4 pMat, vMat;
+std::vector<Model> models;
+Camera camera;
 
-std::stack<glm::mat4> mvStack;
-
-Model sun;
-Model earth;
-Model moon;
-
-void setupVertices() {
+void loadModels() {
     Texture vinceTexture;
     Texture brickTexture;
     vinceTexture.loadFromFile("assets/textures/vince.png");
@@ -40,24 +33,38 @@ void setupVertices() {
     cube.loadFromFile("assets/meshes/Cube.obj");
     pyramid.loadFromFile("assets/meshes/Pyramid.obj");
 
-    sun.init(cube, vinceTexture);
-    earth.init(pyramid, vinceTexture);
-    moon.init(cube, brickTexture);
+    const glm::vec3 cubePositions[] = {
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(1.5f, 0.2f, -1.5f),
+        glm::vec3(2.4f, -0.4f, -3.5f),
+        glm::vec3(2.0f, 5.0f, -15.0f),
+        glm::vec3(1.3f, -2.0f, -2.5f),
+        glm::vec3(1.5f, 2.0f, -2.5f),
+        glm::vec3(-1.7f, 3.0f, -7.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3(-1.3f, 1.0f, -1.5f)
+    };
 
-    sun.transform.setScale({1.5f, 1.5f, 1.5f});
-    earth.transform.setRotation({0.0f, 0.0f, 3.1415f});
-    moon.transform.setScale({0.25f, 0.25f, 0.25f});
+    for (int i = 0; i < 10; i += 1) {
+        glm::vec3 position = cubePositions[i] * 1.5f;
+
+        Model model;
+        model.init(i % 2 == 0 ? cube : pyramid, i % 3 == 0 ? vinceTexture : brickTexture);
+
+        model.transform.setPosition(position);
+        const float angle = 20.0f * static_cast<float>(i);
+        glm::vec3 rotation = {glm::radians(angle), glm::radians(angle) * 0.3, glm::radians(angle) * 0.5f};
+        model.transform.setRotation(rotation);
+        models.push_back(model);
+    }
 }
 
 void init() {
     mainShader = ShaderProgram::createShaderProgram("assets/shaders/vertShader.glsl", "assets/shaders/fragShader.glsl");
     const float aspect = static_cast<float>(width) / static_cast<float>(height);
-    pMat = glm::perspective(1.0472f, aspect, 0.1f, 1000.0f);
-
-    cameraX = 0.0f;
-    cameraY = 0.0f;
-    cameraZ = 14.0f;
-    setupVertices();
+    camera.init(aspect);
+    loadModels();
     glClearColor(0.15f, 0.19f, 0.37f, 1.0f);
 }
 
@@ -66,39 +73,14 @@ void display(const float currentTime) {
     glClear(GL_COLOR_BUFFER_BIT);
     mainShader.setActive();
 
-    vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
-    mvStack.push(vMat);
-    mainShader.setMat4Uniform("proj_matrix", pMat);
+    camera.update();
+    mainShader.setMat4Uniform("proj_matrix", camera.projectionMatrix);
 
     glEnable(GL_CULL_FACE);
 
-    // ----------------------  pyramid == sun
-    mvStack.push(mvStack.top());
-    mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    mvStack.push(mvStack.top());
-    sun.transform.setRotation(glm::vec3(currentTime, 0.0f, 0.0f));
-    sun.draw(mainShader, mvStack.top());
-    mvStack.pop();
-
-    //-----------------------  cube == planet
-    mvStack.push(mvStack.top());
-    mvStack.top() *= glm::rotate(glm::mat4(1.0f), currentTime, glm::vec3(0.0, 1.0, 0.0));
-    mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(8.0f, 0.0f, 0.0f));
-    mvStack.push(mvStack.top());
-    earth.transform.setRotation(glm::vec3(0.0f, currentTime, 3.14159f));
-    earth.draw(mainShader, mvStack.top());
-    mvStack.pop();
-
-    //-----------------------  smaller cube == moon
-    mvStack.push(mvStack.top());
-    mvStack.top() *= glm::rotate(glm::mat4(1.0f), currentTime, glm::vec3(0.0, 0.0, 1.0));
-    mvStack.top() *= glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f));
-    moon.transform.setRotation(glm::vec3(0.0, 0.0, currentTime));
-    moon.draw(mainShader, mvStack.top());
-    mvStack.pop();
-    mvStack.pop();
-    mvStack.pop();
-    mvStack.pop();
+    for (Model model: models) {
+        model.draw(mainShader, camera.viewMatrix);
+    }
 }
 
 int main() {
@@ -127,25 +109,100 @@ int main() {
     std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
 
     const sf::Clock clock;
+    sf::Clock deltaClock;
+
+    bool moveForward = false;
+    bool moveBackward = false;
+    bool moveLeft = false;
+    bool moveRight = false;
+    bool rightButtonPressed = false;
+
+    sf::Vector2i lastMousePos;
 
     bool running = true;
     while (running) {
+        constexpr float cameraSpeed = 10.0f;
+
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()) {
                 running = false;
             } else if (const auto* resized = event->getIf<sf::Event::Resized>()) {
                 const float aspect = static_cast<float>(resized->size.x) / static_cast<float>(resized->size.y);
-                pMat = glm::perspective(1.0472f, aspect, 0.1f, 1000.0f);
+                camera.setAspectRatio(aspect);
                 glViewport(0, 0, static_cast<GLsizei>(resized->size.x), static_cast<GLsizei>(resized->size.y));
             } else if (const auto* key = event->getIf<sf::Event::KeyPressed>()) {
                 switch (key->scancode) {
                     case sf::Keyboard::Scan::Escape:
                         running = false;
                         break;
+                    case sf::Keyboard::Scan::W:
+                        moveForward = true;
+                        break;
+                    case sf::Keyboard::Scan::S:
+                        moveBackward = true;
+                        break;
+                    case sf::Keyboard::Scan::A:
+                        moveLeft = true;
+                        break;
+                    case sf::Keyboard::Scan::D:
+                        moveRight = true;
+                        break;
                     default:
                         break;
                 }
+            } else if (const auto* key = event->getIf<sf::Event::KeyReleased>()) {
+                switch (key->scancode) {
+                    case sf::Keyboard::Scan::W:
+                        moveForward = false;
+                        break;
+                    case sf::Keyboard::Scan::S:
+                        moveBackward = false;
+                        break;
+                    case sf::Keyboard::Scan::A:
+                        moveLeft = false;
+                        break;
+                    case sf::Keyboard::Scan::D:
+                        moveRight = false;
+                        break;
+                    default:
+                        break;
+                }
+            } else if (const auto* pressed = event->getIf<sf::Event::MouseButtonPressed>()) {
+                if (pressed->button == sf::Mouse::Button::Right) {
+                    rightButtonPressed = true;
+                    lastMousePos = pressed->position;
+                }
+            } else if (const auto* released = event->getIf<sf::Event::MouseButtonReleased>()) {
+                if (released->button == sf::Mouse::Button::Right) {
+                    rightButtonPressed = false;
+                }
             }
+        }
+
+        const float deltaTime = deltaClock.restart().asSeconds();
+
+        if (moveForward) {
+            camera.move(cameraSpeed * camera.getForward() * deltaTime);
+        }
+
+        if (moveBackward) {
+            camera.move(-cameraSpeed * camera.getForward() * deltaTime);
+        }
+
+        if (moveLeft) {
+            camera.move(camera.getRight() * -cameraSpeed * deltaTime);
+        }
+
+        if (moveRight) {
+            camera.move(camera.getRight() * cameraSpeed * deltaTime);
+        }
+
+        if (rightButtonPressed) {
+            glm::vec2 delta;
+            delta.x = sf::Mouse::getPosition(window).x - lastMousePos.x;
+            delta.y = lastMousePos.y - sf::Mouse::getPosition(window).y;
+            lastMousePos = sf::Mouse::getPosition(window);
+            camera.rotate(delta);
         }
 
         const float currentTime = clock.getElapsedTime().asSeconds();
