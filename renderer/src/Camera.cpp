@@ -1,5 +1,6 @@
 #include "Camera.h"
 
+#include "imgui.h"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 
@@ -13,7 +14,8 @@ void Camera::update() {
 }
 
 void Camera::setAspectRatio(const float ratio) {
-    projectionMatrix = glm::perspective(1.0472f, ratio, 0.1f, 1000.0f);
+    aspectRatio = ratio;
+    projectionMatrix = glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 1000.0f);
 }
 
 void Camera::move(const glm::vec3 movement) {
@@ -50,4 +52,11 @@ const glm::vec3& Camera::getRight() const {
 
 const glm::vec3& Camera::getUp() const {
     return up;
+}
+
+void Camera::drawDebug() {
+    if (ImGui::DragFloat("FOV", &fov, 1.0f, 30.f, 120.0f)) {
+        projectionMatrix = glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 1000.0f);
+    }
+    ImGui::DragFloat("Sensitivity", &sensitivity, 0.01f, 0.01f, 0.5f);
 }

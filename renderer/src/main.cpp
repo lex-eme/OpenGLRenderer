@@ -6,11 +6,14 @@
 #include <glm/glm.hpp>
 
 #include "Camera.h"
+#include "imgui-SFML.h"
+#include "imgui.h"
 #include "mesh/Mesh.h"
 #include "Model.h"
 #include "ShaderProgram.h"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/gtc/type_ptr.hpp"
+#include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/Window/Context.hpp"
 #include "SFML/Window/VideoMode.hpp"
 #include "SFML/Window/ContextSettings.hpp"
@@ -83,6 +86,33 @@ void display(const float currentTime) {
     }
 }
 
+void displayDebug(sf::RenderWindow& debugWindow, const sf::Time& deltaTime) {
+    if (!debugWindow.isOpen()) {
+        return;
+    }
+
+    debugWindow.setActive(true);
+
+    while (const std::optional event = debugWindow.pollEvent()) {
+        ImGui::SFML::ProcessEvent(debugWindow, *event);
+        if (event->is<sf::Event::Closed>()) {
+            debugWindow.close();
+        }
+    }
+    ImGui::SFML::Update(debugWindow, deltaTime);
+
+    //ImGui::ShowDemoWindow();
+    ImGui::SetNextWindowSize({300, 300});
+    ImGui::SetNextWindowPos({0, 0});
+    ImGui::Begin("Hello, world!");
+    camera.drawDebug();
+    ImGui::End();
+
+    debugWindow.clear();
+    ImGui::SFML::Render(debugWindow);
+    debugWindow.display();
+}
+
 int main() {
     sf::ContextSettings context_settings;
     context_settings.depthBits = 24;
@@ -90,6 +120,9 @@ int main() {
     context_settings.minorVersion = 1;
     context_settings.attributeFlags = sf::ContextSettings::Attribute::Core;
     context_settings.antiAliasingLevel = 0;
+
+    sf::RenderWindow debugWindow;
+    debugWindow.setVerticalSyncEnabled(true);
 
     sf::Window window(sf::VideoMode({static_cast<unsigned>(width), static_cast<unsigned>(height)}), "OpenGL",
                       sf::Style::Default, sf::State::Windowed, context_settings);
@@ -147,6 +180,19 @@ int main() {
                     case sf::Keyboard::Scan::D:
                         moveRight = true;
                         break;
+                    case sf::Keyboard::Scan::P:
+                        if (debugWindow.isOpen()) {
+                            debugWindow.close();
+                        } else {
+                            debugWindow.create(sf::VideoMode({static_cast<unsigned>(300), static_cast<unsigned>(300)}),
+                                               "Debug",
+                                               sf::Style::Default, sf::State::Windowed);
+                            debugWindow.setPosition({
+                                window.getPosition().x + static_cast<int>(window.getSize().x), window.getPosition().y
+                            });
+                            ImGui::SFML::Init(debugWindow);
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -179,7 +225,9 @@ int main() {
             }
         }
 
-        const float deltaTime = deltaClock.restart().asSeconds();
+        window.setActive(true);
+        const sf::Time deltaSfTime = deltaClock.restart();
+        const float deltaTime = deltaSfTime.asSeconds();
 
         if (moveForward) {
             camera.move(cameraSpeed * camera.getForward() * deltaTime);
@@ -209,5 +257,9 @@ int main() {
         display(currentTime);
 
         window.display();
+
+        displayDebug(debugWindow, deltaSfTime);
     }
+
+    ImGui::SFML::Shutdown();
 }

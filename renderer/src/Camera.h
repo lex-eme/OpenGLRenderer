@@ -18,6 +18,8 @@ private:
     glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
     float yaw = -90.0f;
     float pitch = 0.0f;
+    float fov = 60.0f;
+    float aspectRatio;
 
 public:
     Camera() = default;
@@ -31,4 +33,6 @@ public:
     const glm::vec3& getForward() const;
     const glm::vec3& getRight() const;
     const glm::vec3& getUp() const;
+
+    void drawDebug();
 };
