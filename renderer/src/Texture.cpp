@@ -24,3 +24,9 @@ void Texture::loadFromFile(const std::string& path) {
         }
     }
 }
+
+void Texture::unload() {
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDeleteTextures(1, &textureID);
+    textureID = 0;
+}

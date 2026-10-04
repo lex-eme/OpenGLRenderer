@@ -9,15 +9,16 @@ struct Vertex {
     //glm::vec3 normals;
 };
 
-// TODO: when deallocate from GPU?
 class Mesh {
     GLuint vao{};
-    GLuint verticesVbo{};
-    GLuint indicesVbo{};
+    GLuint vbo{};
+    GLuint ebo{};
     GLsizei indicesCount{};
 
 public:
     void loadFromFile(const std::string &path);
+    void unload();
+
     void draw() const;
 
 private:

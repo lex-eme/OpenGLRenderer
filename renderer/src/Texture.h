@@ -8,4 +8,5 @@ public:
 
 public:
     void loadFromFile(const std::string& path);
+    void unload();
 };

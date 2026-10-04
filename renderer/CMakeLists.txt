@@ -19,6 +19,10 @@ set(SOURCES
         src/Texture.h
         src/Camera.cpp
         src/Camera.h
+        src/scene/Scene.cpp
+        src/scene/Scene.h
+        src/scene/TestScene.cpp
+        src/scene/TestScene.h
 )
 
 find_package(OpenGL REQUIRED)

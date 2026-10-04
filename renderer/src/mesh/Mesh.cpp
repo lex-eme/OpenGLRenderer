@@ -63,6 +63,22 @@ void Mesh::loadFromFile(const std::string& path) {
     glBindVertexArray(0);
 }
 
+void Mesh::unload() {
+    // Unbind vao before the others to avoid modifying unwanted vao
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &ebo);
+
+    glDeleteVertexArrays(1, &vao);
+
+    vbo = 0;
+    ebo = 0;
+    vao = 0;
+}
+
 void Mesh::draw() const {
     glBindVertexArray(vao);
     glEnable(GL_CULL_FACE);
@@ -74,8 +90,8 @@ void Mesh::draw() const {
 }
 
 void Mesh::createVertexBuffer(const std::vector<Vertex>& vertices) {
-    glGenBuffers(1, &verticesVbo);
-    glBindBuffer(GL_ARRAY_BUFFER, verticesVbo);
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
     glEnableVertexAttribArray(0);
@@ -86,7 +102,7 @@ void Mesh::createVertexBuffer(const std::vector<Vertex>& vertices) {
 }
 
 void Mesh::createIndexBuffer(const std::vector<int>& indices) {
-    glGenBuffers(1, &indicesVbo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesVbo);
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), indices.data(), GL_STATIC_DRAW);
 }
