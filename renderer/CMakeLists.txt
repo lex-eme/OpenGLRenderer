@@ -21,8 +21,10 @@ set(SOURCES
         src/Camera.h
         src/scene/Scene.cpp
         src/scene/Scene.h
-        src/scene/TestScene.cpp
-        src/scene/TestScene.h
+        src/scene/SampleObjectScene.cpp
+        src/scene/SampleObjectScene.h
+        src/Sampler.cpp
+        src/Sampler.h
 )
 
 find_package(OpenGL REQUIRED)

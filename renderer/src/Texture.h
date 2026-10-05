@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
 
-// TODO: when deallocate from GPU?
+#include "Sampler.h"
+
 class Texture final {
 public:
     unsigned int textureID = 0;

@@ -12,8 +12,9 @@ public:
 private:
     Mesh mesh;
     Texture texture;
+    Sampler sampler;
 
 public:
-    void init(Mesh inMesh, const Texture& inTexture);
+    void init(Mesh inMesh, const Texture& inTexture, Sampler inSampler = Sampler());
     void draw(ShaderProgram shader, const glm::mat4& parentTransformMatrix) const;
 };

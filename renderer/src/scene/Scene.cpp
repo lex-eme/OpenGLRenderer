@@ -108,7 +108,7 @@ void Scene::input(const std::optional<sf::Event>& event) {
     }
 }
 
-void Scene::update(float deltaTime) {
+void Scene::update(const float deltaTime) {
     camera.update();
 
     if (moveForward) {
@@ -149,6 +149,10 @@ void Scene::draw() {
     for (Model model: models) {
         model.draw(mainShader, camera.viewMatrix);
     }
+}
+
+void Scene::drawDebug() {
+    camera.drawDebug();
 }
 
 void Scene::clearMeshes() {

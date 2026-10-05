@@ -31,6 +31,7 @@ public:
     void input(const std::optional<sf::Event>& event);
     void update(float deltaTime);
     void draw();
+    virtual void drawDebug();
 
 private:
     void clearMeshes();

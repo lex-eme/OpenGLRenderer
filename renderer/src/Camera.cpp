@@ -55,7 +55,7 @@ const glm::vec3& Camera::getUp() const {
 }
 
 void Camera::drawDebug() {
-    if (ImGui::DragFloat("FOV", &fov, 1.0f, 30.f, 120.0f)) {
+    if (ImGui::DragFloat("FOV", &fov, 1.0f, 30.0f, 120.0f)) {
         projectionMatrix = glm::perspective(glm::radians(fov), aspectRatio, 0.1f, 1000.0f);
     }
     ImGui::DragFloat("Sensitivity", &sensitivity, 0.01f, 0.01f, 0.5f);

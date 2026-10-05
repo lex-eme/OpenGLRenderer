@@ -6,21 +6,22 @@
 #include "imgui-SFML.h"
 #include "imgui.h"
 #include "scene/Scene.h"
-#include "scene/TestScene.h"
+#include "scene/SampleObjectScene.h"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/Window/Context.hpp"
 #include "SFML/Window/VideoMode.hpp"
 #include "SFML/Window/ContextSettings.hpp"
 #include "SFML/Window/Window.hpp"
 
-int width = 1280, height = 720;
+int width = 800, height = 600;
 
-void displayDebug(sf::RenderWindow& debugWindow, const sf::Time& deltaTime) {
+void displayDebug(sf::RenderWindow& debugWindow, const sf::Time& deltaTime, Scene& scene) {
     if (!debugWindow.isOpen()) {
         return;
     }
 
     debugWindow.setActive(true);
+
 
     while (const std::optional event = debugWindow.pollEvent()) {
         ImGui::SFML::ProcessEvent(debugWindow, *event);
@@ -35,7 +36,7 @@ void displayDebug(sf::RenderWindow& debugWindow, const sf::Time& deltaTime) {
     ImGui::SetNextWindowSize({300, 300});
     ImGui::SetNextWindowPos({0, 0});
     ImGui::Begin("Hello, world!");
-    //camera.drawDebug();
+    scene.drawDebug();
     ImGui::End();
 
     debugWindow.clear();
@@ -70,7 +71,7 @@ int main() {
     std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
 
     sf::Clock deltaClock;
-    TestScene scene(window);
+    SampleObjectScene scene(window);
     scene.load(static_cast<float>(width), static_cast<float>(height));
 
     bool running = true;
@@ -112,7 +113,7 @@ int main() {
         scene.draw();
         window.display();
 
-        displayDebug(debugWindow, deltaSfTime);
+        displayDebug(debugWindow, deltaSfTime, scene);
     }
 
     ImGui::SFML::Shutdown();
