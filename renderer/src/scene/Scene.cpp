@@ -9,7 +9,7 @@ Scene::~Scene() {
     clearTextures();
 }
 
-void Scene::load(float width, float height) {
+void Scene::load(const float width, const float height) {
     mainShader = ShaderProgram::createShaderProgram("assets/shaders/vertShader.glsl", "assets/shaders/fragShader.glsl");
     const float aspect = width / height;
     camera.init(aspect);
@@ -62,8 +62,8 @@ void Scene::input(const std::optional<sf::Event>& event) {
         const float aspect = static_cast<float>(resized->size.x) / static_cast<float>(resized->size.y);
         camera.setAspectRatio(aspect);
         glViewport(0, 0, static_cast<GLsizei>(resized->size.x), static_cast<GLsizei>(resized->size.y));
-    } else if (const auto* key = event->getIf<sf::Event::KeyPressed>()) {
-        switch (key->scancode) {
+    } else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+        switch (keyPressed->scancode) {
             case sf::Keyboard::Scan::W:
                 moveForward = true;
                 break;
@@ -79,8 +79,8 @@ void Scene::input(const std::optional<sf::Event>& event) {
             default:
                 break;
         }
-    } else if (const auto* key = event->getIf<sf::Event::KeyReleased>()) {
-        switch (key->scancode) {
+    } else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>()) {
+        switch (keyReleased->scancode) {
             case sf::Keyboard::Scan::W:
                 moveForward = false;
                 break;
@@ -109,8 +109,6 @@ void Scene::input(const std::optional<sf::Event>& event) {
 }
 
 void Scene::update(const float deltaTime) {
-    camera.update();
-
     if (moveForward) {
         camera.move(cameraSpeed * camera.getForward() * deltaTime);
     }
@@ -134,14 +132,15 @@ void Scene::update(const float deltaTime) {
         lastMousePos = sf::Mouse::getPosition(window);
         camera.rotate(delta);
     }
+
+    camera.update();
 }
 
-void Scene::draw() {
+void Scene::draw() const {
     glClear(GL_DEPTH_BUFFER_BIT);
     glClear(GL_COLOR_BUFFER_BIT);
     mainShader.setActive();
 
-    camera.update();
     mainShader.setMat4Uniform("proj_matrix", camera.projectionMatrix);
 
     glEnable(GL_CULL_FACE);

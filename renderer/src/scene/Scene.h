@@ -30,7 +30,7 @@ public:
 
     void input(const std::optional<sf::Event>& event);
     void update(float deltaTime);
-    void draw();
+    void draw() const;
     virtual void drawDebug();
 
 private:
