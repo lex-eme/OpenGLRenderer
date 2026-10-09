@@ -22,7 +22,6 @@ void displayDebug(sf::RenderWindow& debugWindow, const sf::Time& deltaTime, Scen
 
     debugWindow.setActive(true);
 
-
     while (const std::optional event = debugWindow.pollEvent()) {
         ImGui::SFML::ProcessEvent(debugWindow, *event);
         if (event->is<sf::Event::Closed>()) {
@@ -33,9 +32,10 @@ void displayDebug(sf::RenderWindow& debugWindow, const sf::Time& deltaTime, Scen
     ImGui::SFML::Update(debugWindow, deltaTime);
 
     //ImGui::ShowDemoWindow();
-    ImGui::SetNextWindowSize({300, 300});
+    ImGui::SetNextWindowSize({500, 600});
     ImGui::SetNextWindowPos({0, 0});
-    ImGui::Begin("Hello, world!");
+    ImGui::Begin("Configuration", nullptr,
+                 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
     scene.drawDebug();
     ImGui::End();
 
@@ -90,7 +90,7 @@ int main() {
                         if (debugWindow.isOpen()) {
                             debugWindow.close();
                         } else {
-                            debugWindow.create(sf::VideoMode({static_cast<unsigned>(300), static_cast<unsigned>(300)}),
+                            debugWindow.create(sf::VideoMode({static_cast<unsigned>(500), static_cast<unsigned>(600)}),
                                                "Debug",
                                                sf::Style::Default, sf::State::Windowed);
                             debugWindow.setPosition({

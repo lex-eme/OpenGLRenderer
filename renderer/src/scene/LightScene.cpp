@@ -33,11 +33,17 @@ void LightScene::draw() const {
     glClear(GL_COLOR_BUFFER_BIT);
     mainShader.setActive();
 
-    mainShader.setVec3Uniform("objectColor", objectColor);
-    mainShader.setVec3Uniform("lightColor", lightColor);
-    mainShader.setVec3Uniform("lightPos", lightPos);
+    mainShader.setVec3Uniform("material.ambient", materialAmbient);
+    mainShader.setVec3Uniform("material.diffuse", materialDiffuse);
+    mainShader.setVec3Uniform("material.specular", materialSpecular);
+    mainShader.setFloatUniform("material.shininess", shininess);
+
+    mainShader.setVec3Uniform("light.position", lightPos);
+    mainShader.setVec3Uniform("light.ambient", lightAmbient);
+    mainShader.setVec3Uniform("light.diffuse", lightDiffuse);
+    mainShader.setVec3Uniform("light.specular", lightSpecular);
+
     mainShader.setVec3Uniform("viewPos", camera.position);
-    mainShader.setFloatUniform("ambientStrength", ambientStrength);
     mainShader.setMat4Uniform("proj_matrix", camera.projectionMatrix);
     mainShader.setMat4Uniform("view_matrix", camera.viewMatrix);
 
@@ -49,10 +55,19 @@ void LightScene::draw() const {
 }
 
 void LightScene::drawDebug() {
-    ImGui::ColorEdit3("Object color", glm::value_ptr(objectColor));
+    ImGui::SeparatorText("Light");
+    ImGui::PushID(1);
+    ImGui::DragFloat3("Position", glm::value_ptr(lightPos), 0.1f);
+    ImGui::ColorEdit3("Ambient", glm::value_ptr(lightAmbient));
+    ImGui::ColorEdit3("Diffuse", glm::value_ptr(lightDiffuse));
+    ImGui::ColorEdit3("Specular", glm::value_ptr(lightSpecular));
+    ImGui::PopID();
 
-    ImGui::DragFloat3("Light position", glm::value_ptr(lightPos), 0.1f);
-    ImGui::ColorEdit3("Light color", glm::value_ptr(lightColor));
-
-    ImGui::SliderFloat("Ambient strength", &ambientStrength, 0.0f, 1.0f);
+    ImGui::PushID(2);
+    ImGui::SeparatorText("Material");
+    ImGui::ColorEdit3("Ambient", glm::value_ptr(materialAmbient));
+    ImGui::ColorEdit3("Diffuse", glm::value_ptr(materialDiffuse));
+    ImGui::ColorEdit3("Specular", glm::value_ptr(materialSpecular));
+    ImGui::DragFloat("Shininess", &shininess, 1.0f, 2.0f, 128.0f);
+    ImGui::PopID();
 }
