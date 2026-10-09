@@ -76,6 +76,12 @@ void Scene::input(const std::optional<sf::Event>& event) {
             case sf::Keyboard::Scan::D:
                 moveRight = true;
                 break;
+            case sf::Keyboard::Scan::E:
+                moveUp = true;
+                break;
+            case sf::Keyboard::Scan::Q:
+                moveDown = true;
+                break;
             default:
                 break;
         }
@@ -92,6 +98,12 @@ void Scene::input(const std::optional<sf::Event>& event) {
                 break;
             case sf::Keyboard::Scan::D:
                 moveRight = false;
+                break;
+            case sf::Keyboard::Scan::E:
+                moveUp = false;
+                break;
+            case sf::Keyboard::Scan::Q:
+                moveDown = false;
                 break;
             default:
                 break;
@@ -123,6 +135,14 @@ void Scene::update(const float deltaTime) {
 
     if (moveRight) {
         camera.move(camera.getRight() * cameraSpeed * deltaTime);
+    }
+
+    if (moveUp) {
+        camera.move(glm::vec3(0.0f, 1.0f, 0.0f) * cameraSpeed * deltaTime);
+    }
+
+    if (moveDown) {
+        camera.move(glm::vec3(0.0f, -1.0f, 0.0f) * cameraSpeed * deltaTime);
     }
 
     if (rightButtonPressed) {

@@ -21,6 +21,8 @@ private:
     bool moveBackward = false;
     bool moveLeft = false;
     bool moveRight = false;
+    bool moveUp = false;
+    bool moveDown = false;
     bool rightButtonPressed = false;
 
 public:
