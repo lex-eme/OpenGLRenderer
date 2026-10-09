@@ -23,6 +23,8 @@ set(SOURCES
         src/scene/Scene.h
         src/scene/SampleObjectScene.cpp
         src/scene/SampleObjectScene.h
+        src/scene/LightScene.cpp
+        src/scene/LightScene.h
         src/Sampler.cpp
         src/Sampler.h
 )
@@ -33,7 +35,7 @@ add_executable(App)
 target_sources(App PRIVATE ${SOURCES})
 
 target_include_directories(App PRIVATE ../dependencies)
-target_link_libraries(App PRIVATE glm::glm ImGui-SFML::ImGui-SFML SFML::Audio)
+target_link_libraries(App PRIVATE glm::glm ImGui-SFML::ImGui-SFML SFML::Audio assimp::assimp)
 
 if (APPLE)
     target_link_libraries(App PRIVATE OpenGL::GL)

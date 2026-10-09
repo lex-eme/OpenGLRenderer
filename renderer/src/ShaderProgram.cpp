@@ -34,6 +34,13 @@ void ShaderProgram::setIntUniform(const std::string& name, const int value) cons
     printProgramLog(ID);
 }
 
+void ShaderProgram::setVec3Uniform(const std::string& name, const glm::vec3& value) const {
+    const GLint location = getUniformLocation(name);
+    glProgramUniform3fv(ID, location, 1, glm::value_ptr(value));
+    checkOpenGLError();
+    printProgramLog(ID);
+}
+
 void ShaderProgram::setMat4Uniform(const std::string& name, const glm::mat4& value) const {
     const GLint location = getUniformLocation(name);
     glProgramUniformMatrix4fv(ID, location, 1, GL_FALSE, glm::value_ptr(value));

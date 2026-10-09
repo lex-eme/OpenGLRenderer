@@ -28,9 +28,9 @@ public:
     virtual ~Scene();
     virtual void load(float width, float height);
 
-    void input(const std::optional<sf::Event>& event);
-    void update(float deltaTime);
-    void draw() const;
+    virtual void input(const std::optional<sf::Event>& event);
+    virtual void update(float deltaTime);
+    virtual void draw() const;
     virtual void drawDebug();
 
 private:

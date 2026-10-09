@@ -5,8 +5,8 @@
 
 #include "imgui-SFML.h"
 #include "imgui.h"
+#include "scene/LightScene.h"
 #include "scene/Scene.h"
-#include "scene/SampleObjectScene.h"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/Window/Context.hpp"
 #include "SFML/Window/VideoMode.hpp"
@@ -71,7 +71,7 @@ int main() {
     std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
 
     sf::Clock deltaClock;
-    SampleObjectScene scene(window);
+    LightScene scene(window);
     scene.load(static_cast<float>(width), static_cast<float>(height));
 
     bool running = true;

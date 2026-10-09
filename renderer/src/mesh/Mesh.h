@@ -6,7 +6,7 @@
 struct Vertex {
     glm::vec3 position;
     glm::vec2 uvs;
-    //glm::vec3 normals;
+    glm::vec3 normals;
 };
 
 class Mesh {

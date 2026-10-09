@@ -16,3 +16,12 @@ void Model::draw(const ShaderProgram shader, const glm::mat4& parentTransformMat
     glBindTexture(GL_TEXTURE_2D, texture.textureID);
     mesh.draw();
 }
+
+void Model::draw(const ShaderProgram shader) const {
+    shader.setMat4Uniform("model_matrix", transform.getMatrix());
+    shader.setIntUniform("samp", 0);
+    sampler.bind(0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture.textureID);
+    mesh.draw();
+}

@@ -15,7 +15,7 @@ void Mesh::loadFromFile(const std::string& path) {
     std::vector<glm::vec3> facePositions;
     std::vector<glm::vec2> faceTexCoords;
     std::vector<int> indices;
-    std::map<std::tuple<int, int>, int> indexMap;
+    std::map<std::tuple<int, int, int>, int> indexMap;
 
     int index = 0;
 
@@ -42,11 +42,11 @@ void Mesh::loadFromFile(const std::string& path) {
 
             for (size_t i = 0; i < 3; i++) {
                 fin >> v1 >> skip >> t1 >> skip >> n1;
-                std::tuple tuple{v1, t1};
+                std::tuple tuple{v1, t1, n1};
                 if (auto search = indexMap.find(tuple); search != indexMap.end()) {
                     indices.push_back(search->second);
                 } else {
-                    vertices.emplace_back(positions[v1 - 1], uvs[t1 - 1]);
+                    vertices.emplace_back(positions[v1 - 1], uvs[t1 - 1], normals[n1 - 1]);
                     indices.emplace_back(index);
                     indexMap.insert({tuple, index});
                     index += 1;
@@ -97,8 +97,8 @@ void Mesh::createVertexBuffer(const std::vector<Vertex>& vertices) {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-    //glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)(5* sizeof(float)));
-    //glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(5 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 }
 
 void Mesh::createIndexBuffer(const std::vector<int>& indices) {

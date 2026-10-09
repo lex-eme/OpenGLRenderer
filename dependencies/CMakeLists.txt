@@ -33,3 +33,11 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(glm)
+
+FetchContent_Declare(
+        assimp
+        GIT_REPOSITORY https://github.com/assimp/assimp
+        GIT_TAG v6.0.5
+)
+
+FetchContent_MakeAvailable(assimp)
