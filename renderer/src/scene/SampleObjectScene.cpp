@@ -45,7 +45,7 @@ void SampleObjectScene::load(const float width, const float height) {
         glm::vec3 position = positions[i] * 3.0f;
 
         Model model;
-        model.init(cube, vinceTexture, samplers[i]);
+        model.init(cube, vinceTexture, Texture(), samplers[i]);
 
         model.transform.setPosition(position);
         models.push_back(model);

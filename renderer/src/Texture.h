@@ -5,7 +5,7 @@
 
 class Texture final {
 public:
-    unsigned int textureID = 0;
+    unsigned int id = 0;
 
 public:
     void loadFromFile(const std::string& path);

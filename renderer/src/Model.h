@@ -11,11 +11,13 @@ public:
 
 private:
     Mesh mesh;
-    Texture texture;
+    Texture diffuseTex;
+    Texture specularTex;
     Sampler sampler;
 
 public:
-    void init(Mesh inMesh, const Texture& inTexture, Sampler inSampler = Sampler());
+    void init(Mesh inMesh, const Texture& inTexture, const Texture& inSpecular = Texture(),
+              Sampler inSampler = Sampler());
     void draw(ShaderProgram shader, const glm::mat4& parentTransformMatrix) const;
     void draw(ShaderProgram shader) const;
 };

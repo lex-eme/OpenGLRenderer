@@ -12,16 +12,19 @@ void LightScene::load(const float width, const float height) {
     const float aspect = width / height;
     camera.init(aspect);
 
-    Texture brickTexture;
-    brickTexture.loadFromFile("assets/textures/brick1.jpg");
-    textures.push_back(brickTexture);
+    Texture diffuseTex;
+    diffuseTex.loadFromFile("assets/textures/container.png");
+    textures.push_back(diffuseTex);
+    Texture specularTex;
+    specularTex.loadFromFile("assets/textures/container_specular.png");
+    textures.push_back(specularTex);
 
     Mesh cube;
     cube.loadFromFile("assets/meshes/Cube.obj");
     meshes.push_back(cube);
 
     Model box;
-    box.init(cube, brickTexture, Sampler());
+    box.init(cube, diffuseTex, specularTex);
     box.transform.setPosition(glm::vec3(0.0f));
     models.push_back(box);
 
@@ -33,9 +36,6 @@ void LightScene::draw() const {
     glClear(GL_COLOR_BUFFER_BIT);
     mainShader.setActive();
 
-    mainShader.setVec3Uniform("material.ambient", materialAmbient);
-    mainShader.setVec3Uniform("material.diffuse", materialDiffuse);
-    mainShader.setVec3Uniform("material.specular", materialSpecular);
     mainShader.setFloatUniform("material.shininess", shininess);
 
     mainShader.setVec3Uniform("light.position", lightPos);
@@ -65,9 +65,6 @@ void LightScene::drawDebug() {
 
     ImGui::PushID(2);
     ImGui::SeparatorText("Material");
-    ImGui::ColorEdit3("Ambient", glm::value_ptr(materialAmbient));
-    ImGui::ColorEdit3("Diffuse", glm::value_ptr(materialDiffuse));
-    ImGui::ColorEdit3("Specular", glm::value_ptr(materialSpecular));
     ImGui::DragFloat("Shininess", &shininess, 1.0f, 2.0f, 128.0f);
     ImGui::PopID();
 }
