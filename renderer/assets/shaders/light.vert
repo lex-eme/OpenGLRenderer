@@ -26,7 +26,7 @@ void main(void) {
     gl_Position = proj_matrix * view_matrix * model_matrix * vec4(position, 1.0);
     textureCoord = texCoord;
     fragPos = vec3(model_matrix * vec4(position, 1.0));
-    normal = aNormal;
+    normal = vec3(model_matrix * vec4(aNormal, 1.0));
 }
 
 mat4 buildTranslate(float x, float y, float z) {

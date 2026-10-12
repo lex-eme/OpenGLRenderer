@@ -8,7 +8,6 @@ struct Material {
 
 struct Light {
     vec3 position;
-
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -28,8 +27,7 @@ uniform Material material;
 uniform Light light;
 uniform vec3 viewPos;
 
-void main()
-{
+void main() {
     vec3 ambient = light.ambient * vec3(texture(material.diffuse, textureCoord));
 
     vec3 norm = normalize(normal);

@@ -5,7 +5,6 @@
 
 #include "imgui-SFML.h"
 #include "imgui.h"
-#include "scene/LightScene.h"
 #include "scene/Scene.h"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/Window/Context.hpp"
@@ -30,7 +29,6 @@ void displayDebug(sf::RenderWindow& debugWindow, const sf::Time& deltaTime, Scen
         }
     }
     ImGui::SFML::Update(debugWindow, deltaTime);
-
     //ImGui::ShowDemoWindow();
     ImGui::SetNextWindowSize({500, 600});
     ImGui::SetNextWindowPos({0, 0});
@@ -71,7 +69,7 @@ int main() {
     std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
 
     sf::Clock deltaClock;
-    LightScene scene(window);
+    Scene scene(window);
     scene.load(static_cast<float>(width), static_cast<float>(height));
 
     bool running = true;
