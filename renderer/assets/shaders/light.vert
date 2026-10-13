@@ -8,11 +8,6 @@ uniform mat4 model_matrix;
 uniform mat4 view_matrix;
 uniform mat4 proj_matrix;
 
-uniform vec3 objectColor;
-uniform vec3 lightColor;
-uniform vec3 lightPos;
-uniform float ambientStrength;
-
 out vec2 textureCoord;
 out vec3 normal;
 out vec3 fragPos;
@@ -26,7 +21,7 @@ void main(void) {
     gl_Position = proj_matrix * view_matrix * model_matrix * vec4(position, 1.0);
     textureCoord = texCoord;
     fragPos = vec3(model_matrix * vec4(position, 1.0));
-    normal = vec3(model_matrix * vec4(aNormal, 1.0));
+    normal = vec3(model_matrix * vec4(aNormal, 0.0));
 }
 
 mat4 buildTranslate(float x, float y, float z) {
