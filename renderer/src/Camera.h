@@ -24,7 +24,7 @@ private:
 public:
     Camera() = default;
 
-    void init(float aspectRatio);
+    void init(float ratio);
     void update();
     void setAspectRatio(float ratio);
     void move(glm::vec3 movement);

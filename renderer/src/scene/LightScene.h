@@ -12,9 +12,9 @@ class LightScene final : public Scene {
     float shininess = 32.0f;
 
 public:
-    explicit LightScene(sf::Window& inWindow);
+    LightScene() = default;
 
-    void load(float width, float height) override;
+    void load(GLFWwindow* inWindow, float width, float height) override;
     void draw() const override;
     void drawDebug() override;
 };

@@ -3,63 +3,77 @@
 #include <fstream>
 #include <iostream>
 
-#include "imgui-SFML.h"
-#include "imgui.h"
+#include "GLFW/glfw3.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+#include "imgui/imgui_internal.h"
 #include "scene/Scene.h"
-#include "SFML/Graphics/RenderWindow.hpp"
-#include "SFML/Window/Context.hpp"
-#include "SFML/Window/VideoMode.hpp"
-#include "SFML/Window/ContextSettings.hpp"
-#include "SFML/Window/Window.hpp"
 
-int width = 800, height = 600;
+int width = 1600, height = 1050;
+Scene scene;
 
-void displayDebug(sf::RenderWindow& debugWindow, const sf::Time& deltaTime, Scene& scene) {
-    if (!debugWindow.isOpen()) {
-        return;
+void framebuffer_size_callback(GLFWwindow* window, const int newWidth, const int newHeight) {
+    scene.windowResized(newWidth, newHeight);
+}
+
+void keyboard_callback(GLFWwindow* window, const int key, int scancode, const int action, int mods) {
+    if (key == GLFW_KEY_ESCAPE) {
+        glfwSetWindowShouldClose(window, true);
     }
 
-    debugWindow.setActive(true);
-
-    while (const std::optional event = debugWindow.pollEvent()) {
-        ImGui::SFML::ProcessEvent(debugWindow, *event);
-        if (event->is<sf::Event::Closed>()) {
-            debugWindow.close();
-            return;
-        }
+    if (action == GLFW_PRESS) {
+        scene.keyPressed(key);
     }
-    ImGui::SFML::Update(debugWindow, deltaTime);
-    //ImGui::ShowDemoWindow();
-    ImGui::SetNextWindowSize({500, 600});
-    ImGui::SetNextWindowPos({0, 0});
-    ImGui::Begin("Configuration", nullptr,
-                 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
-    scene.drawDebug();
-    ImGui::End();
 
-    debugWindow.clear();
-    ImGui::SFML::Render(debugWindow);
-    debugWindow.display();
+    if (action == GLFW_RELEASE) {
+        scene.keyReleased(key);
+    }
+}
+
+void mouseButton_callback(GLFWwindow* window, const int button, const int action, int mods) {
+    if (action == GLFW_PRESS) {
+        scene.mouseButtonPressed(button);
+    }
+
+    if (action == GLFW_RELEASE) {
+        scene.mouseButtonReleased(button);
+    }
+}
+
+static void glfw_error_callback(const int error, const char* description) {
+    std::cerr << "GLFW Error " << error << ": " << description << std::endl;
 }
 
 int main() {
-    sf::ContextSettings context_settings;
-    context_settings.depthBits = 24;
-    context_settings.majorVersion = 4;
-    context_settings.minorVersion = 1;
-    context_settings.attributeFlags = sf::ContextSettings::Attribute::Core;
-    context_settings.antiAliasingLevel = 0;
+    glfwSetErrorCallback(glfw_error_callback);
+    if (!glfwInit())
+        return 1;
 
-    sf::RenderWindow debugWindow;
-    debugWindow.setVerticalSyncEnabled(true);
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
 
-    sf::Window window(sf::VideoMode({static_cast<unsigned>(width), static_cast<unsigned>(height)}), "OpenGL",
-                      sf::Style::Default, sf::State::Windowed, context_settings);
-    window.setVerticalSyncEnabled(true);
-    window.setActive(true);
+    float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor());
+    GLFWwindow* window = glfwCreateWindow(width * main_scale, height * main_scale, "LearnOpenGL", nullptr, nullptr);
+    if (window == nullptr) {
+        std::cout << "Failed to create GLFW window" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
 
-    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(sf::Context::getFunction))) {
-        std::cerr << "Failed to load glad" << std::endl;
+    glfwMakeContextCurrent(window);
+    glfwSwapInterval(1);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetKeyCallback(window, keyboard_callback);
+    glfwSetMouseButtonCallback(window, mouseButton_callback);
+
+    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
+        std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
     std::cout << "Version OpenGL : " << GLVersion.major << "." << GLVersion.minor << std::endl;
@@ -68,51 +82,85 @@ int main() {
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
     std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
 
-    sf::Clock deltaClock;
-    Scene scene(window);
-    scene.load(static_cast<float>(width), static_cast<float>(height));
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    (void) io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-    bool running = true;
-    while (running) {
-        while (const std::optional event = window.pollEvent()) {
-            scene.input(event);
+    ImGui::StyleColorsDark();
 
-            if (event->is<sf::Event::Closed>()) {
-                running = false;
-            } else if (const auto* key = event->getIf<sf::Event::KeyPressed>()) {
-                switch (key->scancode) {
-                    case sf::Keyboard::Scan::Escape:
-                        running = false;
-                        break;
-                    case sf::Keyboard::Scan::P:
-                        if (debugWindow.isOpen()) {
-                            debugWindow.close();
-                        } else {
-                            debugWindow.create(sf::VideoMode({static_cast<unsigned>(500), static_cast<unsigned>(600)}),
-                                               "Debug",
-                                               sf::Style::Default, sf::State::Windowed);
-                            debugWindow.setPosition({
-                                window.getPosition().x + static_cast<int>(window.getSize().x), window.getPosition().y
-                            });
-                            ImGui::SFML::Init(debugWindow);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
+    // Setup scaling
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.ScaleAllSizes(main_scale);
+    // Bake a fixed style scale. (until we have a solution for dynamic style scaling, changing this requires resetting Style + calling this again)
+    style.FontScaleDpi = main_scale;
+    // Set initial font scale. (in docking branch: using io.ConfigDpiScaleFonts=true automatically overrides this for every window depending on the current monitor)
+#if GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR >= 3
+    io.ConfigDpiScaleFonts = true;
+    // [Experimental] Automatically overwrite style.FontScaleDpi in Begin() when Monitor DPI changes. This will scale fonts but _NOT_ scale sizes/padding for now.
+    io.ConfigDpiScaleViewports = true; // [Experimental] Scale Dear ImGui and Platform Windows when Monitor DPI changes.
+#endif
+
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+        style.WindowRounding = 0.0f;
+        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+    }
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    const char* glsl_version = "#version 410";
+    ImGui_ImplOpenGL3_Init(glsl_version);
+
+    scene.load(window, static_cast<float>(width), static_cast<float>(height));
+
+    double currentTime = glfwGetTime();
+    float deltaTime = 0.0f;
+
+    while (!glfwWindowShouldClose(window)) {
+        const double newTime = glfwGetTime();
+        deltaTime = newTime - currentTime;
+        currentTime = newTime;
+
+        glfwPollEvents();
+        if (glfwGetWindowAttrib(window, GLFW_ICONIFIED) != 0) {
+            ImGui_ImplGlfw_Sleep(10);
+            continue;
         }
-
-        window.setActive(true);
-        const sf::Time deltaSfTime = deltaClock.restart();
-        const float deltaTime = deltaSfTime.asSeconds();
 
         scene.update(deltaTime);
         scene.draw();
-        window.display();
 
-        displayDebug(debugWindow, deltaSfTime, scene);
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        ImGui::DockSpaceOverViewport(0, nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
+
+        ImGui::Begin("Configuration", nullptr);
+        scene.drawDebug();
+        ImGui::End();
+        // Rendering
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        // Update and Render additional Platform Windows
+        // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
+        //  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+            GLFWwindow* backup_current_context = glfwGetCurrentContext();
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+            glfwMakeContextCurrent(backup_current_context);
+        }
+        glfwSwapBuffers(window);
     }
 
-    ImGui::SFML::Shutdown();
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+    glfwDestroyWindow(window);
+    glfwTerminate();
+    return 0;
 }

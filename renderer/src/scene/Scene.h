@@ -1,8 +1,7 @@
 #pragma once
 #include "../Camera.h"
 #include "../Model.h"
-#include "SFML/Window/Event.hpp"
-#include "SFML/Window/Window.hpp"
+#include "GLFW/glfw3.h"
 
 constexpr float cameraSpeed = 10.0f;
 
@@ -11,16 +10,16 @@ protected:
     std::vector<Model> models;
     Camera camera;
     ShaderProgram mainShader;
-    sf::Window& window;
+    GLFWwindow* window = nullptr;
     std::vector<Mesh> meshes;
     std::vector<Texture> textures;
 
 private:
     glm::vec3 pointLightPositions[4] = {
-        glm::vec3( 0.7f,  0.2f,  2.0f),
-        glm::vec3( 2.3f, -3.3f, -4.0f),
-        glm::vec3(-4.0f,  2.0f, -12.0f),
-        glm::vec3( 0.0f,  0.0f, -3.0f)
+        glm::vec3(0.7f, 0.2f, 2.0f),
+        glm::vec3(2.3f, -3.3f, -4.0f),
+        glm::vec3(-4.0f, 2.0f, -12.0f),
+        glm::vec3(0.0f, 0.0f, -3.0f)
     };
     glm::vec3 lightPos{0.0f, 15.0f, -3.7f};
     glm::vec3 lightDir{0.0f, -1.0f, 0.0f};
@@ -38,7 +37,7 @@ private:
 
     float shininess = 32.0f;
 
-    sf::Vector2i lastMousePos;
+    glm::vec2 lastMousePos{};
     bool moveForward = false;
     bool moveBackward = false;
     bool moveLeft = false;
@@ -48,11 +47,15 @@ private:
     bool rightButtonPressed = false;
 
 public:
-    explicit Scene(sf::Window& inWindow);
+    Scene();
     virtual ~Scene();
-    virtual void load(float width, float height);
+    virtual void load(GLFWwindow* inWindow, float width, float height);
 
-    virtual void input(const std::optional<sf::Event>& event);
+    virtual void keyPressed(int key);
+    virtual void keyReleased(int key);
+    virtual void mouseButtonPressed(int button);
+    virtual void mouseButtonReleased(int button);
+    virtual void windowResized(int width, int height);
     virtual void update(float deltaTime);
     virtual void draw() const;
     virtual void drawDebug();

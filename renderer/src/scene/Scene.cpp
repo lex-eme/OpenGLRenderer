@@ -1,10 +1,10 @@
 #include "Scene.h"
 
-#include "imgui.h"
+#include "imgui/imgui.h"
 #include "glm/gtc/type_ptr.inl"
 
-Scene::Scene(sf::Window& inWindow)
-    : mainShader(), window(inWindow) {
+Scene::Scene()
+    : mainShader() {
 }
 
 Scene::~Scene() {
@@ -12,7 +12,8 @@ Scene::~Scene() {
     clearTextures();
 }
 
-void Scene::load(const float width, const float height) {
+void Scene::load(GLFWwindow* inWindow, const float width, const float height) {
+    window = inWindow;
     mainShader = ShaderProgram::createShaderProgram("assets/shaders/light.vert", "assets/shaders/light.frag");
     const float aspect = width / height;
     camera.init(aspect);
@@ -62,67 +63,75 @@ void Scene::load(const float width, const float height) {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 }
 
-void Scene::input(const std::optional<sf::Event>& event) {
-    if (const auto* resized = event->getIf<sf::Event::Resized>()) {
-        const float aspect = static_cast<float>(resized->size.x) / static_cast<float>(resized->size.y);
-        camera.setAspectRatio(aspect);
-        glViewport(0, 0, static_cast<GLsizei>(resized->size.x), static_cast<GLsizei>(resized->size.y));
-    } else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
-        switch (keyPressed->scancode) {
-            case sf::Keyboard::Scan::W:
-                moveForward = true;
-                break;
-            case sf::Keyboard::Scan::S:
-                moveBackward = true;
-                break;
-            case sf::Keyboard::Scan::A:
-                moveLeft = true;
-                break;
-            case sf::Keyboard::Scan::D:
-                moveRight = true;
-                break;
-            case sf::Keyboard::Scan::E:
-                moveUp = true;
-                break;
-            case sf::Keyboard::Scan::Q:
-                moveDown = true;
-                break;
-            default:
-                break;
-        }
-    } else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>()) {
-        switch (keyReleased->scancode) {
-            case sf::Keyboard::Scan::W:
-                moveForward = false;
-                break;
-            case sf::Keyboard::Scan::S:
-                moveBackward = false;
-                break;
-            case sf::Keyboard::Scan::A:
-                moveLeft = false;
-                break;
-            case sf::Keyboard::Scan::D:
-                moveRight = false;
-                break;
-            case sf::Keyboard::Scan::E:
-                moveUp = false;
-                break;
-            case sf::Keyboard::Scan::Q:
-                moveDown = false;
-                break;
-            default:
-                break;
-        }
-    } else if (const auto* pressed = event->getIf<sf::Event::MouseButtonPressed>()) {
-        if (pressed->button == sf::Mouse::Button::Right) {
-            rightButtonPressed = true;
-            lastMousePos = pressed->position;
-        }
-    } else if (const auto* released = event->getIf<sf::Event::MouseButtonReleased>()) {
-        if (released->button == sf::Mouse::Button::Right) {
-            rightButtonPressed = false;
-        }
+void Scene::keyPressed(const int key) {
+    switch (key) {
+        case GLFW_KEY_W:
+            moveForward = true;
+            break;
+        case GLFW_KEY_S:
+            moveBackward = true;
+            break;
+        case GLFW_KEY_A:
+            moveLeft = true;
+            break;
+        case GLFW_KEY_D:
+            moveRight = true;
+            break;
+        case GLFW_KEY_E:
+            moveUp = true;
+            break;
+        case GLFW_KEY_Q:
+            moveDown = true;
+            break;
+        default:
+            break;
     }
+}
+
+void Scene::keyReleased(const int key) {
+    switch (key) {
+        case GLFW_KEY_W:
+            moveForward = false;
+            break;
+        case GLFW_KEY_S:
+            moveBackward = false;
+            break;
+        case GLFW_KEY_A:
+            moveLeft = false;
+            break;
+        case GLFW_KEY_D:
+            moveRight = false;
+            break;
+        case GLFW_KEY_E:
+            moveUp = false;
+            break;
+        case GLFW_KEY_Q:
+            moveDown = false;
+            break;
+        default:
+            break;
+    }
+}
+
+void Scene::mouseButtonPressed(const int button) {
+    if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+        rightButtonPressed = true;
+        double x, y;
+        glfwGetCursorPos(window, &x, &y);
+        lastMousePos = lastMousePos = {x, y};;
+    }
+}
+
+void Scene::mouseButtonReleased(const int button) {
+    if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+        rightButtonPressed = false;
+    }
+}
+
+void Scene::windowResized(int width, int height) {
+    const float aspect = static_cast<float>(width) / static_cast<float>(height);
+    camera.setAspectRatio(aspect);
+    glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
 }
 
 void Scene::update(const float deltaTime) {
@@ -151,10 +160,12 @@ void Scene::update(const float deltaTime) {
     }
 
     if (rightButtonPressed) {
+        double x, y;
+        glfwGetCursorPos(window, &x, &y);
         glm::vec2 delta;
-        delta.x = sf::Mouse::getPosition(window).x - lastMousePos.x;
-        delta.y = lastMousePos.y - sf::Mouse::getPosition(window).y;
-        lastMousePos = sf::Mouse::getPosition(window);
+        delta.x = x - lastMousePos.x;
+        delta.y = lastMousePos.y - y;
+        lastMousePos = {x, y};
         camera.rotate(delta);
     }
 

@@ -6,8 +6,9 @@ class SampleObjectScene final : public Scene {
     float angle = 0.0f;
 
 public:
-    explicit SampleObjectScene(sf::Window& inWindow);
-    void load(float width, float height) override;
+    SampleObjectScene() = default;
+    void load(GLFWwindow* inWindow, float width, float height) override;
 
+    void draw() const override;
     void drawDebug() override;
 };

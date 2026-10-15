@@ -1,13 +1,11 @@
 #include "LightScene.h"
 
-#include "imgui.h"
+#include "imgui/imgui.h"
 #include "glm/gtc/type_ptr.inl"
 
-LightScene::LightScene(sf::Window& inWindow)
-    : Scene(inWindow) {
-}
 
-void LightScene::load(const float width, const float height) {
+void LightScene::load(GLFWwindow* inWindow, const float width, const float height) {
+    window = inWindow;
     mainShader = ShaderProgram::createShaderProgram("assets/shaders/light.vert", "assets/shaders/light.frag");
     const float aspect = width / height;
     camera.init(aspect);

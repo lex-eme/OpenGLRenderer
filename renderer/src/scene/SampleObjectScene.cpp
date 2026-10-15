@@ -1,12 +1,9 @@
 #include "SampleObjectScene.h"
 
-#include "imgui.h"
+#include "imgui/imgui.h"
 
-SampleObjectScene::SampleObjectScene(sf::Window& inWindow)
-    : Scene(inWindow) {
-}
-
-void SampleObjectScene::load(const float width, const float height) {
+void SampleObjectScene::load(GLFWwindow* inWindow, const float width, const float height) {
+    window = inWindow;
     mainShader = ShaderProgram::createShaderProgram("assets/shaders/vertShader.glsl", "assets/shaders/fragShader.glsl");
     const float aspect = width / height;
     camera.init(aspect);
@@ -52,6 +49,20 @@ void SampleObjectScene::load(const float width, const float height) {
     }
 
     glClearColor(0.15f, 0.19f, 0.37f, 1.0f);
+}
+
+void SampleObjectScene::draw() const {
+    glClear(GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
+    mainShader.setActive();
+
+    mainShader.setMat4Uniform("proj_matrix", camera.projectionMatrix);
+
+    glEnable(GL_CULL_FACE);
+
+    for (Model model: models) {
+        model.draw(mainShader, camera.viewMatrix);
+    }
 }
 
 void SampleObjectScene::drawDebug() {
