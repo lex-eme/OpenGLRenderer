@@ -4,7 +4,7 @@
 
 void SampleObjectScene::load(GLFWwindow* inWindow, const float width, const float height) {
     window = inWindow;
-    mainShader = ShaderProgram::createShaderProgram("assets/shaders/vertShader.glsl", "assets/shaders/fragShader.glsl");
+    mainShader = ShaderProgram::createShaderProgram("assets/shaders/unlit.vert", "assets/shaders/unlit.frag");
     const float aspect = width / height;
     camera.init(aspect);
 

@@ -4,7 +4,7 @@
 #include "glm/gtc/type_ptr.inl"
 
 Scene::Scene()
-    : mainShader() {
+    : mainShader(), litShader() {
 }
 
 Scene::~Scene() {
@@ -14,7 +14,8 @@ Scene::~Scene() {
 
 void Scene::load(GLFWwindow* inWindow, const float width, const float height) {
     window = inWindow;
-    mainShader = ShaderProgram::createShaderProgram("assets/shaders/light.vert", "assets/shaders/light.frag");
+    mainShader = ShaderProgram::createShaderProgram("assets/shaders/unlit.vert", "assets/shaders/unlit.frag");
+    litShader = LitShader::createShaderProgram("assets/shaders/lit.vert", "assets/shaders/lit.frag");
     const float aspect = width / height;
     camera.init(aspect);
 
@@ -58,6 +59,14 @@ void Scene::load(GLFWwindow* inWindow, const float width, const float height) {
         glm::vec3 rotation = {angle, angle * 0.3, angle * 0.5f};
         model.transform.setRotation(rotation);
         models.push_back(model);
+    }
+
+    for (int i = 0; i < 4; i += 1) {
+        pointLights.emplace_back();
+    }
+
+    for (int i = 0; i < 4; i += 1) {
+        spotLights.emplace_back();
     }
 
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -175,66 +184,22 @@ void Scene::update(const float deltaTime) {
 void Scene::draw() const {
     glClear(GL_DEPTH_BUFFER_BIT);
     glClear(GL_COLOR_BUFFER_BIT);
-    mainShader.setActive();
+    litShader.setActive();
 
-    mainShader.setFloatUniform("material.shininess", shininess);
+    litShader.setFloatUniform("material.shininess", shininess);
 
-    mainShader.setVec3Uniform("dirLight.direction", lightDir);
-    mainShader.setVec3Uniform("dirLight.ambient", lightAmbient);
-    mainShader.setVec3Uniform("dirLight.diffuse", lightDiffuse);
-    mainShader.setVec3Uniform("dirLight.specular", lightSpecular);
+    litShader.setDirectionalLight(directionalLight);
+    litShader.setPointLights(pointLights);
+    litShader.setSpotLights(spotLights);
 
-    mainShader.setVec3Uniform("pointLights[0].position", pointLightPositions[0]);
-    mainShader.setVec3Uniform("pointLights[0].ambient", lightAmbient);
-    mainShader.setVec3Uniform("pointLights[0].diffuse", lightDiffuse);
-    mainShader.setVec3Uniform("pointLights[0].specular", lightSpecular);
-    mainShader.setFloatUniform("pointLights[0].constant", constant);
-    mainShader.setFloatUniform("pointLights[0].linear", linear);
-    mainShader.setFloatUniform("pointLights[0].quadratic", quadratic);
-
-    mainShader.setVec3Uniform("pointLights[1].position", pointLightPositions[1]);
-    mainShader.setVec3Uniform("pointLights[1].ambient", lightAmbient);
-    mainShader.setVec3Uniform("pointLights[1].diffuse", lightDiffuse);
-    mainShader.setVec3Uniform("pointLights[1].specular", lightSpecular);
-    mainShader.setFloatUniform("pointLights[1].constant", constant);
-    mainShader.setFloatUniform("pointLights[1].linear", linear);
-    mainShader.setFloatUniform("pointLights[1].quadratic", quadratic);
-
-    mainShader.setVec3Uniform("pointLights[2].position", pointLightPositions[2]);
-    mainShader.setVec3Uniform("pointLights[2].ambient", lightAmbient);
-    mainShader.setVec3Uniform("pointLights[2].diffuse", lightDiffuse);
-    mainShader.setVec3Uniform("pointLights[2].specular", lightSpecular);
-    mainShader.setFloatUniform("pointLights[2].constant", constant);
-    mainShader.setFloatUniform("pointLights[2].linear", linear);
-    mainShader.setFloatUniform("pointLights[2].quadratic", quadratic);
-
-    mainShader.setVec3Uniform("pointLights[3].position", pointLightPositions[3]);
-    mainShader.setVec3Uniform("pointLights[3].ambient", lightAmbient);
-    mainShader.setVec3Uniform("pointLights[3].diffuse", lightDiffuse);
-    mainShader.setVec3Uniform("pointLights[3].specular", lightSpecular);
-    mainShader.setFloatUniform("pointLights[3].constant", constant);
-    mainShader.setFloatUniform("pointLights[3].linear", linear);
-    mainShader.setFloatUniform("pointLights[3].quadratic", quadratic);
-
-    mainShader.setVec3Uniform("spotLight.position", lightPos);
-    mainShader.setVec3Uniform("spotLight.direction", lightDir);
-    mainShader.setVec3Uniform("spotLight.ambient", spotAmbient);
-    mainShader.setVec3Uniform("spotLight.diffuse", spotDiffuse);
-    mainShader.setVec3Uniform("spotLight.specular", spotSpecular);
-    mainShader.setFloatUniform("spotLight.constant", constant);
-    mainShader.setFloatUniform("spotLight.linear", linear);
-    mainShader.setFloatUniform("spotLight.quadratic", quadratic);
-    mainShader.setFloatUniform("spotLight.cutOff", innerCutOff);
-    mainShader.setFloatUniform("spotLight.outerCutOff", outerCutOff);
-
-    mainShader.setVec3Uniform("viewPos", camera.position);
-    mainShader.setMat4Uniform("proj_matrix", camera.projectionMatrix);
-    mainShader.setMat4Uniform("view_matrix", camera.viewMatrix);
+    litShader.setVec3Uniform("viewPos", camera.position);
+    litShader.setMat4Uniform("proj_matrix", camera.projectionMatrix);
+    litShader.setMat4Uniform("view_matrix", camera.viewMatrix);
 
     glEnable(GL_CULL_FACE);
 
     for (Model model: models) {
-        model.draw(mainShader);
+        model.draw(litShader);
     }
 }
 
@@ -242,25 +207,23 @@ void Scene::drawDebug() {
     camera.drawDebug();
 
     ImGui::SeparatorText("Light");
-    ImGui::PushID(1);
-    ImGui::DragFloat3("Position1", glm::value_ptr(pointLightPositions[0]), 0.1f);
-    ImGui::DragFloat3("Position2", glm::value_ptr(pointLightPositions[1]), 0.1f);
-    ImGui::DragFloat3("Position3", glm::value_ptr(pointLightPositions[2]), 0.1f);
-    ImGui::DragFloat3("Position4", glm::value_ptr(pointLightPositions[3]), 0.1f);
-    ImGui::DragFloat3("Direction", glm::value_ptr(lightDir), 0.01f);
-    ImGui::ColorEdit3("Ambient", glm::value_ptr(lightAmbient));
-    ImGui::ColorEdit3("Diffuse", glm::value_ptr(lightDiffuse));
-    ImGui::ColorEdit3("Specular", glm::value_ptr(lightSpecular));
-    ImGui::DragFloat3("Attributes", &constant, 0.0001f, 0.0000001f, 2.0f, "%.6f");
-    ImGui::DragFloat3("SpotPos", glm::value_ptr(lightPos), 0.1f);
-    ImGui::DragFloat("Inner cutoff", &innerCutOff, 0.1f);
-    ImGui::DragFloat("Outer cutoff", &outerCutOff, 0.1f);
-    ImGui::PopID();
+    directionalLight.drawDebug();
+    int i = 0;
+    for (PointLight& light: pointLights) {
+        ImGui::PushID(i);
+        light.drawDebug();
+        ImGui::PopID();
+        i += 1;
+    }
 
-    ImGui::PushID(2);
+    for (SpotLight& light: spotLights) {
+        ImGui::PushID(i);
+        light.drawDebug();
+        ImGui::PopID();
+        i += 1;
+    }
     ImGui::SeparatorText("Material");
     ImGui::DragFloat("Shininess", &shininess, 1.0f, 2.0f, 128.0f);
-    ImGui::PopID();
 }
 
 void Scene::clearMeshes() {

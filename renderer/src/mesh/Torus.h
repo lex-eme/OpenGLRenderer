@@ -1,6 +1,6 @@
 #pragma once
 #include <glad/glad.h>
-#include "../ShaderProgram.h"
+#include "../shader/ShaderProgram.h"
 #include "../Transform.h"
 #include "glm/glm.hpp"
 

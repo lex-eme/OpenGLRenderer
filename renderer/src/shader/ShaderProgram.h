@@ -21,10 +21,11 @@ public:
     static ShaderProgram createShaderProgram(const std::string& vertexShaderSourcePath,
                                              const std::string& fragmentShaderSourcePath);
 
-private:
+protected:
     explicit ShaderProgram(GLuint ID);
-    GLint getUniformLocation(const std::string& name) const;
 
+    GLint getUniformLocation(const std::string& name) const;
+    static bool checkOpenGLError();
     static std::string readShaderSource(const std::string& filePath);
     static void printShaderLog(GLuint shader);
     static void printProgramLog(GLuint program);

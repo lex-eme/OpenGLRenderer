@@ -138,6 +138,7 @@ int main() {
         ImGui::NewFrame();
         ImGui::DockSpaceOverViewport(0, nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
 
+        ImGui::ShowDemoWindow();
         ImGui::Begin("Configuration", nullptr);
         scene.drawDebug();
         ImGui::End();

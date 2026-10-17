@@ -1,8 +1,8 @@
 set(SOURCES
         src/main.cpp
         src/glad.c
-        src/ShaderProgram.cpp
-        src/ShaderProgram.h
+        src/shader/ShaderProgram.cpp
+        src/shader/ShaderProgram.h
         src/Transform.cpp
         src/Transform.h
         src/mesh/Mesh.cpp
@@ -23,10 +23,18 @@ set(SOURCES
         src/scene/Scene.h
         src/scene/SampleObjectScene.cpp
         src/scene/SampleObjectScene.h
-        src/scene/LightScene.cpp
-        src/scene/LightScene.h
         src/Sampler.cpp
         src/Sampler.h
+        src/light/Light.cpp
+        src/light/Light.h
+        src/light/DirectionalLight.cpp
+        src/light/DirectionalLight.h
+        src/light/PointLight.cpp
+        src/light/PointLight.h
+        src/shader/LitShader.cpp
+        src/shader/LitShader.h
+        src/light/SpotLight.cpp
+        src/light/SpotLight.h
 )
 
 find_package(OpenGL REQUIRED)

@@ -1,6 +1,8 @@
 #pragma once
 #include "../Camera.h"
 #include "../Model.h"
+#include "../light/DirectionalLight.h"
+#include "../shader/LitShader.h"
 #include "GLFW/glfw3.h"
 
 constexpr float cameraSpeed = 10.0f;
@@ -10,6 +12,7 @@ protected:
     std::vector<Model> models;
     Camera camera;
     ShaderProgram mainShader;
+    LitShader litShader;
     GLFWwindow* window = nullptr;
     std::vector<Mesh> meshes;
     std::vector<Texture> textures;
@@ -21,19 +24,10 @@ private:
         glm::vec3(-4.0f, 2.0f, -12.0f),
         glm::vec3(0.0f, 0.0f, -3.0f)
     };
-    glm::vec3 lightPos{0.0f, 15.0f, -3.7f};
-    glm::vec3 lightDir{0.0f, -1.0f, 0.0f};
-    glm::vec3 lightAmbient{0.2f, 0.2f, 0.2f};
-    glm::vec3 lightDiffuse{0.5f, 0.5f, 0.5f};
-    glm::vec3 lightSpecular{1.0f, 1.0f, 1.0f};
-    glm::vec3 spotAmbient{0.2f, 0.2f, 0.2f};
-    glm::vec3 spotDiffuse{0.3f, 0.5f, 0.3f};
-    glm::vec3 spotSpecular{0.8f, 1.0f, 0.8f};
-    float constant = 1.0f;
-    float linear = 0.09f;
-    float quadratic = 0.032f;
-    float innerCutOff = 12.5f;
-    float outerCutOff = 15.0f;
+
+    DirectionalLight directionalLight;
+    std::vector<PointLight> pointLights;
+    std::vector<SpotLight> spotLights;
 
     float shininess = 32.0f;
 

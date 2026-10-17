@@ -2,10 +2,11 @@
 
 #include <fstream>
 #include <iostream>
+#include <sstream>
 
 #include <glm/gtc/type_ptr.hpp>
 
-bool checkOpenGLError() {
+bool ShaderProgram::checkOpenGLError() {
     bool foundError = false;
     int glErr = glGetError();
     while (glErr != GL_NO_ERROR) {
@@ -99,13 +100,22 @@ ShaderProgram::ShaderProgram(const GLuint ID)
 
 std::string ShaderProgram::readShaderSource(const std::string& filePath) {
     std::string content;
-    std::ifstream fileStream(filePath, std::ios::in);
-    std::string line;
-    while (!fileStream.eof()) {
-        getline(fileStream, line);
-        content.append(line + "\n");
+
+    std::ifstream file;
+    file.exceptions (std::ifstream::failbit | std::ifstream::badbit);
+    try
+    {
+        file.open(filePath);
+        std::stringstream vShaderStream, fShaderStream;
+        vShaderStream << file.rdbuf();
+        file.close();
+        content = vShaderStream.str();
     }
-    fileStream.close();
+    catch (std::ifstream::failure& e)
+    {
+        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << e.what() << std::endl;
+    }
+
     return content;
 }
 
