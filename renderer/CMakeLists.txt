@@ -21,8 +21,6 @@ set(SOURCES
         src/Camera.h
         src/scene/Scene.cpp
         src/scene/Scene.h
-        src/scene/SampleObjectScene.cpp
-        src/scene/SampleObjectScene.h
         src/Sampler.cpp
         src/Sampler.h
         src/light/Light.cpp

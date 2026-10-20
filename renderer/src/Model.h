@@ -1,23 +1,34 @@
 #pragma once
+
 #include "mesh/Mesh.h"
 #include "shader/ShaderProgram.h"
 #include "Texture.h"
 #include "Transform.h"
+#include "assimp/material.h"
 
+struct aiNode;
+struct aiScene;
+struct aiMesh;
+struct aiMaterial;
 
 class Model {
 public:
     Transform transform;
 
 private:
-    Mesh mesh;
-    Texture diffuseTex;
-    Texture specularTex;
-    Sampler sampler;
+    std::vector<Mesh> meshes;
+    std::vector<Texture> loadedTextures;
+    std::string directory;
 
 public:
-    void init(Mesh inMesh, const Texture& inTexture, const Texture& inSpecular = Texture(),
-              Sampler inSampler = Sampler());
-    void draw(ShaderProgram shader, const glm::mat4& parentTransformMatrix) const;
-    void draw(ShaderProgram shader) const;
+    Model() = default;
+    explicit Model(const std::string& filePath);
+
+    void draw(ShaderProgram shader);
+
+private:
+    void loadModel(const std::string& path);
+    void processNode(const aiNode* node, const aiScene* scene);
+    Mesh processMesh(const aiMesh* mesh, const aiScene* scene);
+    std::vector<Texture> loadMaterialTextures(const aiMaterial* mat, aiTextureType type, const std::string& typeName);
 };

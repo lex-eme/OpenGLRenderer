@@ -5,12 +5,14 @@
 
 struct Transform {
 private:
-    glm::vec3 position{};
-    glm::vec3 rotation{};
+    glm::vec3 position{0.0f};
+    glm::vec3 rotation{0.0f};
     glm::vec3 scale{1.0f};
     glm::mat4 transformMatrix{};
 
 public:
+    Transform();
+
     void setPosition(const glm::vec3& newPosition);
     void setRotation(const glm::vec3& newRotation);
     void setScale(const glm::vec3& newScale);

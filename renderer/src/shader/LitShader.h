@@ -6,8 +6,8 @@
 
 
 class LitShader final : public ShaderProgram {
-    constexpr static int MAX_POINT_LIGHT_COUNT = 4;
-    constexpr static int MAX_SPOT_LIGHT_COUNT = 4;
+    constexpr static int MAX_POINT_LIGHT_COUNT = 1;
+    constexpr static int MAX_SPOT_LIGHT_COUNT = 1;
 
 public:
     LitShader() = default;

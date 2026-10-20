@@ -1,27 +1,32 @@
 #pragma once
-#include <glad/glad.h>
 #include <glm/glm.hpp>
+
+#include "../Texture.h"
+#include "../shader/ShaderProgram.h"
 
 
 struct Vertex {
     glm::vec3 position;
-    glm::vec2 uvs;
     glm::vec3 normals;
+    glm::vec2 uvs;
 };
 
 class Mesh {
-    GLuint vao{};
-    GLuint vbo{};
-    GLuint ebo{};
-    GLsizei indicesCount{};
+    unsigned int vao{};
+    unsigned int vbo{};
+    unsigned int ebo{};
+    int indicesCount{};
+
+    std::vector<Texture> textures;
 
 public:
-    void loadFromFile(const std::string &path);
+    Mesh() = default;
+    Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices,
+         const std::vector<Texture>& inTextures);
+
+    void draw(ShaderProgram shader) const;
     void unload();
 
-    void draw() const;
-
 private:
-    void createVertexBuffer(const std::vector<Vertex>& vertices);
-    void createIndexBuffer(const std::vector<int>& indices);
+    void setupMesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
 };

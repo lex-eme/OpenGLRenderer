@@ -2,6 +2,10 @@
 
 #include "glm/ext/matrix_transform.hpp"
 
+Transform::Transform() {
+    computeMatrix();
+}
+
 void Transform::setPosition(const glm::vec3& newPosition) {
     position = newPosition;
     computeMatrix();

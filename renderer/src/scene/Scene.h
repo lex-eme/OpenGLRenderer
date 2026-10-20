@@ -9,9 +9,8 @@ constexpr float cameraSpeed = 10.0f;
 
 class Scene {
 protected:
-    std::vector<Model> models;
+    Model model;
     Camera camera;
-    ShaderProgram mainShader;
     LitShader litShader;
     GLFWwindow* window = nullptr;
     std::vector<Mesh> meshes;
@@ -51,7 +50,7 @@ public:
     virtual void mouseButtonReleased(int button);
     virtual void windowResized(int width, int height);
     virtual void update(float deltaTime);
-    virtual void draw() const;
+    virtual void draw();
     virtual void drawDebug();
 
 private:

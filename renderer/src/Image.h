@@ -8,8 +8,8 @@ class Image final {
     friend Texture;
 
 private:
-    int width, height, nrChannels;
-    unsigned char* data;
+    int width{}, height{}, nrChannels{};
+    unsigned char* data{};
 
 public:
     Image() = default;

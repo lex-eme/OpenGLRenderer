@@ -5,8 +5,8 @@
 #include "Image.h"
 #include "glad/glad.h"
 
-void Texture::loadFromFile(const std::string& path) {
-    if (Image image; image.loadFromFile(path)) {
+void Texture::loadFromFile(const std::string& inPath) {
+    if (Image image; image.loadFromFile(inPath)) {
         glGenTextures(1, &id);
         glBindTexture(GL_TEXTURE_2D, id);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);

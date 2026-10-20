@@ -4,7 +4,7 @@
 #include "glm/gtc/type_ptr.inl"
 
 Scene::Scene()
-    : mainShader(), litShader() {
+    : litShader() {
 }
 
 Scene::~Scene() {
@@ -14,58 +14,17 @@ Scene::~Scene() {
 
 void Scene::load(GLFWwindow* inWindow, const float width, const float height) {
     window = inWindow;
-    mainShader = ShaderProgram::createShaderProgram("assets/shaders/unlit.vert", "assets/shaders/unlit.frag");
     litShader = LitShader::createShaderProgram("assets/shaders/lit.vert", "assets/shaders/lit.frag");
     const float aspect = width / height;
     camera.init(aspect);
 
-    Texture diffuseTex;
-    diffuseTex.loadFromFile("assets/textures/container.png");
-    textures.push_back(diffuseTex);
-    Texture specularTex;
-    specularTex.loadFromFile("assets/textures/container_specular.png");
-    textures.push_back(specularTex);
+    model = Model("assets/models/backpack/backpack.obj");
 
-    Mesh cube;
-    cube.loadFromFile("assets/meshes/Cube.obj");
-    meshes.push_back(cube);
-
-    const glm::vec3 positions[] = {
-        glm::vec3(0.0f, -5.0f, 0.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(1.5f, 0.2f, -1.5f),
-        glm::vec3(2.4f, -0.4f, -3.5f),
-        glm::vec3(2.0f, 5.0f, -15.0f),
-        glm::vec3(1.3f, -2.0f, -2.5f),
-        glm::vec3(1.5f, 2.0f, -2.5f),
-        glm::vec3(-1.7f, 3.0f, -7.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3(-1.3f, 1.0f, -1.5f)
-    };
-
-    Model ground;
-    ground.init(cube, diffuseTex, specularTex);
-    ground.transform.setPosition({0.0f, -5.0f, 0.0f});
-    ground.transform.setScale({50.0f, 1.0f, 50.0f});
-    models.push_back(ground);
-
-    for (int i = 0; i < 10; i += 1) {
-        Model model;
-        model.init(cube, diffuseTex, specularTex);
-
-        glm::vec3 position = positions[i] * 1.5f;
-        model.transform.setPosition(position);
-        const float angle = 20.0f * static_cast<float>(i);
-        glm::vec3 rotation = {angle, angle * 0.3, angle * 0.5f};
-        model.transform.setRotation(rotation);
-        models.push_back(model);
-    }
-
-    for (int i = 0; i < 4; i += 1) {
+    for (int i = 0; i < 1; i += 1) {
         pointLights.emplace_back();
     }
 
-    for (int i = 0; i < 4; i += 1) {
+    for (int i = 0; i < 1; i += 1) {
         spotLights.emplace_back();
     }
 
@@ -181,7 +140,7 @@ void Scene::update(const float deltaTime) {
     camera.update();
 }
 
-void Scene::draw() const {
+void Scene::draw() {
     glClear(GL_DEPTH_BUFFER_BIT);
     glClear(GL_COLOR_BUFFER_BIT);
     litShader.setActive();
@@ -198,13 +157,16 @@ void Scene::draw() const {
 
     glEnable(GL_CULL_FACE);
 
-    for (Model model: models) {
-        model.draw(litShader);
-    }
+    model.draw(litShader);
 }
 
 void Scene::drawDebug() {
     camera.drawDebug();
+
+    static glm::vec3 position{0.0f};
+    if (ImGui::DragFloat3("Mesh position", glm::value_ptr(position), 0.01f)) {
+        model.transform.setPosition(position);
+    }
 
     ImGui::SeparatorText("Light");
     directionalLight.drawDebug();
