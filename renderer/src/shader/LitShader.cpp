@@ -70,6 +70,7 @@ LitShader LitShader::createShaderProgram(const std::string& vertexShaderSourcePa
     if (success != 1) {
         std::cerr << "Fragment shader compilation failed" << std::endl;
         printShaderLog(fShader);
+        exit(-1);
     }
 
     const GLuint vfProgram = glCreateProgram();
@@ -81,6 +82,7 @@ LitShader LitShader::createShaderProgram(const std::string& vertexShaderSourcePa
     if (success != 1) {
         std::cerr << "Shader program linking failed" << std::endl;
         printProgramLog(vfProgram);
+        exit(-1);
     }
 
     glDeleteShader(vShader);

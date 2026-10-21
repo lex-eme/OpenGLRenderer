@@ -48,8 +48,6 @@ void Mesh::draw(const ShaderProgram shader) const {
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
 
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
     glFrontFace(GL_CCW);
     glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, nullptr);
 

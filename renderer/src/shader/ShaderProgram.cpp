@@ -66,6 +66,7 @@ ShaderProgram ShaderProgram::createShaderProgram(const std::string& vertexShader
     if (success != 1) {
         std::cerr << "Vertex shader compilation failed" << std::endl;
         printShaderLog(vShader);
+        exit(-1);
     }
 
     const GLuint fShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -76,6 +77,7 @@ ShaderProgram ShaderProgram::createShaderProgram(const std::string& vertexShader
     if (success != 1) {
         std::cerr << "Fragment shader compilation failed" << std::endl;
         printShaderLog(fShader);
+        exit(-1);
     }
 
     const GLuint vfProgram = glCreateProgram();

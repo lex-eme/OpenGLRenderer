@@ -141,8 +141,7 @@ void Scene::update(const float deltaTime) {
 }
 
 void Scene::draw() {
-    glClear(GL_DEPTH_BUFFER_BIT);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     litShader.setActive();
 
     litShader.setFloatUniform("material.shininess", shininess);
@@ -156,6 +155,8 @@ void Scene::draw() {
     litShader.setMat4Uniform("view_matrix", camera.viewMatrix);
 
     glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
 
     model.draw(litShader);
 }
