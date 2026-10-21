@@ -5,6 +5,9 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "imgui/imgui.h"
+#include "glm/gtc/type_ptr.inl"
+
 Model::Model(const std::string& filePath) {
     loadModel(filePath);
 }
@@ -14,6 +17,14 @@ void Model::draw(const ShaderProgram shader) {
     for (Mesh& mesh: meshes) {
         mesh.draw(shader);
     }
+}
+
+void Model::drawDebug(const int id) {
+    ImGui::PushID(id);
+    if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_None)) {
+        transform.drawDebug();
+    }
+    ImGui::PopID();
 }
 
 void Model::loadModel(const std::string& path) {

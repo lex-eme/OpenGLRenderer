@@ -164,10 +164,8 @@ void Scene::draw() {
 void Scene::drawDebug() {
     camera.drawDebug();
 
-    static glm::vec3 position{0.0f};
-    if (ImGui::DragFloat3("Mesh position", glm::value_ptr(position), 0.01f)) {
-        model.transform.setPosition(position);
-    }
+    ImGui::SeparatorText("Models");
+    model.drawDebug(1);
 
     ImGui::SeparatorText("Light");
     directionalLight.drawDebug();

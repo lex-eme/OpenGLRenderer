@@ -25,6 +25,7 @@ public:
     explicit Model(const std::string& filePath);
 
     void draw(ShaderProgram shader);
+    void drawDebug(int id);
 
 private:
     void loadModel(const std::string& path);

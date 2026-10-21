@@ -17,6 +17,8 @@ public:
     void setRotation(const glm::vec3& newRotation);
     void setScale(const glm::vec3& newScale);
 
+    void drawDebug();
+
     [[nodiscard]] const glm::mat4& getMatrix() const;
 
 private:

@@ -1,6 +1,8 @@
 #include "Transform.h"
 
 #include "glm/ext/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.inl"
+#include "imgui/imgui.h"
 
 Transform::Transform() {
     computeMatrix();
@@ -19,6 +21,18 @@ void Transform::setRotation(const glm::vec3& newRotation) {
 void Transform::setScale(const glm::vec3& newScale) {
     scale = newScale;
     computeMatrix();
+}
+
+void Transform::drawDebug() {
+    if (ImGui::DragFloat3("Location", glm::value_ptr(position), 0.1f)) {
+        computeMatrix();
+    }
+    if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotation), 0.1f)) {
+        computeMatrix();
+    }
+    if (ImGui::DragFloat3("Scale", glm::value_ptr(scale), 0.1f)) {
+        computeMatrix();
+    }
 }
 
 const glm::mat4& Transform::getMatrix() const {
