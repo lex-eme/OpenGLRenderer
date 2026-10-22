@@ -1,12 +1,12 @@
 #include "Mesh.h"
 
+#include <glad/glad.h>
 #include <fstream>
 #include <map>
 
-Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices,
-           const std::vector<Texture>& inTextures) {
+Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const unsigned int index) {
     setupMesh(vertices, indices);
-    textures = inTextures;
+    materialIndex = index;
 }
 
 void Mesh::unload() {
@@ -25,28 +25,8 @@ void Mesh::unload() {
     vao = 0;
 }
 
-void Mesh::draw(const ShaderProgram shader) const {
-    unsigned int diffuseNr = 1;
-    unsigned int specularNr = 1;
+void Mesh::draw() const {
     glBindVertexArray(vao);
-
-    for (int i = 0; i < textures.size(); i++) {
-        glActiveTexture(GL_TEXTURE0 + i);
-        std::string number;
-        std::string name = textures[i].type;
-        if (name == "texture_diffuse") {
-            number = std::to_string(diffuseNr);
-            diffuseNr += 1;
-        } else if (name == "texture_specular") {
-            number = std::to_string(specularNr);
-            specularNr += 1;
-        }
-
-        std::string uniformName = "material." + name;
-        uniformName += number;
-        shader.setIntUniform(uniformName, i);
-        glBindTexture(GL_TEXTURE_2D, textures[i].id);
-    }
 
     glFrontFace(GL_CCW);
     glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, nullptr);

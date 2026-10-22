@@ -37,7 +37,11 @@ set(SOURCES
 
 find_package(OpenGL REQUIRED)
 
-add_executable(App)
+add_executable(App
+        src/AssetManager.cpp
+        src/AssetManager.h
+        src/Material.cpp
+        src/Material.h)
 target_sources(App PRIVATE ${SOURCES})
 
 target_include_directories(App PRIVATE ../dependencies)

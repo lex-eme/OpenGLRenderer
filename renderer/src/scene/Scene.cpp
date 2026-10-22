@@ -1,5 +1,6 @@
 #include "Scene.h"
 
+#include "../Material.h"
 #include "imgui/imgui.h"
 #include "glm/gtc/type_ptr.inl"
 
@@ -18,7 +19,17 @@ void Scene::load(GLFWwindow* inWindow, const float width, const float height) {
     const float aspect = width / height;
     camera.init(aspect);
 
+    assetManager.addTexture("backpack_diffuse", "assets/models/backpack/diffuse.jpg");
+
+    Material backpackMaterial(assetManager);
+
     model = Model("assets/models/backpack/backpack.obj");
+    //model = Model("assets/models/battery/battery.fbx");
+    //model = Model("assets/models/Test.fbx");
+
+    for (int i = 0; i < model.materials.size(); i += 1) {
+        model.materials[i] = backpackMaterial;
+    }
 
     for (int i = 0; i < 1; i += 1) {
         pointLights.emplace_back();
@@ -142,23 +153,23 @@ void Scene::update(const float deltaTime) {
 
 void Scene::draw() {
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-    litShader.setActive();
 
-    litShader.setFloatUniform("material.shininess", shininess);
+    ShaderProgram program = model.materials[0].shader;
+    //program.setFloatUniform("material.shininess", shininess);
 
-    litShader.setDirectionalLight(directionalLight);
-    litShader.setPointLights(pointLights);
-    litShader.setSpotLights(spotLights);
+    // litShader.setDirectionalLight(directionalLight);
+    // litShader.setPointLights(pointLights);
+    // litShader.setSpotLights(spotLights);
+    // litShader.setVec3Uniform("viewPos", camera.position);
 
-    litShader.setVec3Uniform("viewPos", camera.position);
-    litShader.setMat4Uniform("proj_matrix", camera.projectionMatrix);
-    litShader.setMat4Uniform("view_matrix", camera.viewMatrix);
+    program.setMat4Uniform("proj_matrix", camera.projectionMatrix);
+    program.setMat4Uniform("view_matrix", camera.viewMatrix);
 
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    model.draw(litShader);
+    model.draw(program);
 }
 
 void Scene::drawDebug() {

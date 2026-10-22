@@ -1,9 +1,10 @@
 #version 410 core
 
 layout (location = 0) in vec3 position;
-layout (location = 1) in vec2 texCoord;
+layout (location = 2) in vec2 texCoord;
 
-uniform mat4 mv_matrix;
+uniform mat4 model_matrix;
+uniform mat4 view_matrix;
 uniform mat4 proj_matrix;
 
 out vec2 textureCoord;
@@ -14,7 +15,7 @@ mat4 buildRotateZ(float rad);
 mat4 buildTranslate(float x, float y, float z);
 
 void main(void) {
-    gl_Position = proj_matrix * mv_matrix * vec4(position, 1.0);
+    gl_Position = proj_matrix * view_matrix * model_matrix * vec4(position, 1.0);
     textureCoord = texCoord;
 }
 

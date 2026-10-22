@@ -1,4 +1,5 @@
 #pragma once
+#include "../AssetManager.h"
 #include "../Camera.h"
 #include "../Model.h"
 #include "../light/DirectionalLight.h"
@@ -15,6 +16,7 @@ protected:
     GLFWwindow* window = nullptr;
     std::vector<Mesh> meshes;
     std::vector<Texture> textures;
+    AssetManager assetManager;
 
 private:
     glm::vec3 pointLightPositions[4] = {

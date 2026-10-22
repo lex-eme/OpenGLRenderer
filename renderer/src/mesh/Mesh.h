@@ -1,10 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
 
-#include "../Texture.h"
-#include "../shader/ShaderProgram.h"
-
-
 struct Vertex {
     glm::vec3 position;
     glm::vec3 normals;
@@ -12,19 +8,18 @@ struct Vertex {
 };
 
 class Mesh {
+public:
     unsigned int vao{};
     unsigned int vbo{};
     unsigned int ebo{};
     int indicesCount{};
-
-    std::vector<Texture> textures;
+    unsigned int materialIndex;
 
 public:
     Mesh() = default;
-    Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices,
-         const std::vector<Texture>& inTextures);
+    Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, unsigned int index);
 
-    void draw(ShaderProgram shader) const;
+    void draw() const;
     void unload();
 
 private:

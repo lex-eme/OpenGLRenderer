@@ -15,7 +15,8 @@ Model::Model(const std::string& filePath) {
 void Model::draw(const ShaderProgram shader) {
     shader.setMat4Uniform("model_matrix", transform.getMatrix());
     for (Mesh& mesh: meshes) {
-        mesh.draw(shader);
+        materials[mesh.materialIndex].bind();
+        mesh.draw();
     }
 }
 
@@ -36,15 +37,23 @@ void Model::loadModel(const std::string& path) {
         std::cerr << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
         return;
     }
-    directory = path.substr(0, path.find_last_of('/'));
+    std::cout << "Material count: " << scene->mNumMaterials << std::endl;
+
+    for (int i = 0; i < scene->mNumMaterials; i += 1) {
+        const aiMaterial* material = scene->mMaterials[i];
+        std::cout << "Material name: " << material->GetName().C_Str() << std::endl;
+        materials.emplace_back();
+    }
+
+    std::cout << "Model mesh count: " << scene->mNumMeshes << std::endl;
 
     processNode(scene->mRootNode, scene);
 }
 
 void Model::processNode(const aiNode* node, const aiScene* scene) {
     for (unsigned int i = 0; i < node->mNumMeshes; i++) {
-        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(processMesh(mesh, scene));
+        const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+        meshes.push_back(processMesh(mesh));
     }
 
     for (unsigned int i = 0; i < node->mNumChildren; i++) {
@@ -52,10 +61,9 @@ void Model::processNode(const aiNode* node, const aiScene* scene) {
     }
 }
 
-Mesh Model::processMesh(const aiMesh* mesh, const aiScene* scene) {
+Mesh Model::processMesh(const aiMesh* mesh) {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<Texture> textures;
 
     // process vertices
     vertices.resize(mesh->mNumVertices);
@@ -88,41 +96,5 @@ Mesh Model::processMesh(const aiMesh* mesh, const aiScene* scene) {
         }
     }
 
-    // process material
-    aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-    std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-    textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-    std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-    textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-
-    return Mesh(vertices, indices, textures);
-}
-
-std::vector<Texture> Model::loadMaterialTextures(const aiMaterial* mat, const aiTextureType type,
-                                                 const std::string& typeName) {
-    std::vector<Texture> textures;
-    textures.resize(mat->GetTextureCount(type));
-    for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
-        aiString str;
-        mat->GetTexture(type, i, &str);
-        bool skip = false;
-
-        for (Texture& loadedTexture: loadedTextures) {
-            if (std::strcmp(loadedTexture.path.data(), str.C_Str()) == 0) {
-                textures[i] = loadedTexture;
-                skip = true;
-                break;
-            }
-        }
-
-        if (!skip) {
-            std::string filename(str.C_Str());
-            filename = directory + "/" + filename;
-            textures[i].loadFromFile(filename);
-            textures[i].type = typeName;
-            textures[i].path = str.C_Str();
-            loadedTextures.push_back(textures[i]);
-        }
-    }
-    return textures;
+    return Mesh(vertices, indices, mesh->mMaterialIndex);
 }
