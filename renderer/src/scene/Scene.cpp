@@ -1,6 +1,8 @@
 #include "Scene.h"
 
-#include "../Material.h"
+#include "../material/ColorMaterial.h"
+#include "../material/Material.h"
+#include "../material/UnlitMaterial.h"
 #include "imgui/imgui.h"
 #include "glm/gtc/type_ptr.inl"
 
@@ -18,18 +20,49 @@ void Scene::load(GLFWwindow* inWindow, const float width, const float height) {
     litShader = LitShader::createShaderProgram("assets/shaders/lit.vert", "assets/shaders/lit.frag");
     const float aspect = width / height;
     camera.init(aspect);
+    cameraUbo.create();
 
     assetManager.addTexture("backpack_diffuse", "assets/models/backpack/diffuse.jpg");
+    assetManager.addTexture("battery_diffuse", "assets/models/battery/Battery_Albedo.tga");
 
-    Material backpackMaterial(assetManager);
+    const ShaderProgram unlitShader = ShaderProgram::createShaderProgram(
+        "assets/shaders/unlit.vert", "assets/shaders/unlit.frag");
+    unlitShader.bindUniformBufferObject("Matrices", cameraUbo.bindingPoint);
 
-    model = Model("assets/models/backpack/backpack.obj");
-    //model = Model("assets/models/battery/battery.fbx");
-    //model = Model("assets/models/Test.fbx");
+    auto* backpackMaterial = new UnlitMaterial();
+    backpackMaterial->create(unlitShader, assetManager.getTexture("backpack_diffuse"));
 
-    for (int i = 0; i < model.materials.size(); i += 1) {
-        model.materials[i] = backpackMaterial;
+    auto* batteryMaterial = new UnlitMaterial();
+    batteryMaterial->create(unlitShader, assetManager.getTexture("battery_diffuse"));
+
+    const ShaderProgram colorShader = ShaderProgram::createShaderProgram(
+        "assets/shaders/singleColor.vert", "assets/shaders/singleColor.frag");
+    colorShader.bindUniformBufferObject("Matrices", cameraUbo.bindingPoint);
+
+    auto* colorMaterial = new ColorMaterial();
+    colorMaterial->create(colorShader, glm::vec3(0.22f, 0.03f, 0.49f));
+
+    auto* colorMaterial2 = new ColorMaterial();
+    colorMaterial2->create(colorShader, glm::vec3(0.12f, 0.73f, 0.69f));
+
+    models.emplace_back("assets/models/backpack/backpack.obj");
+    for (int i = 0; i < models[0].materials.size(); i += 1) {
+        models[0].materials[i] = backpackMaterial;
     }
+
+
+    models.emplace_back("assets/models/battery/battery.fbx");
+    models[1].transform.setPosition({3.0f, 0.0f, 0.0f});
+    for (int i = 0; i < models[1].materials.size(); i += 1) {
+        models[1].materials[i] = batteryMaterial;
+    }
+
+
+    models.emplace_back("assets/models/Test.fbx");
+    models[2].transform.setPosition({-3.0f, 0.0f, 0.0f});
+    models[2].transform.setScale({0.01f, 0.01f, 0.01f});
+    models[2].materials[0] = colorMaterial;
+    models[2].materials[1] = colorMaterial2;
 
     for (int i = 0; i < 1; i += 1) {
         pointLights.emplace_back();
@@ -154,48 +187,61 @@ void Scene::update(const float deltaTime) {
 void Scene::draw() {
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-    ShaderProgram program = model.materials[0].shader;
     //program.setFloatUniform("material.shininess", shininess);
 
     // litShader.setDirectionalLight(directionalLight);
     // litShader.setPointLights(pointLights);
     // litShader.setSpotLights(spotLights);
     // litShader.setVec3Uniform("viewPos", camera.position);
-
-    program.setMat4Uniform("proj_matrix", camera.projectionMatrix);
-    program.setMat4Uniform("view_matrix", camera.viewMatrix);
+    cameraUbo.setProjection(camera.projectionMatrix);
+    cameraUbo.setView(camera.viewMatrix);
 
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    model.draw(program);
+    for (Model& model: models) {
+        model.draw();
+    }
 }
 
 void Scene::drawDebug() {
-    camera.drawDebug();
+    if (ImGui::BeginTabBar("TheTabBar")) {
+        if (ImGui::BeginTabItem("Camera")) {
+            camera.drawDebug();
+            ImGui::EndTabItem();
+        }
 
-    ImGui::SeparatorText("Models");
-    model.drawDebug(1);
+        if (ImGui::BeginTabItem("Models")) {
+            int i = 0;
+            for (Model& model: models) {
+                model.drawDebug(i);
+                i += 1;
+            }
+            ImGui::EndTabItem();
+        }
 
-    ImGui::SeparatorText("Light");
-    directionalLight.drawDebug();
-    int i = 0;
-    for (PointLight& light: pointLights) {
-        ImGui::PushID(i);
-        light.drawDebug();
-        ImGui::PopID();
-        i += 1;
+        if (ImGui::BeginTabItem("Lights")) {
+            directionalLight.drawDebug();
+            int i = 0;
+            for (PointLight& light: pointLights) {
+                ImGui::PushID(i);
+                light.drawDebug();
+                ImGui::PopID();
+                i += 1;
+            }
+
+            for (SpotLight& light: spotLights) {
+                ImGui::PushID(i);
+                light.drawDebug();
+                ImGui::PopID();
+                i += 1;
+            }
+            ImGui::EndTabItem();
+        }
     }
 
-    for (SpotLight& light: spotLights) {
-        ImGui::PushID(i);
-        light.drawDebug();
-        ImGui::PopID();
-        i += 1;
-    }
-    ImGui::SeparatorText("Material");
-    ImGui::DragFloat("Shininess", &shininess, 1.0f, 2.0f, 128.0f);
+    ImGui::EndTabBar();
 }
 
 void Scene::clearMeshes() {

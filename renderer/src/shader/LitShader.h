@@ -1,5 +1,8 @@
 #pragma once
 #include "ShaderProgram.h"
+
+#include <glad/glad.h>
+
 #include "../light/DirectionalLight.h"
 #include "../light/PointLight.h"
 #include "../light/SpotLight.h"

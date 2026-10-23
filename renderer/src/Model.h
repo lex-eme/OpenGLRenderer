@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Material.h"
+#include "material/Material.h"
 #include "mesh/Mesh.h"
-#include "shader/ShaderProgram.h"
 #include "Transform.h"
 
 struct aiNode;
@@ -13,7 +12,7 @@ struct aiMaterial;
 class Model {
 public:
     Transform transform;
-    std::vector<Material> materials;
+    std::vector<Material*> materials;
 
 private:
     std::vector<Mesh> meshes;
@@ -22,7 +21,7 @@ public:
     Model() = default;
     explicit Model(const std::string& filePath);
 
-    void draw(ShaderProgram shader);
+    void draw();
     void drawDebug(int id);
 
 private:

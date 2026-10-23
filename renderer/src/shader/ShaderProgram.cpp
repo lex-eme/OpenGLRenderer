@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <glad/glad.h>
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -18,35 +19,42 @@ bool ShaderProgram::checkOpenGLError() {
 }
 
 void ShaderProgram::setActive() const {
-    glUseProgram(ID);
+    glUseProgram(id);
 }
 
 void ShaderProgram::setFloatUniform(const std::string& name, const float value) const {
     const GLint location = getUniformLocation(name);
-    glProgramUniform1f(ID, location, value);
+    glProgramUniform1f(id, location, value);
     checkOpenGLError();
-    printProgramLog(ID);
+    printProgramLog(id);
 }
 
 void ShaderProgram::setIntUniform(const std::string& name, const int value) const {
     const GLint location = getUniformLocation(name);
-    glProgramUniform1i(ID, location, value);
+    glProgramUniform1i(id, location, value);
     checkOpenGLError();
-    printProgramLog(ID);
+    printProgramLog(id);
 }
 
 void ShaderProgram::setVec3Uniform(const std::string& name, const glm::vec3& value) const {
     const GLint location = getUniformLocation(name);
-    glProgramUniform3fv(ID, location, 1, glm::value_ptr(value));
+    glProgramUniform3fv(id, location, 1, glm::value_ptr(value));
     checkOpenGLError();
-    printProgramLog(ID);
+    printProgramLog(id);
 }
 
 void ShaderProgram::setMat4Uniform(const std::string& name, const glm::mat4& value) const {
     const GLint location = getUniformLocation(name);
-    glProgramUniformMatrix4fv(ID, location, 1, GL_FALSE, glm::value_ptr(value));
+    glProgramUniformMatrix4fv(id, location, 1, GL_FALSE, glm::value_ptr(value));
     checkOpenGLError();
-    printProgramLog(ID);
+    printProgramLog(id);
+}
+
+void ShaderProgram::bindUniformBufferObject(const std::string& name, const unsigned int bindingPoint) const {
+    const unsigned int index = glGetUniformBlockIndex(id, name.c_str());
+    glUniformBlockBinding(id, index, bindingPoint);
+    checkOpenGLError();
+    printProgramLog(id);
 }
 
 ShaderProgram ShaderProgram::createShaderProgram(const std::string& vertexShaderSourcePath,
@@ -96,8 +104,8 @@ ShaderProgram ShaderProgram::createShaderProgram(const std::string& vertexShader
     return ShaderProgram(vfProgram);
 }
 
-ShaderProgram::ShaderProgram(const GLuint ID)
-    : ID(ID) {
+ShaderProgram::ShaderProgram(const unsigned int ID)
+    : id(ID) {
 }
 
 std::string ShaderProgram::readShaderSource(const std::string& filePath) {
@@ -121,7 +129,7 @@ std::string ShaderProgram::readShaderSource(const std::string& filePath) {
     return content;
 }
 
-void ShaderProgram::printShaderLog(GLuint shader) {
+void ShaderProgram::printShaderLog(const unsigned int shader) {
     int len = 0;
     int chWrittn = 0;
     char* log;
@@ -134,7 +142,7 @@ void ShaderProgram::printShaderLog(GLuint shader) {
     }
 }
 
-void ShaderProgram::printProgramLog(GLuint program) {
+void ShaderProgram::printProgramLog(const unsigned int program) {
     int len = 0;
     int chWrittn = 0;
     char* log;
@@ -147,8 +155,8 @@ void ShaderProgram::printProgramLog(GLuint program) {
     }
 }
 
-GLint ShaderProgram::getUniformLocation(const std::string& name) const {
-    const GLint location = glGetUniformLocation(ID, name.c_str());
+unsigned int ShaderProgram::getUniformLocation(const std::string& name) const {
+    const GLint location = glGetUniformLocation(id, name.c_str());
     if (location == -1) {
         std::cerr << "Shader uniform '" + name << "' does not exist" << std::endl;
     }

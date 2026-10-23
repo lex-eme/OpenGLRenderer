@@ -81,6 +81,15 @@ int main() {
     int nrAttributes;
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
     std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
+    glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &nrAttributes);
+    std::cout << "Maximum nr of vertex uniform supported: " << nrAttributes << std::endl;
+    glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &nrAttributes);
+    std::cout << "Maximum nr of fragment uniform supported: " << nrAttributes << std::endl;
+    glGetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS, &nrAttributes);
+    std::cout << "Maximum nr of uniform buffer bindings supported: " << nrAttributes << std::endl;
+    glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &nrAttributes);
+    std::cout << "Maximum uniform block size supported: " << nrAttributes << std::endl;
+
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();

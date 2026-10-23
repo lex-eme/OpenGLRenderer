@@ -12,10 +12,13 @@ Model::Model(const std::string& filePath) {
     loadModel(filePath);
 }
 
-void Model::draw(const ShaderProgram shader) {
-    shader.setMat4Uniform("model_matrix", transform.getMatrix());
+void Model::draw() {
+    for (const Material* material: materials) {
+        material->shader.setMat4Uniform("model", transform.getMatrix());
+    }
+
     for (Mesh& mesh: meshes) {
-        materials[mesh.materialIndex].bind();
+        materials[mesh.materialIndex]->bind();
         mesh.draw();
     }
 }

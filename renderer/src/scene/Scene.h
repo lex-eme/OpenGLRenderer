@@ -2,6 +2,7 @@
 #include "../AssetManager.h"
 #include "../Camera.h"
 #include "../Model.h"
+#include "../UniformBufferObject.h"
 #include "../light/DirectionalLight.h"
 #include "../shader/LitShader.h"
 #include "GLFW/glfw3.h"
@@ -10,9 +11,10 @@ constexpr float cameraSpeed = 10.0f;
 
 class Scene {
 protected:
-    Model model;
+    std::vector<Model> models;
     Camera camera;
     LitShader litShader;
+    UniformBufferObject cameraUbo{};
     GLFWwindow* window = nullptr;
     std::vector<Mesh> meshes;
     std::vector<Texture> textures;

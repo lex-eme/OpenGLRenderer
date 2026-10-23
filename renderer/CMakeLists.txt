@@ -33,15 +33,21 @@ set(SOURCES
         src/shader/LitShader.h
         src/light/SpotLight.cpp
         src/light/SpotLight.h
+        src/AssetManager.cpp
+        src/AssetManager.h
+        src/material/Material.cpp
+        src/material/Material.h
+        src/UniformBufferObject.cpp
+        src/UniformBufferObject.h
+        src/material/UnlitMaterial.cpp
+        src/material/UnlitMaterial.h
+        src/material/ColorMaterial.cpp
+        src/material/ColorMaterial.h
 )
 
 find_package(OpenGL REQUIRED)
 
-add_executable(App
-        src/AssetManager.cpp
-        src/AssetManager.h
-        src/Material.cpp
-        src/Material.h)
+add_executable(App)
 target_sources(App PRIVATE ${SOURCES})
 
 target_include_directories(App PRIVATE ../dependencies)

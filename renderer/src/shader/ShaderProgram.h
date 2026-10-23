@@ -1,13 +1,12 @@
 #pragma once
 #include <string>
 
-#include "glad/glad.h"
 #include "glm/glm.hpp"
 
 
 class ShaderProgram {
 public:
-    GLuint ID;
+    unsigned int id;
 
 public:
     ShaderProgram() = default;
@@ -17,16 +16,17 @@ public:
     void setIntUniform(const std::string& name, int value) const;
     void setVec3Uniform(const std::string& name, const glm::vec3& value) const;
     void setMat4Uniform(const std::string& name, const glm::mat4& value) const;
+    void bindUniformBufferObject(const std::string& name, unsigned int bindingPoint) const;
 
     static ShaderProgram createShaderProgram(const std::string& vertexShaderSourcePath,
                                              const std::string& fragmentShaderSourcePath);
 
 protected:
-    explicit ShaderProgram(GLuint ID);
+    explicit ShaderProgram(unsigned int ID);
 
-    GLint getUniformLocation(const std::string& name) const;
+    unsigned int getUniformLocation(const std::string& name) const;
     static bool checkOpenGLError();
     static std::string readShaderSource(const std::string& filePath);
-    static void printShaderLog(GLuint shader);
-    static void printProgramLog(GLuint program);
+    static void printShaderLog(unsigned int shader);
+    static void printProgramLog(unsigned int program);
 };
