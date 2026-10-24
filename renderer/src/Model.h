@@ -23,7 +23,7 @@ public:
     explicit Model(const std::string& filePath, bool flipUvs = true);
 
     void draw();
-    void drawDebug(int id);
+    void drawDebug();
 
 private:
     void loadModel(const std::string& path, bool flipUvs = true);

@@ -14,3 +14,6 @@ void UnlitMaterial::create(const ShaderProgram inShader, const Texture inDiffuse
     shader = inShader;
     diffuse = inDiffuse;
 }
+
+void UnlitMaterial::drawDebug() {
+}

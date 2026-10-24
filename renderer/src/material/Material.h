@@ -10,5 +10,6 @@ public:
     Material() = default;
     virtual ~Material() = default;
 
-    virtual void bind() const;
+    virtual void bind() const = 0;
+    virtual void drawDebug() = 0;
 };

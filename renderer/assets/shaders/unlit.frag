@@ -13,7 +13,6 @@ uniform mat4 view_matrix;
 uniform mat4 proj_matrix;
 
 uniform Material material;
-uniform vec3 viewPos;
 
 void main(void) {
     color = texture(material.texture_diffuse1, textureCoord);

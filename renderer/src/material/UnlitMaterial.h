@@ -12,4 +12,5 @@ public:
 
     void bind() const override;
     void create(ShaderProgram inShader, Texture inDiffuse);
+    void drawDebug() override;
 };

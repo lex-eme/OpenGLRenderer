@@ -1,5 +1,8 @@
 #include "Scene.h"
 
+#include <ranges>
+
+#include "../material/BatteryMaterial.h"
 #include "../material/ColorMaterial.h"
 #include "../material/Material.h"
 #include "../material/UnlitMaterial.h"
@@ -24,6 +27,7 @@ void Scene::load(GLFWwindow* inWindow, const float width, const float height) {
 
     assetManager.addTexture("backpack_diffuse", "assets/models/backpack/diffuse.jpg");
     assetManager.addTexture("battery_diffuse", "assets/models/battery/Battery_Albedo.tga");
+    assetManager.addTexture("battery_mre", "assets/models/battery/Battery_MetalRoughEmissive.tga");
 
     const ShaderProgram unlitShader = ShaderProgram::createShaderProgram(
         "assets/shaders/unlit.vert", "assets/shaders/unlit.frag");
@@ -34,8 +38,10 @@ void Scene::load(GLFWwindow* inWindow, const float width, const float height) {
     backpackMaterial->name = "M_Backpack";
     assetManager.addMaterial(backpackMaterial->name, backpackMaterial);
 
-    auto* batteryMaterial = new UnlitMaterial();
-    batteryMaterial->create(unlitShader, assetManager.getTexture("battery_diffuse"));
+    const ShaderProgram batteryShader = ShaderProgram::createShaderProgram(
+        "assets/shaders/unlit.vert", "assets/shaders/battery.frag");
+    auto* batteryMaterial = new BatteryMaterial();
+    batteryMaterial->create(batteryShader, assetManager.getTexture("battery_diffuse"), assetManager.getTexture("battery_mre"));
     batteryMaterial->name = "M_Battery";
     assetManager.addMaterial(batteryMaterial->name, batteryMaterial);
 
@@ -221,7 +227,20 @@ void Scene::drawDebug() {
         if (ImGui::BeginTabItem("Models")) {
             int i = 0;
             for (Model& model: models) {
-                model.drawDebug(i);
+                ImGui::PushID(i);
+                model.drawDebug();
+                ImGui::PopID();
+                i += 1;
+            }
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Materials")) {
+            int i = 0;
+            for (Material* material: assetManager.getMaterialMap() | std::views::values) {
+                ImGui::PushID(i);
+                material->drawDebug();
+                ImGui::PopID();
                 i += 1;
             }
             ImGui::EndTabItem();

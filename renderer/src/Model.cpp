@@ -26,8 +26,7 @@ void Model::draw() {
     }
 }
 
-void Model::drawDebug(const int id) {
-    ImGui::PushID(id);
+void Model::drawDebug() {
     if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_None)) {
         ImGui::SeparatorText("Transform");
         transform.drawDebug();
@@ -102,7 +101,6 @@ void Model::drawDebug(const int id) {
         }
         ImGui::EndChild();
     }
-    ImGui::PopID();
 }
 
 void Model::loadModel(const std::string& path, const bool flipUvs) {

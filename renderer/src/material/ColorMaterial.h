@@ -10,4 +10,5 @@ public:
 
     void bind() const override;
     void create(ShaderProgram inShader, glm::vec3 inColor);
+    void drawDebug() override;
 };
