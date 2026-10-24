@@ -28,7 +28,7 @@ void BatteryMaterial::create(const ShaderProgram inShader, const Texture inAlbed
 void BatteryMaterial::drawDebug() {
     if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_None)) {
         ImGui::Text("Name: %s", name.c_str());
-        ImGui::DragFloat("Charge level", &charge, 0.01f, 0.0f, 1.0f);
+        ImGui::SliderFloat("Charge level", &charge, 0.0f, 1.0f);
         ImGui::ColorEdit3("Charge color", glm::value_ptr(chargeColor));
     }
 }
