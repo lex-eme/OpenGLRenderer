@@ -10,7 +10,6 @@ Image::~Image() {
 }
 
 bool Image::loadFromFile(const std::string& path) {
-    stbi_set_flip_vertically_on_load(true);
     data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
 
     if (data) {

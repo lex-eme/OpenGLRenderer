@@ -31,9 +31,13 @@ void Scene::load(GLFWwindow* inWindow, const float width, const float height) {
 
     auto* backpackMaterial = new UnlitMaterial();
     backpackMaterial->create(unlitShader, assetManager.getTexture("backpack_diffuse"));
+    backpackMaterial->name = "M_Backpack";
+    assetManager.addMaterial(backpackMaterial->name, backpackMaterial);
 
     auto* batteryMaterial = new UnlitMaterial();
     batteryMaterial->create(unlitShader, assetManager.getTexture("battery_diffuse"));
+    batteryMaterial->name = "M_Battery";
+    assetManager.addMaterial(batteryMaterial->name, batteryMaterial);
 
     const ShaderProgram colorShader = ShaderProgram::createShaderProgram(
         "assets/shaders/singleColor.vert", "assets/shaders/singleColor.frag");
@@ -41,15 +45,18 @@ void Scene::load(GLFWwindow* inWindow, const float width, const float height) {
 
     auto* colorMaterial = new ColorMaterial();
     colorMaterial->create(colorShader, glm::vec3(0.22f, 0.03f, 0.49f));
+    colorMaterial->name = "M_PurpleColor";
+    assetManager.addMaterial(colorMaterial->name, colorMaterial);
 
     auto* colorMaterial2 = new ColorMaterial();
     colorMaterial2->create(colorShader, glm::vec3(0.12f, 0.73f, 0.69f));
+    colorMaterial2->name = "M_BlueColor";
+    assetManager.addMaterial(colorMaterial2->name, colorMaterial2);
 
-    models.emplace_back("assets/models/backpack/backpack.obj");
+    models.emplace_back("assets/models/backpack/backpack.obj", false);
     for (int i = 0; i < models[0].materials.size(); i += 1) {
         models[0].materials[i] = backpackMaterial;
     }
-
 
     models.emplace_back("assets/models/battery/battery.fbx");
     models[1].transform.setPosition({3.0f, 0.0f, 0.0f});
@@ -187,12 +194,11 @@ void Scene::update(const float deltaTime) {
 void Scene::draw() {
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-    //program.setFloatUniform("material.shininess", shininess);
-
     // litShader.setDirectionalLight(directionalLight);
     // litShader.setPointLights(pointLights);
     // litShader.setSpotLights(spotLights);
     // litShader.setVec3Uniform("viewPos", camera.position);
+
     cameraUbo.setProjection(camera.projectionMatrix);
     cameraUbo.setView(camera.viewMatrix);
 

@@ -1,15 +1,18 @@
 #include "Model.h"
 
 #include <iostream>
+#include <map>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "ImGuiUtils.h"
 #include "imgui/imgui.h"
 #include "glm/gtc/type_ptr.inl"
+#include "scene/Scene.h"
 
-Model::Model(const std::string& filePath) {
-    loadModel(filePath);
+Model::Model(const std::string& filePath, const bool flipUvs) {
+    loadModel(filePath, flipUvs);
 }
 
 void Model::draw() {
@@ -26,29 +29,99 @@ void Model::draw() {
 void Model::drawDebug(const int id) {
     ImGui::PushID(id);
     if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_None)) {
+        ImGui::SeparatorText("Transform");
         transform.drawDebug();
+
+        ImGui::SeparatorText("Materials");
+        const float materialTableHeight = ImGuiUtils::TableHeight(static_cast<int>(materials.size()), 4);
+        if (ImGui::BeginChild("MaterialTableFrame", ImVec2(0, materialTableHeight), ImGuiChildFlags_Borders)) {
+            if (ImGui::BeginTable("MaterialTable", 3,
+                                  ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ScrollY |
+                                  ImGuiTableFlags_SizingFixedFit)) {
+                ImGui::TableSetupScrollFreeze(0, 1);
+                ImGui::TableSetupColumn("Index");
+                ImGui::TableSetupColumn("Slot");
+                ImGui::TableSetupColumn("Material");
+                ImGui::TableHeadersRow();
+
+                for (int i = 0; i < materials.size(); i++) {
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::Text("%d", i);
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::Text("%s", materialNames[i].c_str());
+                    ImGui::TableSetColumnIndex(2);
+                    ImGui::PushID(i);
+                    if (ImGui::BeginCombo("", materials[i]->name.c_str(),
+                                          ImGuiComboFlags_WidthFitPreview | ImGuiComboFlags_NoArrowButton)) {
+                        for (auto& [name, material]: Scene::assetManager.getMaterialMap()) {
+                            const bool isSelected = materials[i] == material;
+                            if (ImGui::Selectable(name.c_str(), isSelected)) {
+                                materials[i] = material;
+                            }
+                            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                            if (isSelected) {
+                                ImGui::SetItemDefaultFocus();
+                            }
+                        }
+                        ImGui::EndCombo();
+                    }
+                    ImGui::PopID();
+                }
+                ImGui::EndTable();
+            }
+        }
+        ImGui::EndChild();
+
+        ImGui::SeparatorText("Mesh list");
+        const float meshesTableHeight = ImGuiUtils::TableHeight(static_cast<int>(meshes.size()), 6);
+        if (ImGui::BeginChild("MeshTableFrame", ImVec2(0, meshesTableHeight), ImGuiChildFlags_Borders)) {
+            if (ImGui::BeginTable("MeshTable", 4,
+                                  ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ScrollY)) {
+                ImGui::TableSetupScrollFreeze(0, 1);
+                ImGui::TableSetupColumn("Index");
+                ImGui::TableSetupColumn("Material");
+                ImGui::TableSetupColumn("Vertices");
+                ImGui::TableSetupColumn("Indices");
+                ImGui::TableHeadersRow();
+
+                for (int i = 0; i < meshes.size(); i++) {
+                    const Mesh& mesh = meshes[i];
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::Text("%d", i);
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::Text("%d", mesh.materialIndex);
+                    ImGui::TableSetColumnIndex(2);
+                    ImGui::Text("%d", mesh.vertexCount);
+                    ImGui::TableSetColumnIndex(3);
+                    ImGui::Text("%d", mesh.indicesCount);
+                }
+                ImGui::EndTable();
+            }
+        }
+        ImGui::EndChild();
     }
     ImGui::PopID();
 }
 
-void Model::loadModel(const std::string& path) {
+void Model::loadModel(const std::string& path, const bool flipUvs) {
+    unsigned int flags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices;
+    flags |= flipUvs ? aiProcess_FlipUVs : 0;
+
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(
-        path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices);
+    const aiScene* scene = importer.ReadFile(path, flags);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         std::cerr << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
         return;
     }
-    std::cout << "Material count: " << scene->mNumMaterials << std::endl;
 
     for (int i = 0; i < scene->mNumMaterials; i += 1) {
         const aiMaterial* material = scene->mMaterials[i];
-        std::cout << "Material name: " << material->GetName().C_Str() << std::endl;
         materials.emplace_back();
+        materialNames.emplace_back(material->GetName().C_Str());
     }
-
-    std::cout << "Model mesh count: " << scene->mNumMeshes << std::endl;
 
     processNode(scene->mRootNode, scene);
 }

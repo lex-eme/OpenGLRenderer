@@ -36,6 +36,7 @@ void Mesh::draw() const {
 }
 
 void Mesh::setupMesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices) {
+    vertexCount = vertices.size();
     indicesCount = indices.size();
 
     glGenVertexArrays(1, &vao);

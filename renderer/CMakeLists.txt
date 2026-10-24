@@ -43,6 +43,8 @@ set(SOURCES
         src/material/UnlitMaterial.h
         src/material/ColorMaterial.cpp
         src/material/ColorMaterial.h
+        src/ImGuiUtils.cpp
+        src/ImGuiUtils.h
 )
 
 find_package(OpenGL REQUIRED)

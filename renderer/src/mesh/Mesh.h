@@ -13,7 +13,8 @@ public:
     unsigned int vbo{};
     unsigned int ebo{};
     int indicesCount{};
-    unsigned int materialIndex;
+    unsigned int materialIndex{};
+    unsigned int vertexCount{};
 
 public:
     Mesh() = default;

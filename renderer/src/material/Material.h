@@ -4,6 +4,7 @@
 
 class Material {
 public:
+    std::string name{};
     ShaderProgram shader{};
 
     Material() = default;

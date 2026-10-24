@@ -9,7 +9,10 @@
 
 constexpr float cameraSpeed = 10.0f;
 
-class Scene {
+class Scene final {
+public:
+    inline static AssetManager assetManager;
+
 protected:
     std::vector<Model> models;
     Camera camera;
@@ -18,7 +21,6 @@ protected:
     GLFWwindow* window = nullptr;
     std::vector<Mesh> meshes;
     std::vector<Texture> textures;
-    AssetManager assetManager;
 
 private:
     glm::vec3 pointLightPositions[4] = {
@@ -31,8 +33,6 @@ private:
     DirectionalLight directionalLight;
     std::vector<PointLight> pointLights;
     std::vector<SpotLight> spotLights;
-
-    float shininess = 32.0f;
 
     glm::vec2 lastMousePos{};
     bool moveForward = false;

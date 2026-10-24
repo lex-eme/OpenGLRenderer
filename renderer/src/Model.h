@@ -13,19 +13,20 @@ class Model {
 public:
     Transform transform;
     std::vector<Material*> materials;
+    std::vector<std::string> materialNames;
 
 private:
     std::vector<Mesh> meshes;
 
 public:
     Model() = default;
-    explicit Model(const std::string& filePath);
+    explicit Model(const std::string& filePath, bool flipUvs = true);
 
     void draw();
     void drawDebug(int id);
 
 private:
-    void loadModel(const std::string& path);
+    void loadModel(const std::string& path, bool flipUvs = true);
     void processNode(const aiNode* node, const aiScene* scene);
     static Mesh processMesh(const aiMesh* mesh);
 };
