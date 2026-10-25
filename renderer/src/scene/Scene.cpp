@@ -28,6 +28,7 @@ void Scene::load(GLFWwindow* inWindow, const float width, const float height) {
     assetManager.addTexture("backpack_diffuse", "assets/models/backpack/diffuse.jpg");
     assetManager.addTexture("battery_diffuse", "assets/models/battery/Battery_Albedo.tga");
     assetManager.addTexture("battery_mre", "assets/models/battery/Battery_MetalRoughEmissive.tga");
+    assetManager.addTexture("grass", "assets/textures/grass.png");
 
     const ShaderProgram unlitShader = ShaderProgram::createShaderProgram(
         "assets/shaders/unlit.vert", "assets/shaders/unlit.frag");
@@ -70,7 +71,6 @@ void Scene::load(GLFWwindow* inWindow, const float width, const float height) {
         models[1].materials[i] = batteryMaterial;
     }
 
-
     models.emplace_back("assets/models/Test.fbx");
     models[2].transform.setPosition({-3.0f, 0.0f, 0.0f});
     models[2].transform.setScale({0.01f, 0.01f, 0.01f});
@@ -83,6 +83,25 @@ void Scene::load(GLFWwindow* inWindow, const float width, const float height) {
 
     for (int i = 0; i < 1; i += 1) {
         spotLights.emplace_back();
+    }
+
+    std::vector<glm::vec3> vegetation;
+    vegetation.emplace_back(-1.5f,  0.0f, -0.48f);
+    vegetation.emplace_back( 1.5f,  0.0f,  0.51f);
+    vegetation.emplace_back( 0.0f,  0.0f,  0.7f);
+    vegetation.emplace_back(-0.3f,  0.0f, -2.3f);
+    vegetation.emplace_back( 0.5f,  0.0f, -0.6f);
+
+    const ShaderProgram alphaClipShader = ShaderProgram::createShaderProgram("assets/shaders/unlit.vert", "assets/shaders/alphaClip.frag");
+    UnlitMaterial* grassMaterial = new UnlitMaterial();
+    grassMaterial->create(alphaClipShader, assetManager.getTexture("grass"));
+    grassMaterial->name = "M_Grass";
+    assetManager.addMaterial(grassMaterial->name, grassMaterial);
+
+    for (glm::vec3& position : vegetation) {
+        models.emplace_back("assets/models/Plane.fbx");
+        models[models.size() - 1].transform.setPosition(position);
+        models[models.size() - 1].materials[0] = grassMaterial;
     }
 
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
