@@ -12,9 +12,9 @@
 
 int width = 1600, height = 1050;
 Scene scene;
+bool mouseIsInViewport = false;
 
 void framebuffer_size_callback(GLFWwindow* window, const int newWidth, const int newHeight) {
-    scene.windowResized(newWidth, newHeight);
 }
 
 void keyboard_callback(GLFWwindow* window, const int key, int scancode, const int action, int mods) {
@@ -22,22 +22,30 @@ void keyboard_callback(GLFWwindow* window, const int key, int scancode, const in
         glfwSetWindowShouldClose(window, true);
     }
 
-    if (action == GLFW_PRESS) {
-        scene.keyPressed(key);
-    }
-
     if (action == GLFW_RELEASE) {
         scene.keyReleased(key);
+    }
+
+    if (!mouseIsInViewport) {
+        return;
+    }
+
+    if (action == GLFW_PRESS) {
+        scene.keyPressed(key);
     }
 }
 
 void mouseButton_callback(GLFWwindow* window, const int button, const int action, int mods) {
-    if (action == GLFW_PRESS) {
-        scene.mouseButtonPressed(button);
-    }
-
     if (action == GLFW_RELEASE) {
         scene.mouseButtonReleased(button);
+    }
+
+    if (!mouseIsInViewport) {
+        return;
+    }
+
+    if (action == GLFW_PRESS) {
+        scene.mouseButtonPressed(button);
     }
 }
 
@@ -123,8 +131,13 @@ int main() {
     const char* glsl_version = "#version 410";
     ImGui_ImplOpenGL3_Init(glsl_version);
 
-    scene.load(window, static_cast<float>(width), static_cast<float>(height));
+#ifdef __APPLE__
+    width *= 2;
+    height *= 2;
+#endif
+    scene.load(window, width, height);
 
+    ImVec2 viewportSize(300, 300);
     double currentTime = glfwGetTime();
     float deltaTime = 0.0f;
 
@@ -140,15 +153,26 @@ int main() {
         }
 
         scene.update(deltaTime);
-        scene.draw();
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        ImGui::DockSpaceOverViewport(0, nullptr, ImGuiDockNodeFlags_PassthruCentralNode);
+        ImGui::DockSpaceOverViewport();
 
         ImGui::ShowDemoWindow();
-        ImGui::Begin("Configuration", nullptr);
+        ImGui::Begin("Game", nullptr);
+        mouseIsInViewport = ImGui::IsWindowHovered();
+
+        if (ImVec2 contentRegion = ImGui::GetContentRegionAvail();
+            viewportSize.x != contentRegion.x || viewportSize.y != contentRegion.y) {
+            viewportSize = contentRegion;
+            scene.windowResized(static_cast<int>(contentRegion.x), static_cast<int>(contentRegion.y));
+        }
+
+        scene.draw();
+        ImGui::Image(scene.frameBuffer.texture, viewportSize, ImVec2(0, 1), ImVec2(1, 0));
+        ImGui::End();
+        ImGui::Begin("Properties", nullptr);
         scene.drawDebug();
         ImGui::End();
         // Rendering

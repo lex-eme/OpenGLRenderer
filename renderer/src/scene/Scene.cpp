@@ -1,5 +1,6 @@
 #include "Scene.h"
 
+#include <iostream>
 #include <ranges>
 
 #include "../material/BatteryMaterial.h"
@@ -18,10 +19,11 @@ Scene::~Scene() {
     clearTextures();
 }
 
-void Scene::load(GLFWwindow* inWindow, const float width, const float height) {
+void Scene::load(GLFWwindow* inWindow, const int width, const int height) {
     window = inWindow;
     litShader = LitShader::createShaderProgram("assets/shaders/lit.vert", "assets/shaders/lit.frag");
-    const float aspect = width / height;
+    const float aspect = static_cast<float>(width) / static_cast<float>(height);
+    glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
     camera.init(aspect);
     cameraUbo.create();
 
@@ -29,6 +31,10 @@ void Scene::load(GLFWwindow* inWindow, const float width, const float height) {
     assetManager.addTexture("battery_diffuse", "assets/models/battery/Battery_Albedo.tga");
     assetManager.addTexture("battery_mre", "assets/models/battery/Battery_MetalRoughEmissive.tga");
     assetManager.addTexture("grass", "assets/textures/grass.png");
+
+    screenShader = ShaderProgram::createShaderProgram("assets/shaders/postProcess.vert",
+                                                      "assets/shaders/postProcess.frag");
+    screenShader.setIntUniform("screenTexture", 0);
 
     const ShaderProgram unlitShader = ShaderProgram::createShaderProgram(
         "assets/shaders/unlit.vert", "assets/shaders/unlit.frag");
@@ -41,8 +47,10 @@ void Scene::load(GLFWwindow* inWindow, const float width, const float height) {
 
     const ShaderProgram batteryShader = ShaderProgram::createShaderProgram(
         "assets/shaders/unlit.vert", "assets/shaders/battery.frag");
+    batteryShader.bindUniformBufferObject("Matrices", cameraUbo.bindingPoint);
     auto* batteryMaterial = new BatteryMaterial();
-    batteryMaterial->create(batteryShader, assetManager.getTexture("battery_diffuse"), assetManager.getTexture("battery_mre"));
+    batteryMaterial->create(batteryShader, assetManager.getTexture("battery_diffuse"),
+                            assetManager.getTexture("battery_mre"));
     batteryMaterial->name = "M_Battery";
     assetManager.addMaterial(batteryMaterial->name, batteryMaterial);
 
@@ -86,23 +94,27 @@ void Scene::load(GLFWwindow* inWindow, const float width, const float height) {
     }
 
     std::vector<glm::vec3> vegetation;
-    vegetation.emplace_back(-1.5f,  0.0f, -0.48f);
-    vegetation.emplace_back( 1.5f,  0.0f,  0.51f);
-    vegetation.emplace_back( 0.0f,  0.0f,  0.7f);
-    vegetation.emplace_back(-0.3f,  0.0f, -2.3f);
-    vegetation.emplace_back( 0.5f,  0.0f, -0.6f);
+    vegetation.emplace_back(-1.5f, 0.0f, -0.48f);
+    vegetation.emplace_back(1.5f, 0.0f, 0.51f);
+    vegetation.emplace_back(0.0f, 0.0f, 0.7f);
+    vegetation.emplace_back(-0.3f, 0.0f, -2.3f);
+    vegetation.emplace_back(0.5f, 0.0f, -0.6f);
 
-    const ShaderProgram alphaClipShader = ShaderProgram::createShaderProgram("assets/shaders/unlit.vert", "assets/shaders/alphaClip.frag");
+    const ShaderProgram alphaClipShader = ShaderProgram::createShaderProgram(
+        "assets/shaders/unlit.vert", "assets/shaders/alphaClip.frag");
+    alphaClipShader.bindUniformBufferObject("Matrices", cameraUbo.bindingPoint);
     UnlitMaterial* grassMaterial = new UnlitMaterial();
     grassMaterial->create(alphaClipShader, assetManager.getTexture("grass"));
     grassMaterial->name = "M_Grass";
     assetManager.addMaterial(grassMaterial->name, grassMaterial);
 
-    for (glm::vec3& position : vegetation) {
+    for (glm::vec3& position: vegetation) {
         models.emplace_back("assets/models/Plane.fbx");
         models[models.size() - 1].transform.setPosition(position);
         models[models.size() - 1].materials[0] = grassMaterial;
     }
+
+    frameBuffer.create(width, height);
 
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 }
@@ -172,10 +184,11 @@ void Scene::mouseButtonReleased(const int button) {
     }
 }
 
-void Scene::windowResized(int width, int height) {
+void Scene::windowResized(const int width, const int height) {
     const float aspect = static_cast<float>(width) / static_cast<float>(height);
     camera.setAspectRatio(aspect);
     glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
+    frameBuffer.resize(width, height);
 }
 
 void Scene::update(const float deltaTime) {
@@ -217,8 +230,6 @@ void Scene::update(const float deltaTime) {
 }
 
 void Scene::draw() {
-    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
     // litShader.setDirectionalLight(directionalLight);
     // litShader.setPointLights(pointLights);
     // litShader.setSpotLights(spotLights);
@@ -227,6 +238,9 @@ void Scene::draw() {
     cameraUbo.setProjection(camera.projectionMatrix);
     cameraUbo.setView(camera.viewMatrix);
 
+    frameBuffer.bind();
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -234,12 +248,16 @@ void Scene::draw() {
     for (Model& model: models) {
         model.draw();
     }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Scene::drawDebug() {
     if (ImGui::BeginTabBar("TheTabBar")) {
         if (ImGui::BeginTabItem("Camera")) {
             camera.drawDebug();
+
+            ImGui::DragFloat("Offset", &offset, 0.0001f, 0, 0, "%6f");
             ImGui::EndTabItem();
         }
 

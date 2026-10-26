@@ -47,6 +47,8 @@ set(SOURCES
         src/material/BatteryMaterial.h
         src/ImGuiUtils.cpp
         src/ImGuiUtils.h
+        src/FrameBuffer.cpp
+        src/FrameBuffer.h
 )
 
 find_package(OpenGL REQUIRED)

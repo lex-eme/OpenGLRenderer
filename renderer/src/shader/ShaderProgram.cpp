@@ -155,7 +155,7 @@ void ShaderProgram::printProgramLog(const unsigned int program) {
     }
 }
 
-unsigned int ShaderProgram::getUniformLocation(const std::string& name) const {
+int ShaderProgram::getUniformLocation(const std::string& name) const {
     const GLint location = glGetUniformLocation(id, name.c_str());
     if (location == -1) {
         std::cerr << "Shader uniform '" + name << "' does not exist" << std::endl;

@@ -24,7 +24,7 @@ public:
 protected:
     explicit ShaderProgram(unsigned int ID);
 
-    unsigned int getUniformLocation(const std::string& name) const;
+    [[nodiscard]] int getUniformLocation(const std::string& name) const;
     static bool checkOpenGLError();
     static std::string readShaderSource(const std::string& filePath);
     static void printShaderLog(unsigned int shader);
