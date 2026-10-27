@@ -5,6 +5,7 @@
 #include "../Model.h"
 #include "../UniformBufferObject.h"
 #include "../light/DirectionalLight.h"
+#include "../mesh/Grid.h"
 #include "../shader/LitShader.h"
 #include "GLFW/glfw3.h"
 
@@ -19,6 +20,7 @@ protected:
     std::vector<Model> models;
     Camera camera;
     LitShader litShader;
+    Grid grid;
     UniformBufferObject cameraUbo{};
     ShaderProgram screenShader{};
     GLFWwindow* window = nullptr;

@@ -49,6 +49,10 @@ set(SOURCES
         src/ImGuiUtils.h
         src/FrameBuffer.cpp
         src/FrameBuffer.h
+        src/mesh/Grid.cpp
+        src/mesh/Grid.h
+        src/material/GridMaterial.cpp
+        src/material/GridMaterial.h
 )
 
 find_package(OpenGL REQUIRED)

@@ -5,6 +5,7 @@
 
 #include "../material/BatteryMaterial.h"
 #include "../material/ColorMaterial.h"
+#include "../material/GridMaterial.h"
 #include "../material/Material.h"
 #include "../material/UnlitMaterial.h"
 #include "imgui/imgui.h"
@@ -38,6 +39,10 @@ void Scene::load(GLFWwindow* inWindow, const int width, const int height) {
 
     const ShaderProgram unlitShader = ShaderProgram::createShaderProgram(
         "assets/shaders/unlit.vert", "assets/shaders/unlit.frag");
+    unlitShader.bindUniformBufferObject("Matrices", cameraUbo.bindingPoint);
+
+    const ShaderProgram gridShader = ShaderProgram::createShaderProgram(
+        "assets/shaders/grid.vert", "assets/shaders/grid.frag");
     unlitShader.bindUniformBufferObject("Matrices", cameraUbo.bindingPoint);
 
     auto* backpackMaterial = new UnlitMaterial();
@@ -115,6 +120,13 @@ void Scene::load(GLFWwindow* inWindow, const int width, const int height) {
     }
 
     frameBuffer.create(width, height);
+
+    auto* gridMaterial = new GridMaterial(&camera);
+    gridMaterial->create(gridShader);
+    gridMaterial->name = "M_Grid";
+    assetManager.addMaterial(gridMaterial->name, gridMaterial);
+
+    grid.create(gridMaterial);
 
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 }
@@ -248,6 +260,8 @@ void Scene::draw() {
     for (Model& model: models) {
         model.draw();
     }
+
+    grid.draw();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
