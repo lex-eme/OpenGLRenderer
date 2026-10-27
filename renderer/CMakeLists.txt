@@ -7,10 +7,6 @@ set(SOURCES
         src/Transform.h
         src/mesh/Mesh.cpp
         src/mesh/Mesh.h
-        src/mesh/Sphere.cpp
-        src/mesh/Sphere.h
-        src/mesh/Torus.cpp
-        src/mesh/Torus.h
         src/Model.cpp
         src/Model.h
         src/Image.cpp
@@ -53,6 +49,8 @@ set(SOURCES
         src/mesh/Grid.h
         src/material/GridMaterial.cpp
         src/material/GridMaterial.h
+        src/pch.cpp
+        src/pch.h
 )
 
 find_package(OpenGL REQUIRED)

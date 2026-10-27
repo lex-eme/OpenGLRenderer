@@ -1,9 +1,9 @@
+#include "pch.h"
+
 #include "Texture.h"
 
-#include <iostream>
-
 #include "Image.h"
-#include "glad/glad.h"
+
 
 bool Texture::loadFromFile(const std::string& inPath) {
     if (Image image; image.loadFromFile(inPath)) {

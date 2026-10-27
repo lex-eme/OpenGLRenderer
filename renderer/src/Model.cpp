@@ -1,15 +1,10 @@
+#include "pch.h"
+
 #include "Model.h"
 
-#include <iostream>
-#include <map>
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
 #include "ImGuiUtils.h"
-#include "imgui/imgui.h"
-#include "glm/gtc/type_ptr.inl"
 #include "scene/Scene.h"
+
 
 Model::Model(const std::string& filePath, const bool flipUvs) {
     loadModel(filePath, flipUvs);

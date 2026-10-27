@@ -1,7 +1,6 @@
-#include "FrameBuffer.h"
+#include "pch.h"
 
-#include <iostream>
-#include <glad/glad.h>
+#include "FrameBuffer.h"
 
 
 void FrameBuffer::create(const int width, const int height) {

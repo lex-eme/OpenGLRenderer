@@ -1,7 +1,6 @@
-#include "Grid.h"
+#include "../pch.h"
 
-#include <iostream>
-#include <glad/glad.h>
+#include "Grid.h"
 
 
 void Grid::create(Camera* camera, const UniformBufferObject ubo) {

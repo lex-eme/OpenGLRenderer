@@ -1,8 +1,7 @@
+#include "../pch.h"
+
 #include "Mesh.h"
 
-#include <glad/glad.h>
-#include <fstream>
-#include <map>
 
 Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const unsigned int index) {
     setupMesh(vertices, indices);

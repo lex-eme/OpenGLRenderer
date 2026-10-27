@@ -1,7 +1,7 @@
+#include "../pch.h"
+
 #include "PointLight.h"
 
-#include "imgui/imgui.h"
-#include "glm/gtc/type_ptr.inl"
 
 void PointLight::drawDebug() {
     if (ImGui::CollapsingHeader("Point light", ImGuiTreeNodeFlags_None)) {

@@ -1,7 +1,7 @@
+#include "../pch.h"
+
 #include "SpotLight.h"
 
-#include "imgui/imgui.h"
-#include "glm/gtc/type_ptr.inl"
 
 void SpotLight::drawDebug() {
     if (ImGui::CollapsingHeader(" Spotlight", ImGuiTreeNodeFlags_None)) {

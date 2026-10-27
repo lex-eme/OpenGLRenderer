@@ -1,9 +1,9 @@
+#include "pch.h"
+
 #include "AssetManager.h"
 
-#include <iostream>
-#include <ranges>
-
 #include "material/Material.h"
+
 
 AssetManager::~AssetManager() {
     for (auto& texture: textures | std::views::values) {

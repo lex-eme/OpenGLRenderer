@@ -1,8 +1,7 @@
+#include "pch.h"
+
 #include "Camera.h"
 
-#include "imgui/imgui.h"
-#include "glm/ext/matrix_clip_space.hpp"
-#include "glm/ext/matrix_transform.hpp"
 
 void Camera::init(const float ratio) {
     setAspectRatio(ratio);

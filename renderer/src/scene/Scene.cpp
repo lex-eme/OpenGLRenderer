@@ -1,14 +1,12 @@
-#include "Scene.h"
+#include "../pch.h"
 
-#include <iostream>
-#include <ranges>
+#include "Scene.h"
 
 #include "../material/BatteryMaterial.h"
 #include "../material/ColorMaterial.h"
 #include "../material/Material.h"
 #include "../material/UnlitMaterial.h"
-#include "imgui/imgui.h"
-#include "glm/gtc/type_ptr.inl"
+
 
 Scene::Scene()
     : litShader() {

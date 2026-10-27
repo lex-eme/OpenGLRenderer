@@ -1,8 +1,7 @@
+#include "pch.h"
+
 #include "Transform.h"
 
-#include "glm/ext/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.inl"
-#include "imgui/imgui.h"
 
 Transform::Transform() {
     computeMatrix();

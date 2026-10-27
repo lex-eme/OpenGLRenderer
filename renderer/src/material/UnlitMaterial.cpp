@@ -1,6 +1,6 @@
-#include "UnlitMaterial.h"
+#include "../pch.h"
 
-#include <glad/glad.h>
+#include "UnlitMaterial.h"
 
 
 void UnlitMaterial::bind() const {

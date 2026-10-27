@@ -1,9 +1,7 @@
+#include "../pch.h"
+
 #include "BatteryMaterial.h"
 
-#include <glad/glad.h>
-
-#include "imgui/imgui.h"
-#include "glm/gtc/type_ptr.inl"
 
 void BatteryMaterial::bind() const {
     Material::bind();

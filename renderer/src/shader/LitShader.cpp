@@ -1,7 +1,7 @@
+#include "../pch.h"
+
 #include "LitShader.h"
 
-#include <format>
-#include <iostream>
 
 void LitShader::setDirectionalLight(const DirectionalLight& dirLight) const {
     setVec3Uniform("dirLight.direction", dirLight.direction);
@@ -90,6 +90,6 @@ LitShader LitShader::createShaderProgram(const std::string& vertexShaderSourcePa
     return LitShader(vfProgram);
 }
 
-LitShader::LitShader(const GLuint ID)
+LitShader::LitShader(const unsigned int ID)
     : ShaderProgram(ID) {
 }

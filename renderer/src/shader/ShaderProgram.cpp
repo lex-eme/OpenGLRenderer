@@ -1,11 +1,7 @@
+#include "../pch.h"
+
 #include "ShaderProgram.h"
 
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <glad/glad.h>
-
-#include <glm/gtc/type_ptr.hpp>
 
 bool ShaderProgram::checkOpenGLError() {
     bool foundError = false;

@@ -1,7 +1,7 @@
+#include "../pch.h"
+
 #include "ColorMaterial.h"
 
-#include "imgui/imgui.h"
-#include "glm/gtc/type_ptr.inl"
 
 void ColorMaterial::bind() const {
     Material::bind();

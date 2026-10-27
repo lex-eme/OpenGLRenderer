@@ -1,7 +1,6 @@
-#include "DirectionalLight.h"
+#include "../pch.h"
 
-#include "imgui/imgui.h"
-#include "glm/gtc/type_ptr.inl"
+#include "DirectionalLight.h"
 
 
 void DirectionalLight::drawDebug() {

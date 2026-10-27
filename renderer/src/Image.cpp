@@ -1,9 +1,10 @@
-#include "Image.h"
+#include "pch.h"
 
-#include <iostream>
+#include "Image.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
 
 Image::~Image() {
     stbi_image_free(data);

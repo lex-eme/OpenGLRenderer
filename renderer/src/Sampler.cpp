@@ -1,6 +1,6 @@
-#include "Sampler.h"
+#include "pch.h"
 
-#include <glad/glad.h>
+#include "Sampler.h"
 
 
 Sampler::Sampler() {
