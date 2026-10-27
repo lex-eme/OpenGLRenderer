@@ -1,19 +1,21 @@
 #pragma once
 #include "../Transform.h"
+#include "../material/GridMaterial.h"
+#include "../UniformBufferObject.h"
 
-class Material;
+class Camera;
 
 class Grid {
     Transform transform{};
     unsigned int vao{};
     unsigned int vbo{};
     int verticeCount{};
-    Material* material{};
+    GridMaterial material;
 
 public:
     Grid() = default;
 
-    void create(Material* inMaterial);
+    void create(Camera* camera, UniformBufferObject ubo);
     void draw() const;
 
 private:

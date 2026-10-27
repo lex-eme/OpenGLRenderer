@@ -8,9 +8,9 @@ class GridMaterial final : public Material {
     Camera* camera{};
 
 public:
-    explicit GridMaterial(Camera* inCamera);
+    GridMaterial();
 
     void bind() const override;
-    void create(ShaderProgram inShader);
+    void create(ShaderProgram inShader, Camera* inCamera);
     void drawDebug() override;
 };

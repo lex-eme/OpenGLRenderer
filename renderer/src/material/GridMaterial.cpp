@@ -2,8 +2,8 @@
 
 #include "../Camera.h"
 
-GridMaterial::GridMaterial(Camera* inCamera)
-    : Material(), camera(inCamera) {
+GridMaterial::GridMaterial()
+    : Material() {
 }
 
 void GridMaterial::bind() const {
@@ -11,8 +11,9 @@ void GridMaterial::bind() const {
     shader.setVec3Uniform("cameraPos", camera->position);
 }
 
-void GridMaterial::create(const ShaderProgram inShader) {
+void GridMaterial::create(const ShaderProgram inShader, Camera* inCamera) {
     shader = inShader;
+    camera = inCamera;
 }
 
 void GridMaterial::drawDebug() {

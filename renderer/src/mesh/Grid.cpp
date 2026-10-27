@@ -3,18 +3,19 @@
 #include <iostream>
 #include <glad/glad.h>
 
-#include "../material/Material.h"
 
-
-void Grid::create(Material* inMaterial) {
-    material = inMaterial;
+void Grid::create(Camera* camera, const UniformBufferObject ubo) {
+    const ShaderProgram gridShader = ShaderProgram::createShaderProgram(
+        "assets/shaders/grid.vert", "assets/shaders/grid.frag");
+    gridShader.bindUniformBufferObject("Matrices", ubo.bindingPoint);
+    material.create(gridShader, camera);
     verticeCount = 6;
 
     glGenVertexArrays(1, &vao);
 }
 
 void Grid::draw() const {
-    material->bind();
+    material.bind();
     glDisable(GL_CULL_FACE);
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, 6);
