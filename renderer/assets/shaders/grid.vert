@@ -1,21 +1,37 @@
 #version 410 core
 
-layout (location = 0) in vec3 position;
-
 layout (std140) uniform Matrices {
     mat4 projection;
     mat4 view;
 };
 
-out vec3 worldSpacePos;
-
 uniform vec3 cameraPos;
-const float gridScale = 50.0;
+
+out vec2 uv;
+out vec2 out_camPos;
+
+float gridSize = 1000.0;
+
+const vec3 positions[4] = vec3[4](
+        vec3(-1.0, 0.0, -1.0),
+        vec3( 1.0, 0.0, -1.0),
+        vec3( 1.0, 0.0,  1.0),
+        vec3(-1.0, 0.0,  1.0)
+);
+
+const int indices[6] = int[6](
+        0, 1, 2, 2, 3, 0
+);
 
 void main(void) {
-    vec3 localPos = vec3(position.x * gridScale, 0.0, position.z * gridScale);
-    vec3 snappedWorldPos = localPos + vec3(cameraPos.x, 0.0, cameraPos.z);
+    int index = indices[gl_VertexID];
+    vec3 position = positions[index] * gridSize;
 
-    worldSpacePos = snappedWorldPos;
-    gl_Position = projection * view * vec4(snappedWorldPos, 1.0);
+    position.x += cameraPos.x;
+    position.z += cameraPos.z;
+
+    out_camPos = cameraPos.xz;
+
+    gl_Position = projection * view * vec4(position, 1.0);
+    uv = position.xz;
 }

@@ -1,44 +1,86 @@
 #version 410 core
 
-in vec3 worldSpacePos;
-out vec4 FragColor;
+in vec2 uv;
+in vec2 out_camPos;
+out vec4 out_FragColor;
 
-uniform vec3 cameraPos;
-uniform float gridSpacing = 1.0; // 1 unit grid
-uniform vec4 gridColor = vec4(0.5, 0.5, 0.5, 1.0);
+float gridSize = 1000.0;
+float gridCellSize = 0.1;
+vec4 gridColorThin = vec4(0.7, 0.7, 0.7, 1.0);
+vec4 gridColorThick = vec4(0.9, 0.9, 0.9, 1.0);
+const float gridMinPixelsBetweenCells = 4.0;
+
 uniform vec4 xAxisColor = vec4(1.0, 0.0, 0.0, 1.0); // Red
 uniform vec4 zAxisColor = vec4(0.0, 0.0, 1.0, 1.0); // Blue
 
+
+float log10(float x)
+{
+    return log(x) / log(10.0);
+}
+
+float satf(float x)
+{
+    return clamp(x, 0.0, 1.0);
+}
+
+vec2 satv(vec2 x)
+{
+    return clamp(x, vec2(0.0), vec2(1.0));
+}
+
+float max2(vec2 v)
+{
+    return max(v.x, v.y);
+}
+
+vec4 gridColor(vec2 uv, vec2 camPos)
+{
+    vec2 targetAxes = abs(uv) / fwidth(uv);
+    float xAxisAlpha = 1.0 - min(targetAxes.y, 1.0);
+    float zAxisAlpha = 1.0 - min(targetAxes.x, 1.0);
+
+    vec2 dudv = vec2(
+            length(vec2(dFdx(uv.x), dFdy(uv.x))),
+            length(vec2(dFdx(uv.y), dFdy(uv.y)))
+    );
+
+    float lodLevel = max(0.0, log10((length(dudv) * gridMinPixelsBetweenCells) / gridCellSize) + 1.0);
+    float lodFade = fract(lodLevel);
+
+    // cell sizes for lod0, lod1 and lod2
+    float lod0 = gridCellSize * pow(10.0, floor(lodLevel));
+    float lod1 = lod0 * 10.0;
+    float lod2 = lod1 * 10.0;
+
+    // each anti-aliased line covers up to 4 pixels
+    dudv *= 4.0;
+
+    // Update grid coordinates for subsequent alpha calculations (centers each anti-aliased line)
+    uv += dudv / 2.0;
+
+    // calculate absolute distances to cell line centers for each lod and pick max X/Y to get coverage alpha value
+    float lod0a = max2( vec2(1.0) - abs(satv(mod(uv, lod0) / dudv) * 2.0 - vec2(1.0)) );
+    float lod1a = max2( vec2(1.0) - abs(satv(mod(uv, lod1) / dudv) * 2.0 - vec2(1.0)) );
+    float lod2a = max2( vec2(1.0) - abs(satv(mod(uv, lod2) / dudv) * 2.0 - vec2(1.0)) );
+
+    uv -= camPos;
+
+    // blend between falloff colors to handle LOD transition
+    vec4 c = lod2a > 0.0 ? gridColorThick : lod1a > 0.0 ? mix(gridColorThick, gridColorThin, lodFade) : gridColorThin;
+
+    c = mix(c, xAxisColor, xAxisAlpha);
+    c = mix(c, zAxisColor, zAxisAlpha);
+
+    // calculate opacity falloff based on distance to grid extents
+    float opacityFalloff = (1.0 - satf(length(uv) / gridSize));
+
+    // blend between LOD level alphas and scale with opacity falloff
+    c.a *= (lod2a > 0.0 ? lod2a : lod1a > 0.0 ? lod1a : (lod0a * (1.0-lodFade))) * opacityFalloff;
+
+    return c;
+}
+
 void main() {
-    // 1. Calculate screen-space derivative for anti-aliasing and constant line width
-    vec2 coord = worldSpacePos.xz / gridSpacing;
-    vec2 derivative = fwidth(coord);
-
-    // 2. Draw lines using absolute value and stepping
-    vec2 grid = abs(fract(coord - 0.5) - 0.5) / derivative;
-    float line = min(grid.x, grid.y);
-
-    // Justify minimum pixel width (1.0 means 1 pixel wide line)
-    float gridAlpha = 1.0 - min(line, 1.0);
-
-    // 3. Highlight Main Axes (X and Z)
-    // Check how close the pixel is to world 0.0 on X and Z
-    vec2 targetAxes = abs(worldSpacePos.xz) / fwidth(worldSpacePos.xz);
-    float xAxisAlpha = 1.0 - min(targetAxes.y, 1.0); // Z=0 is the X-axis
-    float zAxisAlpha = 1.0 - min(targetAxes.x, 1.0); // X=0 is the Z-axis
-
-    // 4. Distance Fading (so the grid doesn't turn into a solid color at the horizon)
-    float distance = length(worldSpacePos - cameraPos);
-    float fade = exp(-distance * 0.08); // Adjust 0.01 to change how far the grid views
-
-    // 5. Blend Colors
-    vec4 finalColor = gridColor * gridAlpha;
-    if (xAxisAlpha > 0.0) finalColor = mix(finalColor, xAxisColor, xAxisAlpha);
-    if (zAxisAlpha > 0.0) finalColor = mix(finalColor, zAxisColor, zAxisAlpha);
-
-    finalColor.a *= fade;
-
-    if (finalColor.a < 0.05) discard; // Performance optimization
-
-    FragColor = finalColor;
+    out_FragColor = gridColor(uv, out_camPos);
 }
