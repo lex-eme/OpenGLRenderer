@@ -55,7 +55,9 @@ set(SOURCES
 
 find_package(OpenGL REQUIRED)
 
-add_executable(App)
+add_executable(App
+        src/scene/SceneTree.cpp
+        src/scene/SceneTree.h)
 target_sources(App PRIVATE ${SOURCES})
 
 target_include_directories(App PRIVATE ../dependencies)
