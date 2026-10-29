@@ -79,7 +79,6 @@ void Scene::load(GLFWwindow* inWindow, const int width, const int height) {
 
     models.emplace_back("assets/models/Test.fbx");
     models[2].transform.setPosition({-3.0f, 0.0f, 0.0f});
-    models[2].transform.setScale({0.01f, 0.01f, 0.01f});
     models[2].materials[0] = colorMaterial;
     models[2].materials[1] = colorMaterial2;
 
