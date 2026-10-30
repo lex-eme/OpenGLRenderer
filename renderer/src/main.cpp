@@ -98,6 +98,20 @@ int main() {
     glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &nrAttributes);
     std::cout << "Maximum uniform block size supported: " << nrAttributes << std::endl;
 
+    GLint extensionCount = 0;
+    glGetIntegerv(GL_NUM_EXTENSIONS, &extensionCount);
+
+    for (int i = 0; i < extensionCount; i += 1) {
+        const char* ext = reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i));
+        std::cout << "SUPPORTED EXTENSION: " << ext << std::endl;
+    }
+
+    if (GLAD_GL_ARB_shader_storage_buffer_object) {
+        std::cout << "GLAD_GL_ARB_shader_storage_buffer_object SUPPORTED" << std::endl;
+    }
+    if (GLAD_GL_EXT_texture_filter_anisotropic) {
+        std::cout << "GLAD_GL_EXT_texture_filter_anisotropic SUPPORTED" << std::endl;
+    }
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();

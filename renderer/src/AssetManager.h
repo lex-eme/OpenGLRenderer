@@ -17,7 +17,7 @@ public:
     void addMaterial(const std::string& name, Material* material);
 
     [[nodiscard]] const Texture& getTexture(const std::string& name) const;
-    [[nodiscard]] const Material* getMaterial(const std::string& name) const;
+    [[nodiscard]] Material* getMaterial(const std::string& name) const;
 
     [[nodiscard]] const std::unordered_map<std::string, Material*>& getMaterialMap() const;
 };

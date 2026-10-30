@@ -9,6 +9,6 @@ public:
     ColorMaterial() = default;
 
     void bind() const override;
-    void create(ShaderProgram inShader, glm::vec3 inColor);
+    void create(ShaderProgram inShader, const glm::vec3& inColor);
     void drawDebug() override;
 };

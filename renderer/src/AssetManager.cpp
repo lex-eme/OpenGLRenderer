@@ -38,7 +38,7 @@ void AssetManager::addMaterial(const std::string& name, Material* material) {
     materials[name] = material;
 }
 
-const Material* AssetManager::getMaterial(const std::string& name) const {
+Material* AssetManager::getMaterial(const std::string& name) const {
     if (const auto it = materials.find(name); it != materials.end()) {
         return it->second;
     }

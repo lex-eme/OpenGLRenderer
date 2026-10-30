@@ -1,4 +1,5 @@
 #pragma once
+#include "SceneTree.h"
 #include "../AssetManager.h"
 #include "../Camera.h"
 #include "../FrameBuffer.h"
@@ -17,6 +18,7 @@ public:
     FrameBuffer frameBuffer{};
 
 protected:
+    SceneTree sceneTree;
     std::vector<Model> models;
     Camera camera;
     LitShader litShader;

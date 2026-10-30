@@ -66,6 +66,11 @@ void Scene::load(GLFWwindow* inWindow, const int width, const int height) {
     colorMaterial2->name = "M_BlueColor";
     assetManager.addMaterial(colorMaterial2->name, colorMaterial2);
 
+    auto* defaultMaterial = new ColorMaterial();
+    defaultMaterial->create(colorShader, glm::vec3(0.33f, 0.33f, 0.33f));
+    defaultMaterial->name = "M_Default";
+    assetManager.addMaterial(defaultMaterial->name, defaultMaterial);
+
     models.emplace_back("assets/models/backpack/backpack.obj", false);
     for (int i = 0; i < models[0].materials.size(); i += 1) {
         models[0].materials[i] = backpackMaterial;
@@ -114,6 +119,8 @@ void Scene::load(GLFWwindow* inWindow, const int width, const int height) {
     frameBuffer.create(width, height);
 
     grid.create(&camera, cameraUbo);
+
+    sceneTree.loadModel("assets/models/fantasy town/Castle.fbx", false);
 
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glEnable(GL_BLEND);
@@ -246,9 +253,11 @@ void Scene::draw() {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    for (Model& model: models) {
-        model.draw();
-    }
+    // for (Model& model: models) {
+    //     model.draw();
+    // }
+
+    sceneTree.draw();
 
     grid.draw();
 
