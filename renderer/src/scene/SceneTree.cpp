@@ -270,17 +270,49 @@ void SceneTree::loadModel(const std::string& path, const bool flipUvs) {
 }
 
 void SceneTree::draw() {
-    for (auto& pair: meshMap) {
-        const int node = pair.first;
-        unsigned int matIndex = materialForNode[node];
-        unsigned int meshIndex = pair.second;
+    for (unsigned int i = 0; i < globalTransforms.size(); i += 1) {
+        if (meshMap.contains(i)) {
+            const unsigned int meshIndex = meshMap[i];
+            const unsigned int matIndex = materialForNode[i];
 
-        if (materials[matIndex]) {
             materials[matIndex]->bind();
-            materials[matIndex]->shader.setMat4Uniform("model", globalTransforms[node]);
+            materials[matIndex]->shader.setMat4Uniform("model", globalTransforms[i]);
             meshes[meshIndex].draw();
         }
     }
+}
+
+void SceneTree::drawDebug() {
+    ImGui::Begin("Scene tree", nullptr);
+    drawSceneTree(0);
+    ImGui::End();
+}
+
+int SceneTree::drawSceneTree(const int node) {
+    int selected = -1;
+    const std::string name = names[node];
+    const std::string label = name.empty() ? std::string("Node") + std::to_string(node) : name;
+
+    const int flags = hierarchy[node].firstChild < 0 ? ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet : 0;
+    const bool opened = ImGui::TreeNodeEx(&hierarchy[node], flags, "%s", label.c_str());
+
+    ImGui::PushID(node);
+
+    if (ImGui::IsItemClicked(0)) {
+        printf("Selected node: %d (%s)\n", node, label.c_str());
+        selected = node;
+    }
+
+    if (opened) {
+        for (int ch = hierarchy[node].firstChild; ch != -1; ch = hierarchy[ch].nextSibling) {
+            if (const int subNode = drawSceneTree(ch); subNode > -1)
+                selected = subNode;
+        }
+        ImGui::TreePop();
+    }
+
+    ImGui::PopID();
+    return selected;
 }
 
 void SceneTree::markAsChanged(const int node) {

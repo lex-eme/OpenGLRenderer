@@ -186,6 +186,7 @@ int main() {
         scene.draw();
         ImGui::Image(scene.frameBuffer.texture, viewportSize, ImVec2(0, 1), ImVec2(1, 0));
         ImGui::End();
+        scene.sceneTree.drawDebug();
         ImGui::Begin("Properties", nullptr);
         scene.drawDebug();
         ImGui::End();

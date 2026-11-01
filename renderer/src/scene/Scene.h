@@ -16,9 +16,9 @@ class Scene final {
 public:
     inline static AssetManager assetManager;
     FrameBuffer frameBuffer{};
+    SceneTree sceneTree;
 
 protected:
-    SceneTree sceneTree;
     std::vector<Model> models;
     Camera camera;
     LitShader litShader;

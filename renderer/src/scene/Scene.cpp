@@ -120,7 +120,7 @@ void Scene::load(GLFWwindow* inWindow, const int width, const int height) {
 
     grid.create(&camera, cameraUbo);
 
-    sceneTree.loadModel("assets/models/fantasy town/Castle.fbx", false);
+    sceneTree.loadModel("assets/models/fantasy town/Castle.fbx", true);
 
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glEnable(GL_BLEND);

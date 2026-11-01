@@ -45,6 +45,7 @@ public:
     void loadModel(const std::string& path, bool flipUvs);
 
     void draw();
+    void drawDebug();
 
 private:
     int addNode(int parent, int level);
@@ -53,4 +54,6 @@ private:
 
     void processNode(const aiNode* node, const aiScene* scene, int parent, int level);
     static Mesh processMesh(const aiMesh* mesh);
+
+    int drawSceneTree(int node);
 };
