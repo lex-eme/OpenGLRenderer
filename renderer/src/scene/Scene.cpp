@@ -122,6 +122,17 @@ void Scene::load(GLFWwindow* inWindow, const int width, const int height) {
 
     sceneTree.loadModel("assets/models/fantasy town/Castle.fbx", true);
 
+    const std::vector<std::string> paths = {
+        "assets/skybox/right.jpg",
+        "assets/skybox/left.jpg",
+        "assets/skybox/top.jpg",
+        "assets/skybox/bottom.jpg",
+        "assets/skybox/front.jpg",
+        "assets/skybox/back.jpg",
+    };
+    skybox.create(paths);
+    skybox.shader.bindUniformBufferObject("Matrices", cameraUbo.bindingPoint);
+
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -258,7 +269,7 @@ void Scene::draw() {
     // }
 
     sceneTree.draw();
-
+    skybox.draw();
     grid.draw();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

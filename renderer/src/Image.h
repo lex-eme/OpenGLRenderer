@@ -2,10 +2,12 @@
 #include <string>
 
 
+class Skybox;
 class Texture;
 
 class Image final {
     friend Texture;
+    friend Skybox;
 
 private:
     int width{}, height{}, nrChannels{};

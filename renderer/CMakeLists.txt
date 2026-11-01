@@ -51,13 +51,15 @@ set(SOURCES
         src/material/GridMaterial.h
         src/pch.cpp
         src/pch.h
+        src/scene/SceneTree.cpp
+        src/scene/SceneTree.h
+        src/Skybox.cpp
+        src/Skybox.h
 )
 
 find_package(OpenGL REQUIRED)
 
-add_executable(App
-        src/scene/SceneTree.cpp
-        src/scene/SceneTree.h)
+add_executable(App)
 target_sources(App PRIVATE ${SOURCES})
 
 target_include_directories(App PRIVATE ../dependencies)

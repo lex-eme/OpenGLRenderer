@@ -2,6 +2,7 @@
 #include "SceneTree.h"
 #include "../AssetManager.h"
 #include "../Camera.h"
+#include "../Skybox.h"
 #include "../FrameBuffer.h"
 #include "../Model.h"
 #include "../UniformBufferObject.h"
@@ -22,6 +23,7 @@ protected:
     std::vector<Model> models;
     Camera camera;
     LitShader litShader;
+    Skybox skybox;
     Grid grid;
     UniformBufferObject cameraUbo{};
     ShaderProgram screenShader{};
