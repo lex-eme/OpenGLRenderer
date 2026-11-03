@@ -75,7 +75,7 @@ int main() {
     }
 
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetKeyCallback(window, keyboard_callback);
     glfwSetMouseButtonCallback(window, mouseButton_callback);
@@ -155,8 +155,10 @@ int main() {
     double currentTime = glfwGetTime();
     float deltaTime = 0.0f;
 
-    int fps = 0;
+    float fps = 0;
     float timeSum = 0.0f;
+    float min = 1000.0f;
+    float max = 300.0f;
     float plot[10]{0};
 
     while (!glfwWindowShouldClose(window)) {
@@ -169,7 +171,13 @@ int main() {
         if (timeSum >= 1.0f) {
             timeSum -= 1.0f;
             for (int i = 9; i > 0; i -= 1) {
-                plot[i] = plot[i-1];
+                plot[i] = plot[i - 1];
+            }
+            if (fps < min) {
+                min = fps;
+            }
+            if (fps > max) {
+                max = fps;
             }
             plot[0] = fps;
             fps = 0;
@@ -191,13 +199,16 @@ int main() {
         ImGui::ShowDemoWindow();
         ImGui::Begin("fps");
         ImGui::PushItemWidth(-1);
-        ImGui::PlotHistogram("##FPS", plot, IM_COUNTOF(plot), 0, NULL, 0.0f, 1.0f, ImVec2(0, 80.0f));
+        ImGui::PlotHistogram("##FPS", plot, IM_COUNTOF(plot), 0, nullptr, min, max, ImVec2(0, 80.0f));
         ImGui::PopItemWidth();
+        ImGui::Text("Min: %.0f", min);
+        ImGui::Text("Max: %.0f", max);
+        ImGui::Text("Last: %.0f", plot[0]);
         ImGui::End();
         ImGui::Begin("Game", nullptr);
         mouseIsInViewport = ImGui::IsWindowHovered();
 
-        if (ImVec2 contentRegion = ImGui::GetContentRegionAvail();
+        if (const ImVec2 contentRegion = ImGui::GetContentRegionAvail();
             viewportSize.x != contentRegion.x || viewportSize.y != contentRegion.y) {
             viewportSize = contentRegion;
             scene.windowResized(static_cast<int>(contentRegion.x), static_cast<int>(contentRegion.y));
