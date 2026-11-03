@@ -155,10 +155,25 @@ int main() {
     double currentTime = glfwGetTime();
     float deltaTime = 0.0f;
 
+    int fps = 0;
+    float timeSum = 0.0f;
+    float plot[10]{0};
+
     while (!glfwWindowShouldClose(window)) {
         const double newTime = glfwGetTime();
         deltaTime = newTime - currentTime;
         currentTime = newTime;
+        timeSum += deltaTime;
+        fps += 1;
+
+        if (timeSum >= 1.0f) {
+            timeSum -= 1.0f;
+            for (int i = 9; i > 0; i -= 1) {
+                plot[i] = plot[i-1];
+            }
+            plot[0] = fps;
+            fps = 0;
+        }
 
         glfwPollEvents();
         if (glfwGetWindowAttrib(window, GLFW_ICONIFIED) != 0) {
@@ -174,6 +189,11 @@ int main() {
         ImGui::DockSpaceOverViewport();
 
         ImGui::ShowDemoWindow();
+        ImGui::Begin("fps");
+        ImGui::PushItemWidth(-1);
+        ImGui::PlotHistogram("##FPS", plot, IM_COUNTOF(plot), 0, NULL, 0.0f, 1.0f, ImVec2(0, 80.0f));
+        ImGui::PopItemWidth();
+        ImGui::End();
         ImGui::Begin("Game", nullptr);
         mouseIsInViewport = ImGui::IsWindowHovered();
 
