@@ -59,6 +59,10 @@ set(SOURCES
 
 find_package(OpenGL REQUIRED)
 
+if(WIN32 AND MINGW)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
+endif()
+
 add_executable(App)
 target_sources(App PRIVATE ${SOURCES})
 
@@ -70,3 +74,12 @@ if (APPLE)
 elseif (WIN32)
     target_link_libraries(App PRIVATE opengl32)
 endif ()
+
+if(WIN32)
+    add_custom_command(TARGET App POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:App>
+            $<TARGET_FILE_DIR:App>
+            COMMAND_EXPAND_LISTS
+    )
+endif()
