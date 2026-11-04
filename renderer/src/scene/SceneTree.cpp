@@ -211,7 +211,7 @@ void SceneTree::loadModel(const std::string& path, const bool flipUvs) {
 
                     UnlitMaterial* newMat = new UnlitMaterial();
                     Texture texture;
-                    texture.loadFromFile(directory + "/" + std::string(p.filename()));
+                    texture.loadFromFile(directory + "/" + p.filename().string());
                     newMat->create(unlitShader, texture);
                     materials[matIndex] = newMat;
                     hasTexture = true;
