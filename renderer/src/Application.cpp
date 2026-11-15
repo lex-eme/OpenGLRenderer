@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "Application.h"
+#include "Core.h"
 
 #include "imgui/ImGuiLayer.h"
 

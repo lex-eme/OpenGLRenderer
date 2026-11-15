@@ -2,11 +2,10 @@
 
 #include <string>
 
-#include "Core.h"
 #include "event/Event.h"
 
 namespace Bottleneck {
-    class BOTTLENECK_API Layer {
+    class Layer {
     protected:
         std::string m_debugName;
 

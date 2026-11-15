@@ -2,11 +2,10 @@
 
 #include <memory>
 
-#include "Core.h"
 #include "spdlog/spdlog.h"
 
 namespace Bottleneck {
-    class BOTTLENECK_API Log {
+    class Log {
     private:
         inline static std::shared_ptr<spdlog::logger> s_coreLogger;
         inline static std::shared_ptr<spdlog::logger> s_clientLogger;

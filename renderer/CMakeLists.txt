@@ -80,7 +80,7 @@ if (WIN32 AND MINGW)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
 endif ()
 
-add_library(App SHARED
+add_library(App STATIC
         src/Layer.cpp
         src/Layer.h
         src/LayerStack.cpp

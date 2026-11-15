@@ -1,10 +1,9 @@
 #pragma once
 #include "Layer.h"
-#include "Core.h"
 
 
 namespace Bottleneck {
-    class BOTTLENECK_API ImGuiLayer final : public Layer {
+    class ImGuiLayer final : public Layer {
         bool m_blockEvents = true;
 
     public:

@@ -1,9 +1,8 @@
 #pragma once
 
-#include "Core.h"
 
 namespace Bottleneck {
-    class BOTTLENECK_API Input {
+    class Input {
     public:
         static bool IsKeyPressed(const int keycode) { return s_instance->IsKeyPressedImpl(keycode); }
 

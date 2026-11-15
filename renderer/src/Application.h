@@ -2,7 +2,6 @@
 
 #include <memory>
 
-#include "Core.h"
 #include "LayerStack.h"
 #include "Window.h"
 #include "event/ApplicationEvent.h"
@@ -12,7 +11,7 @@
 namespace Bottleneck {
     class ImGuiLayer;
 
-    class BOTTLENECK_API Application {
+    class Application {
     private:
         std::unique_ptr<Window> m_window;
         LayerStack m_layerStack;
