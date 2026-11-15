@@ -2,6 +2,9 @@
 
 #include <glad/glad.h>
 
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks-inl.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.inl>
 #include <glm/ext/matrix_transform.hpp>
@@ -30,3 +33,12 @@
 #include <vector>
 #include <filesystem>
 
+#include "Log.h"
+
+#ifdef BN_PLATFORM_WINDOWS
+// TODO: Windows window
+#elif BN_PLATFORM_APPLE
+#include "platform/macOS/MacWindow.h"
+#else
+#error Only Windows and MacOS supported
+#endif

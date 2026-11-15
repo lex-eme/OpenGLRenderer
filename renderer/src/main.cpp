@@ -8,6 +8,7 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "scene/Scene.h"
+#include "event/ApplicationEvent.h"
 
 
 int width = 1600, height = 1050;
@@ -15,6 +16,8 @@ Scene scene;
 bool mouseIsInViewport = false;
 
 void framebuffer_size_callback(GLFWwindow* window, const int newWidth, const int newHeight) {
+    const WindowResizeEvent event(newWidth, newHeight);
+    std::cout << event << std::endl;
 }
 
 void keyboard_callback(GLFWwindow* window, const int key, int scancode, const int action, int mods) {

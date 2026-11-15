@@ -55,31 +55,57 @@ set(SOURCES
         src/scene/SceneTree.h
         src/Skybox.cpp
         src/Skybox.h
+        src/event/Event.h
+        src/event/ApplicationEvent.h
+        src/event/KeyEvent.h
+        src/core/KeyCodes.h
+        src/core/MouseCodes.h
+        src/event/MouseEvent.h
+        src/Window.cpp
+        src/Window.h
+        src/platform/macOS/MacWindow.cpp
+        src/platform/macOS/MacWindow.h
+        src/Application.cpp
+        src/Application.h
+        src/Core.h
+        src/Bottleneck.h
+        src/EntryPoint.h
+        src/Log.cpp
+        src/Log.h
 )
 
 find_package(OpenGL REQUIRED)
 
-if(WIN32 AND MINGW)
+if (WIN32 AND MINGW)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
-endif()
+endif ()
 
-add_executable(App)
+add_library(App SHARED
+        src/Layer.cpp
+        src/Layer.h
+        src/LayerStack.cpp
+        src/LayerStack.h
+        src/imgui/ImGuiLayer.cpp
+        src/imgui/ImGuiLayer.h
+        src/Input.h
+        src/platform/macOS/MacInput.cpp
+        src/platform/macOS/MacInput.h
+)
 target_sources(App PRIVATE ${SOURCES})
 
-target_include_directories(App PRIVATE ../dependencies)
-target_link_libraries(App PRIVATE glm::glm assimp::assimp glfw imgui-glfw)
+target_include_directories(App PRIVATE ../dependencies ./src)
+target_link_libraries(App PRIVATE glm::glm assimp::assimp glfw imgui-glfw spdlog::spdlog)
 
 if (APPLE)
     target_link_libraries(App PRIVATE OpenGL::GL)
+    target_compile_definitions(App PRIVATE BN_PLATFORM_APPLE)
 elseif (WIN32)
+    target_compile_definitions(App PRIVATE BN_PLATFORM_WINDOWS BN_BUILD_DLL)
     target_link_libraries(App PRIVATE opengl32)
-endif ()
-
-if(WIN32)
     add_custom_command(TARGET App POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<TARGET_RUNTIME_DLLS:App>
             $<TARGET_FILE_DIR:App>
             COMMAND_EXPAND_LISTS
     )
-endif()
+endif ()
