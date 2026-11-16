@@ -72,15 +72,6 @@ set(SOURCES
         src/EntryPoint.h
         src/Log.cpp
         src/Log.h
-)
-
-find_package(OpenGL REQUIRED)
-
-if (WIN32 AND MINGW)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
-endif ()
-
-add_library(App STATIC
         src/Layer.cpp
         src/Layer.h
         src/LayerStack.cpp
@@ -90,6 +81,19 @@ add_library(App STATIC
         src/Input.h
         src/platform/macOS/MacInput.cpp
         src/platform/macOS/MacInput.h
+        src/Renderer/GraphicsContext.cpp
+        src/Renderer/GraphicsContext.h
+        src/platform/openGL/OpenGLContext.cpp
+        src/platform/openGL/OpenGLContext.h
+)
+
+find_package(OpenGL REQUIRED)
+
+if (WIN32 AND MINGW)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
+endif ()
+
+add_library(App STATIC
 )
 target_sources(App PRIVATE ${SOURCES})
 
