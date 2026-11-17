@@ -1,17 +1,15 @@
 #pragma once
+#include "RendererAPI.h"
+#include "VertexArray.h"
 
 namespace Bottleneck {
-    enum class RenderAPI {
-        None = 0,
-        OpenGL = 1
-    };
-
     class Renderer {
-        inline static auto s_renderAPI = RenderAPI::OpenGL;
-
     public:
-        static RenderAPI GetAPI() {
-            return s_renderAPI;
-        }
+        static void BeginScene(); // set camera, lights, environments, etc
+        static void EndScene();
+
+        static void Submit(const std::shared_ptr<VertexArray>& vertexArray);
+
+        static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
     };
 }

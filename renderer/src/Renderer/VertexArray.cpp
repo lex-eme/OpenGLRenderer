@@ -8,9 +8,9 @@
 namespace Bottleneck {
     VertexArray* VertexArray::Create() {
         switch (Renderer::GetAPI()) {
-            case RenderAPI::None:
+            case RendererAPI::API::None:
                 assert(false);
-            case RenderAPI::OpenGL:
+            case RendererAPI::API::OpenGL:
                 return new OpenGLVertexArray();
         }
 

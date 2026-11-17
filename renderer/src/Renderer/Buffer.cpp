@@ -8,9 +8,9 @@
 namespace Bottleneck {
     VertexBuffer* VertexBuffer::Create(const float* vertices, const uint32_t size) {
         switch (Renderer::GetAPI()) {
-            case RenderAPI::None:
+            case RendererAPI::API::None:
                 assert(false);
-            case RenderAPI::OpenGL:
+            case RendererAPI::API::OpenGL:
                 return new OpenGLVertexBuffer(vertices, size);
         }
 
@@ -19,9 +19,9 @@ namespace Bottleneck {
 
     IndexBuffer* IndexBuffer::Create(const uint32_t* indices, const uint32_t count) {
         switch (Renderer::GetAPI()) {
-            case RenderAPI::None:
+            case RendererAPI::API::None:
                 assert(false);
-            case RenderAPI::OpenGL:
+            case RendererAPI::API::OpenGL:
                 return new OpenGLIndexBuffer(indices, count);
         }
 

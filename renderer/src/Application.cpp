@@ -6,6 +6,8 @@
 #include "Core.h"
 
 #include "imgui/ImGuiLayer.h"
+#include "Renderer/RenderCommand.h"
+#include "Renderer/Renderer.h"
 
 namespace Bottleneck {
     Application* Application::s_instance = nullptr;
@@ -77,12 +79,13 @@ namespace Bottleneck {
 
     void Application::run() {
         while (m_running) {
-            glClearColor(0.1f, 0.1f, 0.1f, 1);
-            glClear(GL_COLOR_BUFFER_BIT);
+            RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});
+            RenderCommand::Clear();
 
+            Renderer::BeginScene();
             m_shader->bind();
-            m_vertexArray->bind();
-            glDrawElements(GL_TRIANGLES, m_vertexArray->getIndexBuffer()->getCount(), GL_UNSIGNED_INT, nullptr);
+            Renderer::Submit(m_vertexArray);
+            Renderer::EndScene();
 
             for (Layer* layer: m_layerStack) {
                 layer->onUpdate();
