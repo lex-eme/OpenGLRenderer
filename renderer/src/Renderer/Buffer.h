@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cassert>
+#include <string>
 
 namespace Bottleneck {
     enum class ShaderDataType {
@@ -27,7 +29,7 @@ namespace Bottleneck {
 
     struct BufferElement {
         std::string name{};
-        ShaderDataType type;
+        ShaderDataType type = ShaderDataType::None;
         uint32_t size{};
         uint32_t offset{};
         bool normalized{};

@@ -95,6 +95,10 @@ set(SOURCES
         src/Renderer/Renderer.h
         src/platform/openGL/OpenGLShader.cpp
         src/platform/openGL/OpenGLShader.h
+        src/Renderer/VertexArray.cpp
+        src/Renderer/VertexArray.h
+        src/platform/openGL/OpenGLVertexArray.cpp
+        src/platform/openGL/OpenGLVertexArray.h
 )
 
 find_package(OpenGL REQUIRED)

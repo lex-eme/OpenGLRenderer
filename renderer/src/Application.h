@@ -6,8 +6,8 @@
 #include "Window.h"
 #include "event/ApplicationEvent.h"
 #include "event/KeyEvent.h"
-#include "Renderer/Buffer.h"
 #include "Renderer/Shader.h"
+#include "Renderer/VertexArray.h"
 
 
 namespace Bottleneck {
@@ -19,10 +19,8 @@ namespace Bottleneck {
         bool m_running = true;
         ImGuiLayer* m_imGuiLayer;
 
-        unsigned int m_vertexArray;
-        std::unique_ptr<Shader> m_shader;
-        std::unique_ptr<VertexBuffer> m_vertexBuffer;
-        std::unique_ptr<IndexBuffer> m_indexBuffer;
+        std::shared_ptr<Shader> m_shader;
+        std::shared_ptr<VertexArray> m_vertexArray;
 
         static Application* s_instance;
 
