@@ -77,8 +77,6 @@ namespace Bottleneck {
         glfwSetWindowUserPointer(m_window, &m_data);
         setVSync(true);
 
-        BN_CORE_INFO("OpenGL version: {0}.{1}", GLVersion.major, GLVersion.minor);
-
         glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height) {
             WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
             data.width = width;

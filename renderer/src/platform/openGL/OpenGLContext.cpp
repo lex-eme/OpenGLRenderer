@@ -13,6 +13,12 @@ namespace Bottleneck {
             BN_CORE_ERROR("Failed to initialize GLAD");
             assert(0);
         }
+
+        BN_CORE_INFO("OpenGL info:");
+        BN_CORE_INFO("\tVendor: {0}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
+        BN_CORE_INFO("\tRenderer: {0}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+        BN_CORE_INFO("\tVersion: {0}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+        BN_CORE_INFO("\tGLSL version: {0}", reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
     }
 
     void OpenGLContext::swapBuffers() {

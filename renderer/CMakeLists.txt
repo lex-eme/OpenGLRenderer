@@ -85,6 +85,16 @@ set(SOURCES
         src/Renderer/GraphicsContext.h
         src/platform/openGL/OpenGLContext.cpp
         src/platform/openGL/OpenGLContext.h
+        src/Renderer/Shader.cpp
+        src/Renderer/Shader.h
+        src/Renderer/Buffer.cpp
+        src/Renderer/Buffer.h
+        src/platform/openGL/OpenGLBuffer.cpp
+        src/platform/openGL/OpenGLBuffer.h
+        src/Renderer/Renderer.cpp
+        src/Renderer/Renderer.h
+        src/platform/openGL/OpenGLShader.cpp
+        src/platform/openGL/OpenGLShader.h
 )
 
 find_package(OpenGL REQUIRED)

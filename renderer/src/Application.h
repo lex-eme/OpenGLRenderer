@@ -6,23 +6,29 @@
 #include "Window.h"
 #include "event/ApplicationEvent.h"
 #include "event/KeyEvent.h"
+#include "Renderer/Buffer.h"
+#include "Renderer/Shader.h"
 
 
 namespace Bottleneck {
     class ImGuiLayer;
 
     class Application {
-    private:
         std::unique_ptr<Window> m_window;
         LayerStack m_layerStack;
         bool m_running = true;
         ImGuiLayer* m_imGuiLayer;
 
+        unsigned int m_vertexArray;
+        std::unique_ptr<Shader> m_shader;
+        std::unique_ptr<VertexBuffer> m_vertexBuffer;
+        std::unique_ptr<IndexBuffer> m_indexBuffer;
+
         static Application* s_instance;
 
     public:
         Application();
-        virtual ~Application();
+        virtual ~Application() = default;
 
         void run();
         void onEvent(Event& event);
@@ -43,6 +49,6 @@ namespace Bottleneck {
         bool onKeyPress(const KeyPressedEvent& event);
     };
 
-    // To be defined in client
+    // To be defined in client application
     Application* CreateApplication();
 }

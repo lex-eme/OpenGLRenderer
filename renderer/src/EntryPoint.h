@@ -7,6 +7,7 @@
 extern Bottleneck::Application* Bottleneck::CreateApplication();
 
 int main(int argc, char** argv) {
+    Bottleneck::Log::init();
     Bottleneck::Application* app = Bottleneck::CreateApplication();
     app->run();
     delete app;
