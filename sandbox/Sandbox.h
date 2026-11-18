@@ -13,10 +13,7 @@ public:
     }
 
     ~Sandbox() {
-
     }
-
-
 };
 
 inline Bottleneck::Application* Bottleneck::CreateApplication() {

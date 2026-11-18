@@ -114,6 +114,8 @@ if (WIN32 AND MINGW)
 endif ()
 
 add_library(App STATIC
+        src/Renderer/OrthographicCamera.cpp
+        src/Renderer/OrthographicCamera.h
 )
 target_sources(App PRIVATE ${SOURCES})
 

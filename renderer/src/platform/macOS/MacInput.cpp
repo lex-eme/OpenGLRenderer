@@ -8,13 +8,13 @@
 namespace Bottleneck {
     Input* Input::s_instance = new MacInput();
 
-    bool MacInput::IsKeyPressedImpl(const int keycode) {
+    bool MacInput::IsKeyPressedImpl(const KeyCode keycode) {
         const auto window = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
         const int state = glfwGetKey(window, keycode);
-        return state == GLFW_PRESS || GLFW_REPEAT;
+        return state == GLFW_PRESS;
     }
 
-    bool MacInput::IsMouseButtonPressedImpl(int button) {
+    bool MacInput::IsMouseButtonPressedImpl(const int button) {
         const auto window = static_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
         const int state = glfwGetMouseButton(window, button);
         return state == GLFW_PRESS;

@@ -11,5 +11,6 @@ namespace Bottleneck {
 
         void bind() const override;
         void unbind() const override;
+        void uploadUniformMat4(const std::string& name, const glm::mat4& matrix) override;
     };
 }

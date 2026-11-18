@@ -114,4 +114,9 @@ namespace Bottleneck {
     void OpenGLShader::unbind() const {
         glUseProgram(0);
     }
+
+    void OpenGLShader::uploadUniformMat4(const std::string& name, const glm::mat4& matrix) {
+        const GLint location = glGetUniformLocation(m_rendererID, name.c_str());
+        glProgramUniformMatrix4fv(m_rendererID, location, 1, GL_FALSE, glm::value_ptr(matrix));
+    }
 }
