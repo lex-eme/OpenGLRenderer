@@ -20,7 +20,6 @@ namespace Bottleneck {
         WindowProps props("The new name", 720, 720);
         m_window = std::unique_ptr<Window>(Window::create(props));
         m_window->setEventCallback(BN_BIND_EVENT_FN(Application::onEvent));
-        m_window->setVSync(false);
 
         m_imGuiLayer = new ImGuiLayer();
         pushOverlay(m_imGuiLayer);

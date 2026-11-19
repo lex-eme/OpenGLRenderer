@@ -1,6 +1,11 @@
 #include "TestLayer.h"
 
-#include "../renderer/src/core/Core.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.inl>
+#include <glm/ext/matrix_transform.hpp>
+
+#include "../dependencies/imgui/imgui.h"
+#include "core/Core.h"
 #include "Renderer/RenderCommand.h"
 #include "Renderer/Renderer.h"
 
@@ -13,6 +18,7 @@ TestLayer::TestLayer()
 			layout(location = 1) in vec4 a_Color;
 
             uniform mat4 u_ViewProjection;
+            uniform mat4 u_Transform;
 
 			out vec3 v_Position;
             out vec4 v_Color;
@@ -21,7 +27,7 @@ TestLayer::TestLayer()
 			{
 				v_Position = a_Position;
                 v_Color = a_Color;
-				gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
+				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
 			}
 		)";
 
@@ -86,6 +92,19 @@ void TestLayer::onUpdate(const Bottleneck::TimeStep timeStep) {
         m_cameraPosition.y += m_cameraSpeed * timeStep;
     }
 
+    if (Bottleneck::Input::IsKeyPressed(Key::J)) {
+        m_trianglePosition.x -= m_cameraSpeed * timeStep;
+    }
+    if (Bottleneck::Input::IsKeyPressed(Key::L)) {
+        m_trianglePosition.x += m_cameraSpeed * timeStep;
+    }
+    if (Bottleneck::Input::IsKeyPressed(Key::K)) {
+        m_trianglePosition.y -= m_cameraSpeed * timeStep;
+    }
+    if (Bottleneck::Input::IsKeyPressed(Key::I)) {
+        m_trianglePosition.y += m_cameraSpeed * timeStep;
+    }
+
     if (Bottleneck::Input::IsKeyPressed(Key::A)) {
         m_cameraRotation -= m_cameraRotationSpeed * timeStep;
     }
@@ -100,8 +119,10 @@ void TestLayer::onUpdate(const Bottleneck::TimeStep timeStep) {
     m_camera.setPosition(m_cameraPosition);
     m_camera.setRotation(m_cameraRotation);
 
+    const glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_trianglePosition);
+
     Bottleneck::Renderer::BeginScene(m_camera);
-    Bottleneck::Renderer::Submit(m_shader, m_vertexArray);
+    Bottleneck::Renderer::Submit(m_shader, m_vertexArray, transform);
     Bottleneck::Renderer::EndScene();
 }
 

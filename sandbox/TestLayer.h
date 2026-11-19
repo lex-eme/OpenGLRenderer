@@ -14,6 +14,8 @@ class TestLayer final : public Bottleneck::Layer {
     float m_cameraRotation{0.0f};
     float m_cameraRotationSpeed{30.0f};
 
+    glm::vec3 m_trianglePosition{0.0f};
+
 public:
     TestLayer();
     ~TestLayer() override = default;
