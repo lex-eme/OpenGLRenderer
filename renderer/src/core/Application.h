@@ -2,8 +2,8 @@
 
 #include <memory>
 
-#include "LayerStack.h"
-#include "Window.h"
+#include "core/LayerStack.h"
+#include "core/Window.h"
 #include "event/ApplicationEvent.h"
 #include "event/KeyEvent.h"
 
@@ -16,6 +16,7 @@ namespace Bottleneck {
         LayerStack m_layerStack;
         bool m_running = true;
         ImGuiLayer* m_imGuiLayer;
+        float m_lastFrameTime;
 
         static Application* s_instance;
 

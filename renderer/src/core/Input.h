@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/KeyCodes.h"
+#include "KeyCodes.h"
 
 namespace Bottleneck {
     class Input {

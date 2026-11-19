@@ -2,7 +2,8 @@
 
 #include <string>
 
-#include "event/Event.h"
+#include "TimeStep.h"
+#include "../event/Event.h"
 
 namespace Bottleneck {
     class Layer {
@@ -15,7 +16,7 @@ namespace Bottleneck {
 
         virtual void onAttach() {}
         virtual void onDetach() {}
-        virtual void onUpdate() {}
+        virtual void onUpdate(TimeStep timeStep) {}
         virtual void onImGuiRender() {}
         virtual void onEvent(Event& event) {}
 

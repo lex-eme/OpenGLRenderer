@@ -1,6 +1,6 @@
 #include "TestLayer.h"
 
-#include "Core.h"
+#include "../renderer/src/core/Core.h"
 #include "Renderer/RenderCommand.h"
 #include "Renderer/Renderer.h"
 
@@ -72,26 +72,26 @@ void TestLayer::onDetach() {
     BN_INFO("Layer {0} detached", m_debugName);
 }
 
-void TestLayer::onUpdate() {
+void TestLayer::onUpdate(const Bottleneck::TimeStep timeStep) {
     if (Bottleneck::Input::IsKeyPressed(Key::Left)) {
-        m_cameraPosition.x -= m_cameraSpeed;
+        m_cameraPosition.x -= m_cameraSpeed * timeStep;
     }
     if (Bottleneck::Input::IsKeyPressed(Key::Right)) {
-        m_cameraPosition.x += m_cameraSpeed;
+        m_cameraPosition.x += m_cameraSpeed * timeStep;
     }
     if (Bottleneck::Input::IsKeyPressed(Key::Down)) {
-        m_cameraPosition.y -= m_cameraSpeed;
+        m_cameraPosition.y -= m_cameraSpeed * timeStep;
     }
     if (Bottleneck::Input::IsKeyPressed(Key::Up)) {
-        m_cameraPosition.y += m_cameraSpeed;
+        m_cameraPosition.y += m_cameraSpeed * timeStep;
     }
 
     if (Bottleneck::Input::IsKeyPressed(Key::A)) {
-        m_cameraRotation -= m_cameraRotationSpeed;
+        m_cameraRotation -= m_cameraRotationSpeed * timeStep;
     }
 
     if (Bottleneck::Input::IsKeyPressed(Key::D)) {
-        m_cameraRotation += m_cameraRotationSpeed;
+        m_cameraRotation += m_cameraRotationSpeed * timeStep;
     }
 
     Bottleneck::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});

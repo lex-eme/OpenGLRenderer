@@ -33,7 +33,7 @@
 #include <vector>
 #include <filesystem>
 
-#include "Log.h"
+#include "core/Log.h"
 
 #ifdef BN_PLATFORM_WINDOWS
 // TODO: Windows window

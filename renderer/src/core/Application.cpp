@@ -1,11 +1,14 @@
-#include "pch.h"
+#include "../pch.h"
 
 #include "Application.h"
 
 #include <memory>
-#include "Core.h"
 
-#include "imgui/ImGuiLayer.h"
+#include "TimeStep.h"
+#include "core/Core.h"
+#include "GLFW/glfw3.h"
+
+#include "../imgui/ImGuiLayer.h"
 
 namespace Bottleneck {
     Application* Application::s_instance = nullptr;
@@ -25,8 +28,12 @@ namespace Bottleneck {
 
     void Application::run() {
         while (m_running) {
+            const float time = static_cast<float>(glfwGetTime()); // should be in a class like Platform::GetTime() which should have a MacPlatform::GetTime()
+            TimeStep timeStep = time - m_lastFrameTime;
+            m_lastFrameTime = time;
+
             for (Layer* layer: m_layerStack) {
-                layer->onUpdate();
+                layer->onUpdate(timeStep);
             }
 
             m_imGuiLayer->begin();

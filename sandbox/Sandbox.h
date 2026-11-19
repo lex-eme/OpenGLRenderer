@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Bottleneck.h>
-#include <EntryPoint.h>
+#include <core/EntryPoint.h>
 
 #include "TestLayer.h"
 
@@ -12,8 +12,7 @@ public:
         pushLayer(new TestLayer());
     }
 
-    ~Sandbox() {
-    }
+    ~Sandbox() override = default;
 };
 
 inline Bottleneck::Application* Bottleneck::CreateApplication() {

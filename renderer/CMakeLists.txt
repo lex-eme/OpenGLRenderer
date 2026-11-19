@@ -61,24 +61,24 @@ set(SOURCES
         src/core/KeyCodes.h
         src/core/MouseCodes.h
         src/event/MouseEvent.h
-        src/Window.cpp
-        src/Window.h
+        src/core/Window.cpp
+        src/core/Window.h
         src/platform/macOS/MacWindow.cpp
         src/platform/macOS/MacWindow.h
-        src/Application.cpp
-        src/Application.h
-        src/Core.h
+        src/core/Application.cpp
+        src/core/Application.h
+        src/core/Core.h
         src/Bottleneck.h
-        src/EntryPoint.h
-        src/Log.cpp
-        src/Log.h
-        src/Layer.cpp
-        src/Layer.h
-        src/LayerStack.cpp
-        src/LayerStack.h
+        src/core/EntryPoint.h
+        src/core/Log.cpp
+        src/core/Log.h
+        src/core/Layer.cpp
+        src/core/Layer.h
+        src/core/LayerStack.cpp
+        src/core/LayerStack.h
         src/imgui/ImGuiLayer.cpp
         src/imgui/ImGuiLayer.h
-        src/Input.h
+        src/core/Input.h
         src/platform/macOS/MacInput.cpp
         src/platform/macOS/MacInput.h
         src/Renderer/GraphicsContext.cpp
@@ -105,6 +105,10 @@ set(SOURCES
         src/Renderer/RenderCommand.h
         src/platform/openGL/OpenGLRendererAPI.cpp
         src/platform/openGL/OpenGLRendererAPI.h
+        src/Renderer/OrthographicCamera.cpp
+        src/Renderer/OrthographicCamera.h
+        src/core/TimeStep.cpp
+        src/core/TimeStep.h
 )
 
 find_package(OpenGL REQUIRED)
@@ -114,8 +118,6 @@ if (WIN32 AND MINGW)
 endif ()
 
 add_library(App STATIC
-        src/Renderer/OrthographicCamera.cpp
-        src/Renderer/OrthographicCamera.h
 )
 target_sources(App PRIVATE ${SOURCES})
 
