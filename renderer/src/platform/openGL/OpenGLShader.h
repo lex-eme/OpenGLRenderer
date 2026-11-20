@@ -11,6 +11,15 @@ namespace Bottleneck {
 
         void bind() const override;
         void unbind() const override;
+
+        void uploadUniformInt(const std::string& name, int value) override;
+
+        void uploadUniformFloat(const std::string& name, float value) override;
+        void uploadUniformFloat2(const std::string& name, const glm::vec2& value) override;
+        void uploadUniformFloat3(const std::string& name, const glm::vec3& value) override;
+        void uploadUniformFloat4(const std::string& name, const glm::vec4& value) override;
+
+        void uploadUniformMat3(const std::string& name, const glm::mat3& matrix) override;
         void uploadUniformMat4(const std::string& name, const glm::mat4& matrix) override;
     };
 }

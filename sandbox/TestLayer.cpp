@@ -36,12 +36,14 @@ TestLayer::TestLayer()
 
 			layout(location = 0) out vec4 color;
 
+            uniform vec3 u_Color;
+
 			in vec3 v_Position;
             in vec4 v_Color;
 
 			void main()
 			{
-				color = v_Color;
+				color = vec4(u_Color, 1.0);
 			}
 		)";
 
@@ -120,6 +122,7 @@ void TestLayer::onUpdate(const Bottleneck::TimeStep timeStep) {
     m_camera.setRotation(m_cameraRotation);
 
     const glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_trianglePosition);
+    m_shader->uploadUniformFloat3("u_Color", m_triangleColor);
 
     Bottleneck::Renderer::BeginScene(m_camera);
     Bottleneck::Renderer::Submit(m_shader, m_vertexArray, transform);
@@ -132,6 +135,9 @@ void TestLayer::onEvent(Event& event) {
 }
 
 void TestLayer::onImGuiRender() {
+    ImGui::Begin("Settings");
+    ImGui::ColorEdit3("Triangle color", glm::value_ptr(m_triangleColor));
+    ImGui::End();
 }
 
 bool TestLayer::onKeyPressedEvent(const KeyPressedEvent& event) {

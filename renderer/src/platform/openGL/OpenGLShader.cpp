@@ -115,6 +115,36 @@ namespace Bottleneck {
         glUseProgram(0);
     }
 
+    void OpenGLShader::uploadUniformInt(const std::string& name, const int value) {
+        const GLint location = glGetUniformLocation(m_rendererID, name.c_str());
+        glProgramUniform1i(m_rendererID, location, value);
+    }
+
+    void OpenGLShader::uploadUniformFloat(const std::string& name, const float value) {
+        const GLint location = glGetUniformLocation(m_rendererID, name.c_str());
+        glProgramUniform1f(m_rendererID, location, value);
+    }
+
+    void OpenGLShader::uploadUniformFloat2(const std::string& name, const glm::vec2& value) {
+        const GLint location = glGetUniformLocation(m_rendererID, name.c_str());
+        glProgramUniform2fv(m_rendererID, location, 1, glm::value_ptr(value));
+    }
+
+    void OpenGLShader::uploadUniformFloat3(const std::string& name, const glm::vec3& value) {
+        const GLint location = glGetUniformLocation(m_rendererID, name.c_str());
+        glProgramUniform3fv(m_rendererID, location, 1, glm::value_ptr(value));
+    }
+
+    void OpenGLShader::uploadUniformFloat4(const std::string& name, const glm::vec4& value) {
+        const GLint location = glGetUniformLocation(m_rendererID, name.c_str());
+        glProgramUniform4fv(m_rendererID, location, 1, glm::value_ptr(value));
+    }
+
+    void OpenGLShader::uploadUniformMat3(const std::string& name, const glm::mat3& matrix) {
+        const GLint location = glGetUniformLocation(m_rendererID, name.c_str());
+        glProgramUniformMatrix3fv(m_rendererID, location, 1, GL_FALSE, glm::value_ptr(matrix));
+    }
+
     void OpenGLShader::uploadUniformMat4(const std::string& name, const glm::mat4& matrix) {
         const GLint location = glGetUniformLocation(m_rendererID, name.c_str());
         glProgramUniformMatrix4fv(m_rendererID, location, 1, GL_FALSE, glm::value_ptr(matrix));
