@@ -11,7 +11,7 @@ namespace Bottleneck {
         static void SetClearColor(const glm::vec4& color) { s_RendererAPI->setClearColor(color); }
         static void Clear() { s_RendererAPI->clear(); }
 
-        static void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray) {
+        static void DrawIndexed(const Ref<VertexArray>& vertexArray) {
             s_RendererAPI->drawIndexed(vertexArray);
         }
     };

@@ -109,6 +109,10 @@ set(SOURCES
         src/Renderer/OrthographicCamera.h
         src/core/TimeStep.cpp
         src/core/TimeStep.h
+        src/Renderer/Texture.cpp
+        src/Renderer/Texture.h
+        src/platform/openGL/OpenGLTexture.cpp
+        src/platform/openGL/OpenGLTexture.h
 )
 
 find_package(OpenGL REQUIRED)

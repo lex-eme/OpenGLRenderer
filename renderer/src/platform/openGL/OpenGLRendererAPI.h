@@ -9,6 +9,6 @@ namespace Bottleneck {
 
         void setClearColor(const glm::vec4& color) override;
         void clear() override;
-        void drawIndexed(const std::shared_ptr<VertexArray>& vertexArray) override;
+        void drawIndexed(const Ref<VertexArray>& vertexArray) override;
     };
 }

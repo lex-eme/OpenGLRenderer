@@ -1,11 +1,13 @@
 #pragma once
 
 #include <Bottleneck.h>
+#include <core/Core.h>
 
 
 class TestLayer final : public Bottleneck::Layer {
-    std::shared_ptr<Bottleneck::Shader> m_shader;
-    std::shared_ptr<Bottleneck::VertexArray> m_vertexArray;
+    Bottleneck::Ref<Bottleneck::Shader> m_shader;
+    Bottleneck::Ref<Bottleneck::VertexArray> m_vertexArray;
+    Bottleneck::Ref<Bottleneck::Texture2D> m_texture;
 
     Bottleneck::OrthographicCamera m_camera;
     glm::vec3 m_cameraPosition{0.0f};

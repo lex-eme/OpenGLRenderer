@@ -1,9 +1,9 @@
 #pragma once
 
-#include <memory>
 #include <vector>
 
 #include "Buffer.h"
+#include "core/Core.h"
 
 namespace Bottleneck {
     class VertexArray {
@@ -13,11 +13,11 @@ namespace Bottleneck {
         virtual void bind() const = 0;
         virtual void unbind() const = 0;
 
-        virtual void addVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer) = 0;
-        virtual void setIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer) = 0;
+        virtual void addVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) = 0;
+        virtual void setIndexBuffer(const Ref<IndexBuffer>& indexBuffer) = 0;
 
-        [[nodiscard]] virtual const std::vector<std::shared_ptr<VertexBuffer>>& getVertexBuffers() const = 0;
-        [[nodiscard]] virtual const std::shared_ptr<IndexBuffer>& getIndexBuffer() const = 0;
+        [[nodiscard]] virtual const std::vector<Ref<VertexBuffer>>& getVertexBuffers() const = 0;
+        [[nodiscard]] virtual const Ref<IndexBuffer>& getIndexBuffer() const = 0;
 
         static VertexArray* Create();
     };

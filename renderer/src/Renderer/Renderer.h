@@ -17,7 +17,7 @@ namespace Bottleneck {
         static void EndScene();
 
         // Later it should take a shared ref to a mesh as parameter. Which would include the vertex array and the material (shader + uniforms)
-        static void Submit(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray,
+        static void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray,
                            const glm::mat4& transform = glm::mat4(1.0f));
 
         static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }

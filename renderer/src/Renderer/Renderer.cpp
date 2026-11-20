@@ -11,7 +11,7 @@ namespace Bottleneck {
     void Renderer::EndScene() {
     }
 
-    void Renderer::Submit(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray, const glm::mat4& transform) {
+    void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform) {
         shader->bind();
         shader->uploadUniformMat4("u_ViewProjection", s_sceneData->viewProjectionMatrix);
         shader->uploadUniformMat4("u_Transform", transform);
