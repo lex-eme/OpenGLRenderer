@@ -4,6 +4,10 @@
 #include "Shader.h"
 
 namespace Bottleneck {
+    void Renderer::Init() {
+        RenderCommand::Init();
+    }
+
     void Renderer::BeginScene(const OrthographicCamera& camera) {
         s_sceneData->viewProjectionMatrix = camera.getViewProjectionMatrix();
     }

@@ -31,16 +31,22 @@ namespace Bottleneck {
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisoSetting);
         }
 
-        GLenum format;
+        GLint internalFormat;
+        GLenum dataFormat;
         if (channels == 1) {
-            format = GL_RED;
+            internalFormat = GL_RED;
+            dataFormat = GL_RED;
         } else if (channels == 3) {
-            format = GL_RGB;
+            internalFormat = GL_RGB8;
+            dataFormat = GL_RGB;
         } else {
-            format = GL_RGBA;
+            internalFormat = GL_RGBA8;
+            dataFormat = GL_RGBA;
         }
 
-        glTexImage2D(GL_TEXTURE_2D, 0, format, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data);
+        assert(internalFormat != 0 && dataFormat != 0);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_width, m_height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
 
         stbi_image_free(data);

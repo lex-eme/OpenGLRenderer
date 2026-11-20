@@ -8,6 +8,7 @@ namespace Bottleneck {
         inline static RendererAPI* s_RendererAPI = new OpenGLRendererAPI();
 
     public:
+        static void Init() { s_RendererAPI->init(); }
         static void SetClearColor(const glm::vec4& color) { s_RendererAPI->setClearColor(color); }
         static void Clear() { s_RendererAPI->clear(); }
 

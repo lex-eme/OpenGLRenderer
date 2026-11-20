@@ -1,4 +1,4 @@
-#include "../pch.h"
+#include "pch.h"
 
 #include "Application.h"
 
@@ -8,7 +8,8 @@
 #include "core/Core.h"
 #include "GLFW/glfw3.h"
 
-#include "../imgui/ImGuiLayer.h"
+#include "imgui/ImGuiLayer.h"
+#include "Renderer/Renderer.h"
 
 namespace Bottleneck {
     Application* Application::s_instance = nullptr;
@@ -20,6 +21,8 @@ namespace Bottleneck {
         WindowProps props("The new name", 720, 720);
         m_window = std::unique_ptr<Window>(Window::create(props));
         m_window->setEventCallback(BN_BIND_EVENT_FN(Application::onEvent));
+
+        Renderer::Init();
 
         m_imGuiLayer = new ImGuiLayer();
         pushOverlay(m_imGuiLayer);

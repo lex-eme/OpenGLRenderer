@@ -13,6 +13,8 @@ namespace Bottleneck {
         inline static SceneData* s_sceneData = new SceneData();
 
     public:
+        static void Init();
+
         static void BeginScene(const OrthographicCamera& camera); // set camera, lights, environments, etc
         static void EndScene();
 
