@@ -1,4 +1,7 @@
 #pragma once
+
+#include <unordered_map>
+
 #include "Renderer/Shader.h"
 
 namespace Bottleneck {
@@ -6,6 +9,7 @@ namespace Bottleneck {
         uint32_t m_rendererID;
 
     public:
+        explicit OpenGLShader(const std::string& filepath);
         OpenGLShader(const std::string& vertexSrc, const std::string& fragmentSrc);
         ~OpenGLShader() override;
 
@@ -21,5 +25,11 @@ namespace Bottleneck {
 
         void uploadUniformMat3(const std::string& name, const glm::mat3& matrix) override;
         void uploadUniformMat4(const std::string& name, const glm::mat4& matrix) override;
+
+    private:
+        static std::string readFile(const std::string& filepath);
+        static std::unordered_map<GLenum, std::string> preProcess(const std::string& source);
+
+        void compile(const std::unordered_map<GLenum, std::string>& shaderSources);
     };
 }

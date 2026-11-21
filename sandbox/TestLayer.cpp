@@ -12,43 +12,6 @@
 
 TestLayer::TestLayer()
     : Layer("Example"), m_camera(-1.0f, 1.0f, -1.0f, 1.0f), m_cameraPosition(0.0f) {
-    const std::string vertexSrc = R"(
-			#version 330 core
-
-			layout(location = 0) in vec3 a_Position;
-			layout(location = 1) in vec4 a_Color;
-			layout(location = 2) in vec2 a_TexCoord;
-
-            uniform mat4 u_ViewProjection;
-            uniform mat4 u_Transform;
-
-            out vec4 v_Color;
-            out vec2 v_TexCoord;
-
-			void main()
-			{
-                v_Color = a_Color;
-                v_TexCoord = a_TexCoord;
-				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
-			}
-		)";
-
-    const std::string fragmentSrc = R"(
-			#version 330 core
-
-			layout(location = 0) out vec4 color;
-
-            uniform sampler2D u_Texture;
-
-            in vec4 v_Color;
-            in vec2 v_TexCoord;
-
-			void main()
-			{
-				color = texture(u_Texture, v_TexCoord);
-			}
-		)";
-
     m_vertexArray.reset(Bottleneck::VertexArray::Create());
 
     const float vertices[3 * 9] = {
@@ -72,7 +35,7 @@ TestLayer::TestLayer()
     indexBuffer.reset(Bottleneck::IndexBuffer::Create(indices, 3));
     m_vertexArray->setIndexBuffer(indexBuffer);
 
-    m_shader.reset(Bottleneck::Shader::Create(vertexSrc, fragmentSrc));
+    m_shader.reset(Bottleneck::Shader::Create("assets/shaders/Texture.glsl"));
 
     m_texture = Bottleneck::Texture2D::Create("assets/textures/vince.png");
     m_texture->bind(0);

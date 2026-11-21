@@ -121,8 +121,7 @@ if (WIN32 AND MINGW)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
 endif ()
 
-add_library(App STATIC
-)
+add_library(App STATIC)
 target_sources(App PRIVATE ${SOURCES})
 
 target_include_directories(App PRIVATE ../dependencies ./src)
