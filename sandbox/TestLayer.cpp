@@ -35,7 +35,7 @@ TestLayer::TestLayer()
     indexBuffer.reset(Bottleneck::IndexBuffer::Create(indices, 3));
     m_vertexArray->setIndexBuffer(indexBuffer);
 
-    m_shader.reset(Bottleneck::Shader::Create("assets/shaders/Texture.glsl"));
+    m_shader = m_shaderLibrary.load("assets/shaders/Texture.glsl");
 
     m_texture = Bottleneck::Texture2D::Create("assets/textures/vince.png");
     m_texture->bind(0);

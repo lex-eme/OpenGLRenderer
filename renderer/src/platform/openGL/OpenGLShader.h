@@ -7,10 +7,11 @@
 namespace Bottleneck {
     class OpenGLShader final : public Shader {
         uint32_t m_rendererID;
+        std::string m_name;
 
     public:
         explicit OpenGLShader(const std::string& filepath);
-        OpenGLShader(const std::string& vertexSrc, const std::string& fragmentSrc);
+        OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
         ~OpenGLShader() override;
 
         void bind() const override;
@@ -25,6 +26,8 @@ namespace Bottleneck {
 
         void uploadUniformMat3(const std::string& name, const glm::mat3& matrix) override;
         void uploadUniformMat4(const std::string& name, const glm::mat4& matrix) override;
+
+        [[nodiscard]] const std::string& getName() const override { return m_name; }
 
     private:
         static std::string readFile(const std::string& filepath);

@@ -31,6 +31,7 @@
 #include <deque>
 #include <array>
 #include <vector>
+#include <array>
 #include <filesystem>
 
 #include "core/Log.h"

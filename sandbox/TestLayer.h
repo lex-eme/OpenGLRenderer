@@ -5,6 +5,7 @@
 
 
 class TestLayer final : public Bottleneck::Layer {
+    Bottleneck::ShaderLibrary m_shaderLibrary;
     Bottleneck::Ref<Bottleneck::Shader> m_shader;
     Bottleneck::Ref<Bottleneck::VertexArray> m_vertexArray;
     Bottleneck::Ref<Bottleneck::Texture2D> m_texture;

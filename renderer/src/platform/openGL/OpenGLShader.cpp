@@ -19,9 +19,16 @@ namespace Bottleneck {
         const std::string source = readFile(filepath);
         const auto shaderSources = preProcess(source);
         compile(shaderSources);
+
+        auto lastSlash = filepath.find_last_of("/\\");
+        lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+        const auto lastDot = filepath.rfind('.');
+
+        const auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
+        m_name = filepath.substr(lastSlash, count);
     }
 
-    OpenGLShader::OpenGLShader(const std::string& vertexSrc, const std::string& fragmentSrc) {
+    OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc) {
         std::unordered_map<GLenum, std::string> shaderSources;
         shaderSources[GL_VERTEX_SHADER] = vertexSrc;
         shaderSources[GL_FRAGMENT_SHADER] = fragmentSrc;
@@ -110,15 +117,19 @@ namespace Bottleneck {
 
             const size_t nextLinePos = source.find_first_not_of("\r\n", eol);
             pos = source.find(typeToken, nextLinePos);
-            shaderSources[shaderType] = (pos == std::string::npos) ? source.substr(nextLinePos) : source.substr(nextLinePos, pos - nextLinePos);
+            shaderSources[shaderType] = (pos == std::string::npos)
+                                            ? source.substr(nextLinePos)
+                                            : source.substr(nextLinePos, pos - nextLinePos);
         }
 
         return shaderSources;
     }
 
     void OpenGLShader::compile(const std::unordered_map<GLenum, std::string>& shaderSources) {
+        assert(shaderSources.size() <= 2);
         const GLuint program = glCreateProgram();
-        std::vector<GLenum> glShaderIDs(shaderSources.size());
+        std::array<GLenum, 2> glShaderIDs;
+        int glShaderIDIndex = 0;
 
         for (const auto& [type, source]: shaderSources) {
             const GLuint shader = glCreateShader(type);
@@ -146,7 +157,8 @@ namespace Bottleneck {
             }
 
             glAttachShader(program, shader);
-            glShaderIDs.push_back(shader);
+            glShaderIDs[glShaderIDIndex] = shader;
+            glShaderIDIndex += 1;
         }
 
         m_rendererID = program;
@@ -168,16 +180,16 @@ namespace Bottleneck {
             // We don't need the program anymore.
             glDeleteProgram(program);
             // Don't leak shaders either.
-            for (const auto id: glShaderIDs) {
-                glDeleteShader(id);
+            for (int i = 0; i < glShaderIDIndex; i += 1) {
+                glDeleteShader(glShaderIDs[i]);
             }
 
             BN_CORE_ERROR("{0}", infoLog.data());
             assert(false);
         }
 
-        for (const auto id: glShaderIDs) {
-            glDetachShader(program, id);
+        for (int i = 0; i < glShaderIDIndex; i += 1) {
+            glDetachShader(program, glShaderIDs[i]);
         }
     }
 }
