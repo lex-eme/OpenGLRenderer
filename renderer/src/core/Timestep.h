@@ -1,11 +1,11 @@
 #pragma once
 
 namespace Bottleneck {
-    class TimeStep {
+    class Timestep {
         float m_time;
 
     public:
-        TimeStep(const float time)
+        explicit Timestep(const float time)
             : m_time(time) {
         }
 

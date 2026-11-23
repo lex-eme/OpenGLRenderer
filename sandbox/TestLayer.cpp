@@ -11,7 +11,7 @@
 #include "Renderer/Renderer.h"
 
 TestLayer::TestLayer()
-    : Layer("Example"), m_camera(-1.0f, 1.0f, -1.0f, 1.0f), m_cameraPosition(0.0f) {
+    : Layer("Example"), m_cameraController(1.0f) {
     m_vertexArray.reset(Bottleneck::VertexArray::Create());
 
     const float vertices[3 * 9] = {
@@ -50,57 +50,36 @@ void TestLayer::onDetach() {
     BN_INFO("Layer {0} detached", m_debugName);
 }
 
-void TestLayer::onUpdate(const Bottleneck::TimeStep timeStep) {
-    if (Bottleneck::Input::IsKeyPressed(Key::Left)) {
-        m_cameraPosition.x -= m_cameraSpeed * timeStep;
-    }
-    if (Bottleneck::Input::IsKeyPressed(Key::Right)) {
-        m_cameraPosition.x += m_cameraSpeed * timeStep;
-    }
-    if (Bottleneck::Input::IsKeyPressed(Key::Down)) {
-        m_cameraPosition.y -= m_cameraSpeed * timeStep;
-    }
-    if (Bottleneck::Input::IsKeyPressed(Key::Up)) {
-        m_cameraPosition.y += m_cameraSpeed * timeStep;
-    }
-
+void TestLayer::onUpdate(const Bottleneck::Timestep timestep) {
+    m_cameraController.onUpdate(timestep);
     if (Bottleneck::Input::IsKeyPressed(Key::J)) {
-        m_trianglePosition.x -= m_cameraSpeed * timeStep;
+        m_trianglePosition.x -= m_triangleSpeed * timestep;
     }
     if (Bottleneck::Input::IsKeyPressed(Key::L)) {
-        m_trianglePosition.x += m_cameraSpeed * timeStep;
+        m_trianglePosition.x += m_triangleSpeed * timestep;
     }
     if (Bottleneck::Input::IsKeyPressed(Key::K)) {
-        m_trianglePosition.y -= m_cameraSpeed * timeStep;
+        m_trianglePosition.y -= m_triangleSpeed * timestep;
     }
     if (Bottleneck::Input::IsKeyPressed(Key::I)) {
-        m_trianglePosition.y += m_cameraSpeed * timeStep;
-    }
-
-    if (Bottleneck::Input::IsKeyPressed(Key::A)) {
-        m_cameraRotation -= m_cameraRotationSpeed * timeStep;
-    }
-
-    if (Bottleneck::Input::IsKeyPressed(Key::D)) {
-        m_cameraRotation += m_cameraRotationSpeed * timeStep;
+        m_trianglePosition.y += m_triangleSpeed * timestep;
     }
 
     Bottleneck::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});
     Bottleneck::RenderCommand::Clear();
 
-    m_camera.setPosition(m_cameraPosition);
-    m_camera.setRotation(m_cameraRotation);
-
     const glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_trianglePosition);
 
-    Bottleneck::Renderer::BeginScene(m_camera);
+    Bottleneck::Renderer::BeginScene(m_cameraController.getCamera());
     Bottleneck::Renderer::Submit(m_shader, m_vertexArray, transform);
     Bottleneck::Renderer::EndScene();
 }
 
 void TestLayer::onEvent(Event& event) {
+    m_cameraController.onEvent(event);
+
     EventDispatcher dispatcher(event);
-    dispatcher.Dispatch<KeyPressedEvent>(BN_BIND_EVENT_FN(TestLayer::onKeyPressedEvent));
+    dispatcher.dispatch<KeyPressedEvent>(BN_BIND_EVENT_FN(TestLayer::onKeyPressedEvent));
 }
 
 void TestLayer::onImGuiRender() {

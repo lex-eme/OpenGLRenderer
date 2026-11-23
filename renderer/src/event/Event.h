@@ -53,7 +53,7 @@ public:
 
     // F will be deduced by the compiler
     template<typename T, typename F>
-    bool Dispatch(const F& func) {
+    bool dispatch(const F& func) {
         if (m_Event.getEventType() == T::GetStaticType()) {
             m_Event.handled |= func(static_cast<T&>(m_Event));
             return true;

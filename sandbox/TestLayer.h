@@ -10,12 +10,8 @@ class TestLayer final : public Bottleneck::Layer {
     Bottleneck::Ref<Bottleneck::VertexArray> m_vertexArray;
     Bottleneck::Ref<Bottleneck::Texture2D> m_texture;
 
-    Bottleneck::OrthographicCamera m_camera;
-    glm::vec3 m_cameraPosition{0.0f};
-    float m_cameraSpeed{1.0f};
-
-    float m_cameraRotation{0.0f};
-    float m_cameraRotationSpeed{30.0f};
+    Bottleneck::OrthographicCameraController m_cameraController;
+    float m_triangleSpeed{1.0f};
 
     glm::vec3 m_trianglePosition{0.0f};
     glm::vec3 m_triangleColor{0.5f};
@@ -25,7 +21,7 @@ public:
     ~TestLayer() override = default;
     void onAttach() override;
     void onDetach() override;
-    void onUpdate(Bottleneck::TimeStep timeStep) override;
+    void onUpdate(Bottleneck::Timestep timestep) override;
     void onEvent(Event& event) override;
     void onImGuiRender() override;
 

@@ -6,7 +6,7 @@
 #include "core/Log.h"
 #include "core/Input.h"
 #include "core/Layer.h"
-#include "core/TimeStep.h"
+#include "core/Timestep.h"
 #include "imgui/ImGuiLayer.h"
 
 #include "Renderer/Renderer.h"
@@ -18,5 +18,6 @@
 #include "Renderer/Texture.h"
 
 #include "Renderer/OrthographicCamera.h"
+#include "Renderer/OrthographicCameraController.h"
 
 //#include "EntryPoint.h"

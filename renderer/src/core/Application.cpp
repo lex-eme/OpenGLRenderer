@@ -4,7 +4,7 @@
 
 #include <memory>
 
-#include "TimeStep.h"
+#include "Timestep.h"
 #include "core/Core.h"
 #include "GLFW/glfw3.h"
 
@@ -30,12 +30,13 @@ namespace Bottleneck {
 
     void Application::run() {
         while (m_running) {
-            const float time = static_cast<float>(glfwGetTime()); // should be in a class like Platform::GetTime() which should have a MacPlatform::GetTime()
-            TimeStep timeStep = time - m_lastFrameTime;
+            // should be in a class like Platform::GetTime() which should have a MacPlatform::GetTime()
+            const float time = static_cast<float>(glfwGetTime());
+            const Timestep timestep(time - m_lastFrameTime);
             m_lastFrameTime = time;
 
             for (Layer* layer: m_layerStack) {
-                layer->onUpdate(timeStep);
+                layer->onUpdate(timestep);
             }
 
             m_imGuiLayer->begin();
@@ -50,8 +51,8 @@ namespace Bottleneck {
 
     void Application::onEvent(Event& event) {
         EventDispatcher dispatcher(event);
-        dispatcher.Dispatch<WindowCloseEvent>(BN_BIND_EVENT_FN(Application::onWindowClose));
-        dispatcher.Dispatch<KeyPressedEvent>(BN_BIND_EVENT_FN(Application::onKeyPress));
+        dispatcher.dispatch<WindowCloseEvent>(BN_BIND_EVENT_FN(Application::onWindowClose));
+        dispatcher.dispatch<KeyPressedEvent>(BN_BIND_EVENT_FN(Application::onKeyPress));
 
         for (auto it = m_layerStack.rbegin(); it != m_layerStack.rend(); it += 1) {
             if (event.handled) {
