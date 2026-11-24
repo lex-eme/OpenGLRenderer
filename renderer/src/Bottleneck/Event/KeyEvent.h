@@ -2,7 +2,7 @@
 #include <sstream>
 
 #include "Event.h"
-#include "core/KeyCodes.h"
+#include "Bottleneck/Core/KeyCodes.h"
 
 class KeyEvent : public Event {
 protected:

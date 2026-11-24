@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../core/Window.h"
+#include "Bottleneck/Core/Window.h"
 #include "GLFW/glfw3.h"
-#include "Renderer/GraphicsContext.h"
+#include "Bottleneck/Renderer/GraphicsContext.h"
 
 
 namespace Bottleneck {

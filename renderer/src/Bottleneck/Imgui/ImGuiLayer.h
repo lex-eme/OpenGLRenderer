@@ -1,5 +1,5 @@
 #pragma once
-#include "../core/Layer.h"
+#include "../Core/Layer.h"
 
 
 namespace Bottleneck {

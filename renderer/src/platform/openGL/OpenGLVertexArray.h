@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 
-#include "Renderer/VertexArray.h"
+#include "Bottleneck/Renderer/VertexArray.h"
 
 namespace Bottleneck {
     class OpenGLVertexArray final : public VertexArray {

@@ -2,7 +2,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "core/Core.h"
+#include "Bottleneck/Core/Core.h"
 
 namespace Bottleneck {
     class Shader {

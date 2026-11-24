@@ -55,66 +55,66 @@ set(SOURCES
         src/scene/SceneTree.h
         src/Skybox.cpp
         src/Skybox.h
-        src/event/Event.h
-        src/event/ApplicationEvent.h
-        src/event/KeyEvent.h
-        src/core/KeyCodes.h
-        src/core/MouseCodes.h
-        src/event/MouseEvent.h
-        src/core/Window.cpp
-        src/core/Window.h
+        src/Bottleneck/event/Event.h
+        src/Bottleneck/event/ApplicationEvent.h
+        src/Bottleneck/event/KeyEvent.h
+        src/Bottleneck/core/KeyCodes.h
+        src/Bottleneck/core/MouseCodes.h
+        src/Bottleneck/event/MouseEvent.h
+        src/Bottleneck/core/Window.cpp
+        src/Bottleneck/core/Window.h
         src/platform/macOS/MacWindow.cpp
         src/platform/macOS/MacWindow.h
-        src/core/Application.cpp
-        src/core/Application.h
-        src/core/Core.h
+        src/Bottleneck/core/Application.cpp
+        src/Bottleneck/core/Application.h
+        src/Bottleneck/core/Core.h
         src/Bottleneck.h
-        src/core/EntryPoint.h
-        src/core/Log.cpp
-        src/core/Log.h
-        src/core/Layer.cpp
-        src/core/Layer.h
-        src/core/LayerStack.cpp
-        src/core/LayerStack.h
-        src/imgui/ImGuiLayer.cpp
-        src/imgui/ImGuiLayer.h
-        src/core/Input.h
+        src/Bottleneck/core/EntryPoint.h
+        src/Bottleneck/core/Log.cpp
+        src/Bottleneck/core/Log.h
+        src/Bottleneck/core/Layer.cpp
+        src/Bottleneck/core/Layer.h
+        src/Bottleneck/core/LayerStack.cpp
+        src/Bottleneck/core/LayerStack.h
+        src/Bottleneck/imgui/ImGuiLayer.cpp
+        src/Bottleneck/imgui/ImGuiLayer.h
+        src/Bottleneck/core/Input.h
         src/platform/macOS/MacInput.cpp
         src/platform/macOS/MacInput.h
-        src/Renderer/GraphicsContext.cpp
-        src/Renderer/GraphicsContext.h
+        src/Bottleneck/Renderer/GraphicsContext.cpp
+        src/Bottleneck/Renderer/GraphicsContext.h
         src/platform/openGL/OpenGLContext.cpp
         src/platform/openGL/OpenGLContext.h
-        src/Renderer/Shader.cpp
-        src/Renderer/Shader.h
-        src/Renderer/Buffer.cpp
-        src/Renderer/Buffer.h
+        src/Bottleneck/Renderer/Shader.cpp
+        src/Bottleneck/Renderer/Shader.h
+        src/Bottleneck/Renderer/Buffer.cpp
+        src/Bottleneck/Renderer/Buffer.h
         src/platform/openGL/OpenGLBuffer.cpp
         src/platform/openGL/OpenGLBuffer.h
-        src/Renderer/Renderer.cpp
-        src/Renderer/Renderer.h
+        src/Bottleneck/Renderer/Renderer.cpp
+        src/Bottleneck/Renderer/Renderer.h
         src/platform/openGL/OpenGLShader.cpp
         src/platform/openGL/OpenGLShader.h
-        src/Renderer/VertexArray.cpp
-        src/Renderer/VertexArray.h
+        src/Bottleneck/Renderer/VertexArray.cpp
+        src/Bottleneck/Renderer/VertexArray.h
         src/platform/openGL/OpenGLVertexArray.cpp
         src/platform/openGL/OpenGLVertexArray.h
-        src/Renderer/RendererAPI.cpp
-        src/Renderer/RendererAPI.h
-        src/Renderer/RenderCommand.cpp
-        src/Renderer/RenderCommand.h
+        src/Bottleneck/Renderer/RendererAPI.cpp
+        src/Bottleneck/Renderer/RendererAPI.h
+        src/Bottleneck/Renderer/RenderCommand.cpp
+        src/Bottleneck/Renderer/RenderCommand.h
         src/platform/openGL/OpenGLRendererAPI.cpp
         src/platform/openGL/OpenGLRendererAPI.h
-        src/Renderer/OrthographicCamera.cpp
-        src/Renderer/OrthographicCamera.h
-        src/core/Timestep.cpp
-        src/core/Timestep.h
-        src/Renderer/Texture.cpp
-        src/Renderer/Texture.h
+        src/Bottleneck/Renderer/OrthographicCamera.cpp
+        src/Bottleneck/Renderer/OrthographicCamera.h
+        src/Bottleneck/core/Timestep.cpp
+        src/Bottleneck/core/Timestep.h
+        src/Bottleneck/Renderer/Texture.cpp
+        src/Bottleneck/Renderer/Texture.h
         src/platform/openGL/OpenGLTexture.cpp
         src/platform/openGL/OpenGLTexture.h
-        src/Renderer/OrthographicCameraController.cpp
-        src/Renderer/OrthographicCameraController.h
+        src/Bottleneck/Renderer/OrthographicCameraController.cpp
+        src/Bottleneck/Renderer/OrthographicCameraController.h
 )
 
 find_package(OpenGL REQUIRED)

@@ -2,10 +2,10 @@
 
 #include <memory>
 
-#include "core/LayerStack.h"
-#include "core/Window.h"
-#include "event/ApplicationEvent.h"
-#include "event/KeyEvent.h"
+#include "Bottleneck/Core/LayerStack.h"
+#include "Bottleneck/Core/Window.h"
+#include "Bottleneck/Event/ApplicationEvent.h"
+#include "Bottleneck/Event/KeyEvent.h"
 
 
 namespace Bottleneck {

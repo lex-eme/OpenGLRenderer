@@ -2,22 +2,22 @@
 
 // For use by applications (not by engine)
 
-#include "core/Application.h"
-#include "core/Log.h"
-#include "core/Input.h"
-#include "core/Layer.h"
-#include "core/Timestep.h"
-#include "imgui/ImGuiLayer.h"
+#include "Bottleneck/Core/Application.h"
+#include "Bottleneck/Core/Log.h"
+#include "Bottleneck/Core/Input.h"
+#include "Bottleneck/Core/Layer.h"
+#include "Bottleneck/Core/Timestep.h"
+#include "Bottleneck/Imgui/ImGuiLayer.h"
 
-#include "Renderer/Renderer.h"
-#include "Renderer/RenderCommand.h"
+#include "Bottleneck/Renderer/Renderer.h"
+#include "Bottleneck/Renderer/RenderCommand.h"
 
-#include "Renderer/Buffer.h"
-#include "Renderer/VertexArray.h"
-#include "Renderer/Shader.h"
-#include "Renderer/Texture.h"
+#include "Bottleneck/Renderer/Buffer.h"
+#include "Bottleneck/Renderer/VertexArray.h"
+#include "Bottleneck/Renderer/Shader.h"
+#include "Bottleneck/Renderer/Texture.h"
 
-#include "Renderer/OrthographicCamera.h"
-#include "Renderer/OrthographicCameraController.h"
+#include "Bottleneck/Renderer/OrthographicCamera.h"
+#include "Bottleneck/Renderer/OrthographicCameraController.h"
 
 //#include "EntryPoint.h"

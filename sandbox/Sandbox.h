@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Bottleneck.h>
-#include <core/EntryPoint.h>
+#include <Bottleneck/Core/EntryPoint.h>
 
 #include "TestLayer.h"
 

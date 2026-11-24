@@ -34,7 +34,7 @@
 #include <array>
 #include <filesystem>
 
-#include "core/Log.h"
+#include "Bottleneck/Core/Log.h"
 
 #ifdef BN_PLATFORM_WINDOWS
 // TODO: Windows window

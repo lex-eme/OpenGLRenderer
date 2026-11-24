@@ -5,10 +5,8 @@
 #include <glm/ext/matrix_transform.hpp>
 
 #include "../dependencies/imgui/imgui.h"
-#include "core/Core.h"
-#include "platform/openGL/OpenGLTexture.h"
-#include "Renderer/RenderCommand.h"
-#include "Renderer/Renderer.h"
+#include "Bottleneck/Renderer/RenderCommand.h"
+#include "Bottleneck/Renderer/Renderer.h"
 
 TestLayer::TestLayer()
     : Layer("Example"), m_cameraController(1.0f) {

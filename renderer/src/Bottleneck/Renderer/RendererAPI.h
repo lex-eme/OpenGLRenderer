@@ -2,7 +2,7 @@
 #include <glm/glm.hpp>
 
 #include "VertexArray.h"
-#include "core/Core.h"
+#include "Bottleneck/Core/Core.h"
 
 namespace Bottleneck {
     class RendererAPI {

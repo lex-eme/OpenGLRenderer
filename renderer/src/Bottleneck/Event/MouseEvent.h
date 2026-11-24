@@ -2,7 +2,7 @@
 #include <sstream>
 
 #include "Event.h"
-#include "core/MouseCodes.h"
+#include "Bottleneck/Core/MouseCodes.h"
 
 
 class MouseMovedEvent final : public Event {

@@ -2,9 +2,9 @@
 
 #include "MacWindow.h"
 
-#include "event/ApplicationEvent.h"
-#include "event/KeyEvent.h"
-#include "event/MouseEvent.h"
+#include "Bottleneck/Event/ApplicationEvent.h"
+#include "Bottleneck/Event/KeyEvent.h"
+#include "Bottleneck/Event/MouseEvent.h"
 #include "platform/openGL/OpenGLContext.h"
 
 static uint8_t s_GLFWWindowCount = 0;

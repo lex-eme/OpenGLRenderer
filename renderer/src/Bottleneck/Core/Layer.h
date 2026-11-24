@@ -3,7 +3,7 @@
 #include <string>
 
 #include "Timestep.h"
-#include "../event/Event.h"
+#include "../Event/Event.h"
 
 namespace Bottleneck {
     class Layer {

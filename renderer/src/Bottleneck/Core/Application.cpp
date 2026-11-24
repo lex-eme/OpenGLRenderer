@@ -5,11 +5,11 @@
 #include <memory>
 
 #include "Timestep.h"
-#include "core/Core.h"
+#include "Bottleneck/Core/Core.h"
 #include "GLFW/glfw3.h"
 
-#include "imgui/ImGuiLayer.h"
-#include "Renderer/Renderer.h"
+#include "Bottleneck/Imgui/ImGuiLayer.h"
+#include "Bottleneck/Renderer/Renderer.h"
 
 namespace Bottleneck {
     Application* Application::s_instance = nullptr;

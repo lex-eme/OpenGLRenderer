@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Bottleneck.h>
-#include <core/Core.h>
 
 
 class TestLayer final : public Bottleneck::Layer {

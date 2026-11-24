@@ -2,7 +2,7 @@
 
 #include "MacInput.h"
 
-#include "../../core/Application.h"
+#include "Bottleneck/Core/Application.h"
 #include "GLFW/glfw3.h"
 
 namespace Bottleneck {

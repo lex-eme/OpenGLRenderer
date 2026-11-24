@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "Buffer.h"
-#include "core/Core.h"
+#include "Bottleneck/Core/Core.h"
 
 namespace Bottleneck {
     class VertexArray {

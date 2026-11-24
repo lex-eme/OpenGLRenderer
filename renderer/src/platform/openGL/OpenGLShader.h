@@ -2,7 +2,7 @@
 
 #include <unordered_map>
 
-#include "Renderer/Shader.h"
+#include "Bottleneck/Renderer/Shader.h"
 
 namespace Bottleneck {
     class OpenGLShader final : public Shader {

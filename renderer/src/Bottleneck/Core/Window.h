@@ -1,7 +1,7 @@
 #pragma once
 #include <functional>
 
-#include "event/Event.h"
+#include "Bottleneck/Event/Event.h"
 
 namespace Bottleneck {
     struct WindowProps {

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../core/Input.h"
-#include "core/KeyCodes.h"
+#include "Bottleneck/Core/Input.h"
+#include "Bottleneck/Core/KeyCodes.h"
 
 namespace Bottleneck {
     class MacInput final : public Input {

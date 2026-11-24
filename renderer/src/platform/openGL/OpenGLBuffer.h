@@ -1,5 +1,5 @@
 #pragma once
-#include "Renderer/Buffer.h"
+#include "Bottleneck/Renderer/Buffer.h"
 
 namespace Bottleneck {
     class OpenGLVertexBuffer final : public VertexBuffer {

@@ -2,8 +2,8 @@
 
 #include "OrthographicCameraController.h"
 
-#include "core/Core.h"
-#include "core/Input.h"
+#include "Bottleneck/Core/Core.h"
+#include "Bottleneck/Core/Input.h"
 
 namespace Bottleneck {
     OrthographicCameraController::OrthographicCameraController(const float aspectRatio, const bool rotation)

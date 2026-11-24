@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "core/Core.h"
+#include "Bottleneck/Core/Core.h"
 
 namespace Bottleneck {
     class Texture {

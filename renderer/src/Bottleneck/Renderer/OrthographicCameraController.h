@@ -1,8 +1,8 @@
 #pragma once
-#include "OrthographicCamera.h"
-#include "core/Timestep.h"
-#include "event/ApplicationEvent.h"
-#include "event/MouseEvent.h"
+#include "Bottleneck/Renderer/OrthographicCamera.h"
+#include "Bottleneck/Core/Timestep.h"
+#include "Bottleneck/Event/ApplicationEvent.h"
+#include "Bottleneck/Event/MouseEvent.h"
 
 namespace Bottleneck {
     class OrthographicCameraController {

@@ -1,5 +1,5 @@
 #pragma once
-#include "Renderer/Texture.h"
+#include "Bottleneck/Renderer/Texture.h"
 
 namespace Bottleneck {
     class OpenGLTexture2D final : public Texture2D {
