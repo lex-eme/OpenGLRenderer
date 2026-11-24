@@ -10,7 +10,7 @@
 
 TestLayer::TestLayer()
     : Layer("Example"), m_cameraController(1.0f) {
-    m_vertexArray.reset(Bottleneck::VertexArray::Create());
+    m_vertexArray = Bottleneck::VertexArray::Create();
 
     const float vertices[3 * 9] = {
         -0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f, 0.0f, 0.0f,

@@ -19,6 +19,6 @@ namespace Bottleneck {
         [[nodiscard]] virtual const std::vector<Ref<VertexBuffer>>& getVertexBuffers() const = 0;
         [[nodiscard]] virtual const Ref<IndexBuffer>& getIndexBuffer() const = 0;
 
-        static VertexArray* Create();
+        static Ref<VertexArray> Create();
     };
 }

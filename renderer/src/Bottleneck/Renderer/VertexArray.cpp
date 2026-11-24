@@ -6,12 +6,12 @@
 #include "platform/openGL/OpenGLVertexArray.h"
 
 namespace Bottleneck {
-    VertexArray* VertexArray::Create() {
+    Ref<VertexArray> VertexArray::Create() {
         switch (Renderer::GetAPI()) {
             case RendererAPI::API::None:
                 assert(false);
             case RendererAPI::API::OpenGL:
-                return new OpenGLVertexArray();
+                return std::make_shared<OpenGLVertexArray>();
         }
 
         assert(false);

@@ -16,7 +16,7 @@ namespace Bottleneck {
 
         virtual void onAttach() {}
         virtual void onDetach() {}
-        virtual void onUpdate(Timestep timeStep) {}
+        virtual void onUpdate(Timestep timestep) {}
         virtual void onImGuiRender() {}
         virtual void onEvent(Event& event) {}
 

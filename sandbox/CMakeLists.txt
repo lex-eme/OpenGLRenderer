@@ -2,9 +2,11 @@ add_executable(Sandbox
         Sandbox.cpp
         Sandbox.h
         TestLayer.cpp
-        TestLayer.h)
+        TestLayer.h
+        Sandbox2D.cpp
+        Sandbox2D.h)
 
-target_link_libraries(Sandbox PRIVATE App spdlog::spdlog glm::glm)
+target_link_libraries(Sandbox PRIVATE App spdlog::spdlog glm::glm imgui-glfw)
 target_include_directories(Sandbox PRIVATE ../renderer/src)
 
 if (APPLE)

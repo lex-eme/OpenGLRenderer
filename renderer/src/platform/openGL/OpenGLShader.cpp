@@ -99,11 +99,11 @@ namespace Bottleneck {
         return result;
     }
 
-    std::unordered_map<GLenum, std::string> OpenGLShader::preProcess(const std::string& source) {
-        std::unordered_map<GLenum, std::string> shaderSources;
+    std::unordered_map<unsigned int, std::string> OpenGLShader::preProcess(const std::string& source) {
+        std::unordered_map<unsigned int, std::string> shaderSources;
 
         const char* typeToken = "#type";
-        size_t typeTokenLength = strlen(typeToken);
+        const size_t typeTokenLength = strlen(typeToken);
         std::string::size_type pos = source.find(typeToken, 0);
         while (pos != std::string::npos) {
             const size_t eol = source.find_first_of("\r\n", pos);

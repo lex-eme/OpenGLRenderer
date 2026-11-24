@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_map>
+#include <glm/glm.hpp>
 
 #include "Bottleneck/Renderer/Shader.h"
 
@@ -17,22 +18,26 @@ namespace Bottleneck {
         void bind() const override;
         void unbind() const override;
 
+        void setFloat3(const std::string& name, const glm::vec3& value) override { uploadUniformFloat3(name, value); }
+        void setFloat4(const std::string& name, const glm::vec4& value) override { uploadUniformFloat4(name, value); }
+        void setMat4(const std::string& name, const glm::mat4& value) override { uploadUniformMat4(name, value); }
+
         void uploadUniformInt(const std::string& name, int value) override;
 
-        void uploadUniformFloat(const std::string& name, float value) override;
-        void uploadUniformFloat2(const std::string& name, const glm::vec2& value) override;
-        void uploadUniformFloat3(const std::string& name, const glm::vec3& value) override;
-        void uploadUniformFloat4(const std::string& name, const glm::vec4& value) override;
+        void uploadUniformFloat(const std::string& name, float value);
+        void uploadUniformFloat2(const std::string& name, const glm::vec2& value);
+        void uploadUniformFloat3(const std::string& name, const glm::vec3& value);
+        void uploadUniformFloat4(const std::string& name, const glm::vec4& value);
 
-        void uploadUniformMat3(const std::string& name, const glm::mat3& matrix) override;
-        void uploadUniformMat4(const std::string& name, const glm::mat4& matrix) override;
+        void uploadUniformMat3(const std::string& name, const glm::mat3& matrix);
+        void uploadUniformMat4(const std::string& name, const glm::mat4& matrix);
 
         [[nodiscard]] const std::string& getName() const override { return m_name; }
 
     private:
         static std::string readFile(const std::string& filepath);
-        static std::unordered_map<GLenum, std::string> preProcess(const std::string& source);
+        static std::unordered_map<unsigned int, std::string> preProcess(const std::string& source);
 
-        void compile(const std::unordered_map<GLenum, std::string>& shaderSources);
+        void compile(const std::unordered_map<unsigned int, std::string>& shaderSources);
     };
 }

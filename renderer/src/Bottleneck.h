@@ -10,6 +10,7 @@
 #include "Bottleneck/Imgui/ImGuiLayer.h"
 
 #include "Bottleneck/Renderer/Renderer.h"
+#include "Bottleneck/Renderer/Renderer2D.h"
 #include "Bottleneck/Renderer/RenderCommand.h"
 
 #include "Bottleneck/Renderer/Buffer.h"
