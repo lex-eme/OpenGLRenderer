@@ -35,10 +35,11 @@ namespace Bottleneck {
             const Timestep timestep(time - m_lastFrameTime);
             m_lastFrameTime = time;
 
-            for (Layer* layer: m_layerStack) {
-                layer->onUpdate(timestep);
+            if (!m_minimized) {
+                for (Layer* layer: m_layerStack) {
+                    layer->onUpdate(timestep);
+                }
             }
-
             m_imGuiLayer->begin();
             for (Layer* layer: m_layerStack) {
                 layer->onImGuiRender();
@@ -52,6 +53,7 @@ namespace Bottleneck {
     void Application::onEvent(Event& event) {
         EventDispatcher dispatcher(event);
         dispatcher.dispatch<WindowCloseEvent>(BN_BIND_EVENT_FN(Application::onWindowClose));
+        dispatcher.dispatch<WindowResizeEvent>(BN_BIND_EVENT_FN(Application::onWindowResize));
         dispatcher.dispatch<KeyPressedEvent>(BN_BIND_EVENT_FN(Application::onKeyPress));
 
         for (auto it = m_layerStack.rbegin(); it != m_layerStack.rend(); it += 1) {
@@ -75,6 +77,18 @@ namespace Bottleneck {
     bool Application::onWindowClose(WindowCloseEvent& event) {
         m_running = false;
         return true;
+    }
+
+    bool Application::onWindowResize(const WindowResizeEvent& event) {
+        if (event.getWidth() == 0 || event.getHeight() == 0) {
+            m_minimized = true;
+            return false;
+        }
+
+        m_minimized = false;
+        Renderer::OnWindowResize(event.getWidth(), event.getHeight());
+
+        return false;
     }
 
     bool Application::onKeyPress(const KeyPressedEvent& event) {

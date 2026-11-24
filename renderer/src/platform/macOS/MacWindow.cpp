@@ -77,7 +77,7 @@ namespace Bottleneck {
         glfwSetWindowUserPointer(m_window, &m_data);
         setVSync(true);
 
-        glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height) {
+        glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, const int width, const int height) {
             WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
             data.width = width;
             data.height = height;

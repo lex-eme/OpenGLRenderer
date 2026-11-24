@@ -57,6 +57,7 @@ namespace Bottleneck {
     bool OrthographicCameraController::onWindowResized(const WindowResizeEvent& event) {
         m_aspectRatio = static_cast<float>(event.getWidth()) / static_cast<float>(event.getHeight());
         m_camera.setProjection(-m_aspectRatio * m_zoomLevel, m_aspectRatio * m_zoomLevel, -m_zoomLevel, m_zoomLevel);
+        BN_CORE_INFO("Camera resized");
         return false;
     }
 }

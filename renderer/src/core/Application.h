@@ -15,6 +15,7 @@ namespace Bottleneck {
         std::unique_ptr<Window> m_window;
         LayerStack m_layerStack;
         bool m_running = true;
+        bool m_minimized = false;
         ImGuiLayer* m_imGuiLayer;
         float m_lastFrameTime;
 
@@ -40,6 +41,7 @@ namespace Bottleneck {
 
     private:
         bool onWindowClose(WindowCloseEvent& event);
+        bool onWindowResize(const WindowResizeEvent& event);
         bool onKeyPress(const KeyPressedEvent& event);
     };
 
