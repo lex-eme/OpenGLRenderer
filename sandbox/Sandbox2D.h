@@ -7,8 +7,8 @@ class Sandbox2D final : public Bottleneck::Layer {
     Bottleneck::OrthographicCameraController m_cameraController;
 
     // Temp
-    Bottleneck::Ref<Bottleneck::Shader> m_shader;
     Bottleneck::Ref<Bottleneck::VertexArray> m_vertexArray;
+    Bottleneck::Ref<Bottleneck::Texture2D> m_texture;
 
     glm::vec4 m_color{0.8f, 0.2f, 0.3f, 1.0f};
 

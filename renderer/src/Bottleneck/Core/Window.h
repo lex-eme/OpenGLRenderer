@@ -1,6 +1,7 @@
 #pragma once
 #include <functional>
 
+#include "Core.h"
 #include "Bottleneck/Event/Event.h"
 
 namespace Bottleneck {
@@ -32,6 +33,6 @@ namespace Bottleneck {
 
         [[nodiscard]] virtual void* getNativeWindow() const = 0;
 
-        static Window* create(const WindowProps& props = WindowProps());
+        static Scope<Window> Create(const WindowProps& props = WindowProps());
     };
 }

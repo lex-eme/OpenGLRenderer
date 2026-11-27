@@ -2,6 +2,7 @@
 
 #include "MacWindow.h"
 
+#include "Bottleneck/Core/Core.h"
 #include "Bottleneck/Event/ApplicationEvent.h"
 #include "Bottleneck/Event/KeyEvent.h"
 #include "Bottleneck/Event/MouseEvent.h"
@@ -14,19 +15,25 @@ static void GLFWErrorCallback(const int error, const char* description) {
 }
 
 namespace Bottleneck {
-    Window* Window::create(const WindowProps& props) {
-        return new MacWindow(props);
+    Scope<Window> Window::Create(const WindowProps& props) {
+        return CreateScope<MacWindow>(props);
     }
 
     MacWindow::MacWindow(const WindowProps& props) {
+        BN_PROFILE_FUNCTION();
+
         init(props);
     }
 
     MacWindow::~MacWindow() {
+        BN_PROFILE_FUNCTION();
+
         shutdown();
     }
 
     void MacWindow::onUpdate() {
+        BN_PROFILE_FUNCTION();
+
         glfwPollEvents();
         m_context->swapBuffers();
     }
@@ -36,6 +43,8 @@ namespace Bottleneck {
     }
 
     void MacWindow::setVSync(const bool enabled) {
+        BN_PROFILE_FUNCTION();
+
         if (enabled) {
             glfwSwapInterval(1);
         } else {
@@ -46,11 +55,15 @@ namespace Bottleneck {
 
     void MacWindow::init(const WindowProps& props) {
         BN_CORE_INFO("Initialization of MacOS window");
+        BN_PROFILE_FUNCTION();
+
         m_data.title = props.title;
         m_data.width = props.width;
         m_data.height = props.height;
 
         if (s_GLFWWindowCount == 0) {
+            BN_PROFILE_SCOPE("glfwInit");
+
             const int success = glfwInit();
             assert(success);
             glfwSetErrorCallback(GLFWErrorCallback);
@@ -61,8 +74,13 @@ namespace Bottleneck {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // Apple only (MacWindow)
 
-        m_window = glfwCreateWindow(static_cast<int>(props.width), static_cast<int>(props.height), m_data.title.c_str(),
-                                    nullptr, nullptr);
+        {
+            BN_PROFILE_SCOPE("glfwCreateWindow");
+
+            m_window = glfwCreateWindow(static_cast<int>(props.width), static_cast<int>(props.height),
+                                        m_data.title.c_str(),
+                                        nullptr, nullptr);
+        }
 
         if (m_window == nullptr) {
             BN_CORE_ERROR("Failed to create GLFW window");
@@ -147,6 +165,8 @@ namespace Bottleneck {
     }
 
     void MacWindow::shutdown() const {
+        BN_PROFILE_FUNCTION();
+
         glfwDestroyWindow(m_window);
         s_GLFWWindowCount -= 1;
 

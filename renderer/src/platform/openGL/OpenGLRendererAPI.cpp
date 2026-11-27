@@ -4,14 +4,19 @@
 
 namespace Bottleneck {
     void OpenGLRendererAPI::init() {
+        BN_PROFILE_FUNCTION();
+
         BN_CORE_INFO("Initialization of OpenGL Render API");
         // can enable blend if needed
         // glEnable(GL_BLEND);
         // can set blending function
         // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_DEPTH_TEST);
+        //glDepthFunc(GL_LEQUAL);
     }
 
-    void OpenGLRendererAPI::setViewport(const uint32_t x, const uint32_t y, const uint32_t width, const uint32_t height) {
+    void OpenGLRendererAPI::setViewport(const uint32_t x, const uint32_t y, const uint32_t width,
+                                        const uint32_t height) {
         glViewport(x, y, width, height);
     }
 

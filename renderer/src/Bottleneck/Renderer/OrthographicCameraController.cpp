@@ -13,6 +13,8 @@ namespace Bottleneck {
     }
 
     void OrthographicCameraController::onUpdate(const Timestep timestep) {
+        BN_PROFILE_FUNCTION();
+
         if (Input::IsKeyPressed(Key::A)) {
             m_cameraPosition.x -= m_cameraTranslationSpeed * timestep;
         }
@@ -41,12 +43,16 @@ namespace Bottleneck {
     }
 
     void OrthographicCameraController::onEvent(Event& event) {
+        BN_PROFILE_FUNCTION();
+
         EventDispatcher dispatcher(event);
         dispatcher.dispatch<MouseScrolledEvent>(BN_BIND_EVENT_FN(OrthographicCameraController::onMouseScrolled));
         dispatcher.dispatch<WindowResizeEvent>(BN_BIND_EVENT_FN(OrthographicCameraController::onWindowResized));
     }
 
     bool OrthographicCameraController::onMouseScrolled(const MouseScrolledEvent& event) {
+        BN_PROFILE_FUNCTION();
+
         m_zoomLevel -= event.getYOffset() * 0.25f;
         m_zoomLevel = std::max(m_zoomLevel, 0.25f);
         m_camera.setProjection(-m_aspectRatio * m_zoomLevel, m_aspectRatio * m_zoomLevel, -m_zoomLevel, m_zoomLevel);
@@ -55,6 +61,8 @@ namespace Bottleneck {
     }
 
     bool OrthographicCameraController::onWindowResized(const WindowResizeEvent& event) {
+        BN_PROFILE_FUNCTION();
+
         m_aspectRatio = static_cast<float>(event.getWidth()) / static_cast<float>(event.getHeight());
         m_camera.setProjection(-m_aspectRatio * m_zoomLevel, m_aspectRatio * m_zoomLevel, -m_zoomLevel, m_zoomLevel);
         BN_CORE_INFO("Camera resized");

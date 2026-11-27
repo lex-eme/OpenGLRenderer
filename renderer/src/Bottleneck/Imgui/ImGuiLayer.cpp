@@ -9,6 +9,8 @@
 
 
 void Bottleneck::ImGuiLayer::onAttach() {
+    BN_PROFILE_FUNCTION();
+
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
@@ -36,6 +38,8 @@ void Bottleneck::ImGuiLayer::onAttach() {
 }
 
 void Bottleneck::ImGuiLayer::onDetach() {
+    BN_PROFILE_FUNCTION();
+
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
@@ -54,12 +58,16 @@ void Bottleneck::ImGuiLayer::onImGuiRender() {
 }
 
 void Bottleneck::ImGuiLayer::begin() {
+    BN_PROFILE_FUNCTION();
+
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 }
 
 void Bottleneck::ImGuiLayer::end() {
+    BN_PROFILE_FUNCTION();
+
     ImGuiIO& io = ImGui::GetIO();
     const Application& app = Application::get();
     io.DisplaySize = ImVec2(static_cast<float>(app.getWindow().getWidth()),

@@ -36,6 +36,8 @@
 
 #include "Bottleneck/Core/Log.h"
 
+#include "Bottleneck/Debug/Instrumentor.h"
+
 #ifdef BN_PLATFORM_WINDOWS
 // TODO: Windows window
 #elif BN_PLATFORM_APPLE

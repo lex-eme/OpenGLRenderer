@@ -8,6 +8,8 @@ namespace Bottleneck {
     ////////////////////////////////////////////////////////////
 
     OpenGLVertexBuffer::OpenGLVertexBuffer(const float* vertices, const uint32_t size) {
+        BN_PROFILE_FUNCTION();
+
         glGenBuffers(1, &m_rendererID);
         glBindBuffer(GL_ARRAY_BUFFER, m_rendererID);
         glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
@@ -15,14 +17,20 @@ namespace Bottleneck {
     }
 
     OpenGLVertexBuffer::~OpenGLVertexBuffer() {
+        BN_PROFILE_FUNCTION();
+
         glDeleteBuffers(1, &m_rendererID);
     }
 
     void OpenGLVertexBuffer::bind() const {
+        BN_PROFILE_FUNCTION();
+
         glBindBuffer(GL_ARRAY_BUFFER, m_rendererID);
     }
 
     void OpenGLVertexBuffer::unbind() const {
+        BN_PROFILE_FUNCTION();
+
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
@@ -36,6 +44,8 @@ namespace Bottleneck {
 
     OpenGLIndexBuffer::OpenGLIndexBuffer(const uint32_t* indices, const uint32_t count)
         : m_count(count) {
+        BN_PROFILE_FUNCTION();
+
         glGenBuffers(1, &m_rendererID);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_rendererID);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
@@ -43,14 +53,20 @@ namespace Bottleneck {
     }
 
     OpenGLIndexBuffer::~OpenGLIndexBuffer() {
+        BN_PROFILE_FUNCTION();
+
         glDeleteBuffers(1, &m_rendererID);
     }
 
     void OpenGLIndexBuffer::bind() const {
+        BN_PROFILE_FUNCTION();
+
         glBindBuffer(GL_ARRAY_BUFFER, m_rendererID);
     }
 
     void OpenGLIndexBuffer::unbind() const {
+        BN_PROFILE_FUNCTION();
+
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 }

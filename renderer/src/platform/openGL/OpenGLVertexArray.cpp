@@ -25,24 +25,33 @@ namespace Bottleneck {
     }
 
     OpenGLVertexArray::OpenGLVertexArray() {
+        BN_PROFILE_FUNCTION();
+
         glGenVertexArrays(1, &m_rendererID);
         glBindVertexArray(m_rendererID);
-        //glBindVertexArray(0);
     }
 
     OpenGLVertexArray::~OpenGLVertexArray() {
+        BN_PROFILE_FUNCTION();
+
         glDeleteVertexArrays(1, &m_rendererID);
     }
 
     void OpenGLVertexArray::bind() const {
+        BN_PROFILE_FUNCTION();
+
         glBindVertexArray(m_rendererID);
     }
 
     void OpenGLVertexArray::unbind() const {
+        BN_PROFILE_FUNCTION();
+
         glBindVertexArray(0);
     }
 
     void OpenGLVertexArray::addVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
+        BN_PROFILE_FUNCTION();
+
         assert(!vertexBuffer->getLayout().getElements().empty());
 
         glBindVertexArray(m_rendererID);
@@ -65,6 +74,8 @@ namespace Bottleneck {
     }
 
     void OpenGLVertexArray::setIndexBuffer(const Ref<IndexBuffer>& indexBuffer) {
+        BN_PROFILE_FUNCTION();
+
         glBindVertexArray(m_rendererID);
         indexBuffer->bind();
         m_indexBuffer = indexBuffer;

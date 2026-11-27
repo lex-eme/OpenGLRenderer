@@ -23,7 +23,7 @@ namespace Bottleneck {
 
     public:
         Application();
-        virtual ~Application() = default;
+        virtual ~Application();
 
         void run();
         void onEvent(Event& event);

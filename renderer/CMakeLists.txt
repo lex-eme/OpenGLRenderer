@@ -117,6 +117,7 @@ set(SOURCES
         src/Bottleneck/Renderer/OrthographicCameraController.h
         src/Bottleneck/Renderer/Renderer2D.cpp
         src/Bottleneck/Renderer/Renderer2D.h
+        src/Bottleneck/Debug/Instrumentor.h
 )
 
 find_package(OpenGL REQUIRED)

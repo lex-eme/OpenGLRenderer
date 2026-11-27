@@ -2,8 +2,6 @@
 
 #include "Application.h"
 
-#include <memory>
-
 #include "Timestep.h"
 #include "Bottleneck/Core/Core.h"
 #include "GLFW/glfw3.h"
@@ -15,11 +13,13 @@ namespace Bottleneck {
     Application* Application::s_instance = nullptr;
 
     Application::Application() {
+        BN_PROFILE_FUNCTION();
+
         assert(s_instance == nullptr);
         s_instance = this;
 
-        WindowProps props("The new name", 720, 720);
-        m_window = std::unique_ptr<Window>(Window::create(props));
+        const WindowProps props("The new name", 720, 720);
+        m_window = Window::Create(props);
         m_window->setEventCallback(BN_BIND_EVENT_FN(Application::onEvent));
 
         Renderer::Init();
@@ -28,21 +28,38 @@ namespace Bottleneck {
         pushOverlay(m_imGuiLayer);
     }
 
+    Application::~Application() {
+        BN_PROFILE_FUNCTION();
+
+        Renderer::Shutdown();
+    }
+
     void Application::run() {
+        BN_PROFILE_FUNCTION();
+
         while (m_running) {
+            BN_PROFILE_SCOPE("RunLoop");
             // should be in a class like Platform::GetTime() which should have a MacPlatform::GetTime()
             const float time = static_cast<float>(glfwGetTime());
             const Timestep timestep(time - m_lastFrameTime);
             m_lastFrameTime = time;
 
             if (!m_minimized) {
-                for (Layer* layer: m_layerStack) {
-                    layer->onUpdate(timestep);
+                {
+                    BN_PROFILE_SCOPE("LayerStack OnUpdate");
+
+                    for (Layer* layer: m_layerStack) {
+                        layer->onUpdate(timestep);
+                    }
                 }
             }
-            m_imGuiLayer->begin();
-            for (Layer* layer: m_layerStack) {
-                layer->onImGuiRender();
+
+            m_imGuiLayer->begin(); {
+                BN_PROFILE_SCOPE("LayerStack onImGuiRender");
+
+                for (Layer* layer: m_layerStack) {
+                    layer->onImGuiRender();
+                }
             }
             m_imGuiLayer->end();
 
@@ -51,6 +68,8 @@ namespace Bottleneck {
     }
 
     void Application::onEvent(Event& event) {
+        BN_PROFILE_FUNCTION();
+
         EventDispatcher dispatcher(event);
         dispatcher.dispatch<WindowCloseEvent>(BN_BIND_EVENT_FN(Application::onWindowClose));
         dispatcher.dispatch<WindowResizeEvent>(BN_BIND_EVENT_FN(Application::onWindowResize));
@@ -65,11 +84,15 @@ namespace Bottleneck {
     }
 
     void Application::pushLayer(Layer* layer) {
+        BN_PROFILE_FUNCTION();
+
         m_layerStack.pushLayer(layer);
         layer->onAttach();
     }
 
     void Application::pushOverlay(Layer* layer) {
+        BN_PROFILE_FUNCTION();
+
         m_layerStack.pushOverlay(layer);
         layer->onAttach();
     }
@@ -80,6 +103,8 @@ namespace Bottleneck {
     }
 
     bool Application::onWindowResize(const WindowResizeEvent& event) {
+        BN_PROFILE_FUNCTION();
+
         if (event.getWidth() == 0 || event.getHeight() == 0) {
             m_minimized = true;
             return false;

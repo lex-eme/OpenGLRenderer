@@ -8,6 +8,8 @@ namespace Bottleneck {
     }
 
     void OpenGLContext::init() {
+        BN_PROFILE_FUNCTION();
+
         glfwMakeContextCurrent(m_windowHandle);
         if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
             BN_CORE_ERROR("Failed to initialize GLAD");
@@ -22,6 +24,8 @@ namespace Bottleneck {
     }
 
     void OpenGLContext::swapBuffers() {
+        BN_PROFILE_FUNCTION();
+
         glfwSwapBuffers(m_windowHandle);
     }
 }

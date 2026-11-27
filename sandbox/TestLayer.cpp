@@ -12,17 +12,16 @@ TestLayer::TestLayer()
     : Layer("Example"), m_cameraController(1.0f) {
     m_vertexArray = Bottleneck::VertexArray::Create();
 
-    const float vertices[3 * 9] = {
-        -0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, 0.0f, 0.2f, 0.3f, 0.8f, 1.0f, 1.0f, 0.0f,
-        0.0f, 0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f, 0.5f, 1.0f
+    const float vertices[3 * 5] = {
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.5f, 0.0f, 0.5f, 1.0f
     };
 
     Bottleneck::Ref<Bottleneck::VertexBuffer> vertexBuffer;
     vertexBuffer.reset(Bottleneck::VertexBuffer::Create(vertices, sizeof(vertices)));
     Bottleneck::BufferLayout layout = {
         {Bottleneck::ShaderDataType::Float3, "a_Position"},
-        {Bottleneck::ShaderDataType::Float4, "a_Color"},
         {Bottleneck::ShaderDataType::Float2, "a_TexCoord"},
     };
     vertexBuffer->setLayout(layout);

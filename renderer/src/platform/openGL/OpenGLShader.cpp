@@ -16,6 +16,8 @@ namespace Bottleneck {
     }
 
     OpenGLShader::OpenGLShader(const std::string& filepath) {
+        BN_PROFILE_FUNCTION();
+
         const std::string source = readFile(filepath);
         const auto shaderSources = preProcess(source);
         compile(shaderSources);
@@ -29,6 +31,8 @@ namespace Bottleneck {
     }
 
     OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc) {
+        BN_PROFILE_FUNCTION();
+
         std::unordered_map<GLenum, std::string> shaderSources;
         shaderSources[GL_VERTEX_SHADER] = vertexSrc;
         shaderSources[GL_FRAGMENT_SHADER] = fragmentSrc;
@@ -36,53 +40,75 @@ namespace Bottleneck {
     }
 
     OpenGLShader::~OpenGLShader() {
+        BN_PROFILE_FUNCTION();
+
         glDeleteProgram(m_rendererID);
     }
 
     void OpenGLShader::bind() const {
+        BN_PROFILE_FUNCTION();
+
         glUseProgram(m_rendererID);
     }
 
     void OpenGLShader::unbind() const {
+        BN_PROFILE_FUNCTION();
+
         glUseProgram(0);
     }
 
     void OpenGLShader::uploadUniformInt(const std::string& name, const int value) {
+        BN_PROFILE_FUNCTION();
+
         const GLint location = glGetUniformLocation(m_rendererID, name.c_str());
         glProgramUniform1i(m_rendererID, location, value);
     }
 
     void OpenGLShader::uploadUniformFloat(const std::string& name, const float value) {
+        BN_PROFILE_FUNCTION();
+
         const GLint location = glGetUniformLocation(m_rendererID, name.c_str());
         glProgramUniform1f(m_rendererID, location, value);
     }
 
     void OpenGLShader::uploadUniformFloat2(const std::string& name, const glm::vec2& value) {
+        BN_PROFILE_FUNCTION();
+
         const GLint location = glGetUniformLocation(m_rendererID, name.c_str());
         glProgramUniform2fv(m_rendererID, location, 1, glm::value_ptr(value));
     }
 
     void OpenGLShader::uploadUniformFloat3(const std::string& name, const glm::vec3& value) {
+        BN_PROFILE_FUNCTION();
+
         const GLint location = glGetUniformLocation(m_rendererID, name.c_str());
         glProgramUniform3fv(m_rendererID, location, 1, glm::value_ptr(value));
     }
 
     void OpenGLShader::uploadUniformFloat4(const std::string& name, const glm::vec4& value) {
+        BN_PROFILE_FUNCTION();
+
         const GLint location = glGetUniformLocation(m_rendererID, name.c_str());
         glProgramUniform4fv(m_rendererID, location, 1, glm::value_ptr(value));
     }
 
     void OpenGLShader::uploadUniformMat3(const std::string& name, const glm::mat3& matrix) {
+        BN_PROFILE_FUNCTION();
+
         const GLint location = glGetUniformLocation(m_rendererID, name.c_str());
         glProgramUniformMatrix3fv(m_rendererID, location, 1, GL_FALSE, glm::value_ptr(matrix));
     }
 
     void OpenGLShader::uploadUniformMat4(const std::string& name, const glm::mat4& matrix) {
+        BN_PROFILE_FUNCTION();
+
         const GLint location = glGetUniformLocation(m_rendererID, name.c_str());
         glProgramUniformMatrix4fv(m_rendererID, location, 1, GL_FALSE, glm::value_ptr(matrix));
     }
 
     std::string OpenGLShader::readFile(const std::string& filepath) {
+        BN_PROFILE_FUNCTION();
+
         std::ifstream in(filepath, std::ios::in | std::ios::binary);
 
         std::string result;
@@ -100,6 +126,8 @@ namespace Bottleneck {
     }
 
     std::unordered_map<unsigned int, std::string> OpenGLShader::preProcess(const std::string& source) {
+        BN_PROFILE_FUNCTION();
+
         std::unordered_map<unsigned int, std::string> shaderSources;
 
         const char* typeToken = "#type";
@@ -126,6 +154,8 @@ namespace Bottleneck {
     }
 
     void OpenGLShader::compile(const std::unordered_map<GLenum, std::string>& shaderSources) {
+        BN_PROFILE_FUNCTION();
+
         assert(shaderSources.size() <= 2);
         const GLuint program = glCreateProgram();
         std::array<GLenum, 2> glShaderIDs;
