@@ -32,9 +32,10 @@ void Sandbox2D::onUpdate(const Bottleneck::Timestep timestep) {
     } {
         BN_PROFILE_SCOPE("Renderer Draw");
         Bottleneck::Renderer2D::BeginScene(m_cameraController.getCamera());
-        Bottleneck::Renderer2D::DrawQuad({-1.0f, 0.0f, -0.1f}, {1.0f, 1.0f}, m_color);
-        Bottleneck::Renderer2D::DrawQuad({0.5f, -0.5f}, {0.5f, 0.75f}, m_color);
-        Bottleneck::Renderer2D::DrawQuad({-0.75f, 0.0f}, {0.6f, 0.6f}, m_texture);
+        Bottleneck::Renderer2D::DrawRotatedQuad({-1.0f, 0.0f, -0.1f}, {1.0f, 1.0f}, glm::radians(15.0f), m_color);
+        Bottleneck::Renderer2D::DrawRotatedQuad({0.5f, -0.5f}, {0.5f, 0.75f}, glm::radians(-15.0f), m_color);
+        Bottleneck::Renderer2D::DrawRotatedQuad({-0.75f, 0.0f}, {0.6f, 0.6f}, glm::radians(45.0f), m_texture, 2.0f,
+                                                {1.0f, 0.2f, 0.2f, 1.0f});
         Bottleneck::Renderer2D::EndScene();
     }
 }
